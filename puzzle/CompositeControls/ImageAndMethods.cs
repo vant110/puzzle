@@ -8,14 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace puzzle
+namespace puzzle.Services
 {
-    public partial class Form1 : Form
+    public partial class ImageAndMethods : UserControl
     {
-        public Form1()
+        public ImageAndMethods()
         {
             InitializeComponent();
         }
-
     }
 }

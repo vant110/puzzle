@@ -1,8 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <ItemGroup>
-        <Compile Update="Form1.cs">
-            <SubType>Form</SubType>
-        </Compile>
-    </ItemGroup>
+  <ItemGroup>
+    <Compile Update="CompositeControls\AdminMenu.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="CompositeControls\BottomControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="CompositeControls\ImageAndMethods.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="CompositeControls\LevelInfo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="CompositeControls\List.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="CompositeControls\RegAndAuth.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="CompositeControls\TopControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>
