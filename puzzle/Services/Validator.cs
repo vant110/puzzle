@@ -12,27 +12,27 @@ namespace puzzle.Services
 
         public static bool IsLogin(string input)
         {
-            return Regex.IsMatch(input, loginPattern);
+            return input != null && Regex.IsMatch(input, loginPattern);
         }
 
         public static bool IsPassword(string input)
         {
-            return Regex.IsMatch(input, passwordPattern);
+            return input != null && Regex.IsMatch(input, passwordPattern);
         }
 
         public static bool IsImageName(string input)
         {
-            return Regex.IsMatch(input, imageNamePattern);
+            return input != null && Regex.IsMatch(input, imageNamePattern);
         }
 
         public static bool IsLevelName(string input)
         {
-            return Regex.IsMatch(input, levelNamePattern);
+            return input != null && Regex.IsMatch(input, levelNamePattern);
         }
 
         public static bool IsPuzzleName(string input)
         {
-            return Regex.IsMatch(input, puzzleNamePattern);
+            return input != null && Regex.IsMatch(input, puzzleNamePattern);
         }
     }
 }

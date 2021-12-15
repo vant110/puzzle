@@ -1,6 +1,10 @@
-﻿using puzzle.Model;
+﻿using Microsoft.EntityFrameworkCore;
+using puzzle.Model;
 using System;
 using System.ComponentModel;
+using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace puzzle.Services
@@ -11,45 +15,69 @@ namespace puzzle.Services
         {
             InitializeComponent();
 
-            #region Логин
-            textBoxLogin.Validating += new CancelEventHandler((s, e) =>
+            buttonRegister.Click += new EventHandler((s, e) =>
             {
-                string input = textBoxLogin.Text;
-                if (Validator.IsLogin(input))
+                User.Login = textBoxLogin.Text;
+                User.Password = textBoxPassword.Text;
+                if (!Validator.IsLogin(User.Login))
                 {
-                    User.Login = input;
+                    MessageBoxes.Error("Логин некорректен.");
+                    return;
                 }
-                else
+                if (!Validator.IsPassword(User.Password))
                 {
-                    e.Cancel = true;
+                    MessageBoxes.Error("Пароль некорректен.");
+                    return;
+                }
+                
+                Hasher.HashPassword(User.Password);                    
+                try
+                {
+                    int rowsAffected;
+                    using (var db = new PuzzleContext(Settings.Options))
+                    {
+                        rowsAffected = db.Database.ExecuteSqlInterpolated($"CALL register_player ({User.Login}, {User.PasswordHash})");
+                    }
+                    if (rowsAffected == 0)
+                    {
+                        // Введен логин администратора.
+                        MessageBoxes.Error("Логин занят.");
+                    }
+                }
+                catch (MySqlConnector.MySqlException ex) when (ex.Number == 1062)
+                {
+                    // Логин UNIQUE.
+                    MessageBoxes.Error("Логин занят.");
                 }
             });
-            #endregion
-            #region Пароль
-            textBoxPassword.Validating += new CancelEventHandler((s, e) =>
-            {
-                string input = textBoxPassword.Text;
-                if (Validator.IsLogin(input))
-                {
-                    User.Password = input;
-                }
-                else
-                {
-                    e.Cancel = true;
-                }
-            });
-            #endregion
-            #region Войти
             buttonAuthorize.Click += new EventHandler((s, e) =>
             {
-                if (Validator.IsLogin(User.Login)
-                && Validator.IsPassword(User.Password))
+                User.Login = textBoxLogin.Text;
+                User.Password = textBoxPassword.Text;
+                if (!Validator.IsLogin(User.Login))
                 {
-                    Hasher.HashPassword(User.Password);
-
+                    MessageBoxes.Error("Логин некорректен."); 
+                    return;
                 }
+                if (!Validator.IsPassword(User.Password))
+                {
+                    MessageBoxes.Error("Пароль некорректен.");
+                    return;
+                }
+                
+                Hasher.HashPassword(User.Password);
+                using (var db = new PuzzleContext(Settings.Options))
+                {
+                    MySqlConnector.MySqlParameter param1 = new("@param1", User.Login);
+                    MySqlConnector.MySqlParameter param2 = new("@param2", User.PasswordHash);
+                    var result = db.Players.FromSqlRaw("CALL authorize_player (@param1, @param2)", param1, param2);      
+                    foreach (var i in result)
+                    {
+                        Debug.WriteLine(i);
+                    }
+                }
+                         
             });
-            #endregion
         }
     }
 }

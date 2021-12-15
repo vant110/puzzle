@@ -1,4 +1,5 @@
 ﻿using puzzle.Model;
+using System.Text;
 
 namespace puzzle.Services
 {
@@ -6,7 +7,7 @@ namespace puzzle.Services
     {
         public static void HashPassword(string password)
         {
-            User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
+            User.PasswordHash = Encoding.ASCII.GetBytes(BCrypt.Net.BCrypt.HashPassword(password));
         }
     }
 }

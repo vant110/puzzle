@@ -2,14 +2,9 @@
 {
     static class User
     {
-        private static int id;
-        private static string login;
-        private static string password;
-        private static string passwordHash;
-
-        public static int Id { get => id; set => id = value; }
-        public static string Login { get => login; set => login = value; }
-        public static string Password { get => password; set => password = value; }
-        public static string PasswordHash { get => passwordHash; set => passwordHash = value; }
+        public static short Id { get; set; }
+        public static string Login { get; set; }
+        public static string Password { get; set; }
+        public static byte[] PasswordHash { get; set; }
     }
 }
