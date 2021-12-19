@@ -29,7 +29,7 @@ namespace puzzle
             
             CreateTopControl();
             CreateRegAndAuth();
-
+            /*
             #region Инициализация options
             var builder = new ConfigurationBuilder();
             // установка пути к текущему каталогу
@@ -40,7 +40,7 @@ namespace puzzle
             var config = builder.Build();
             // получаем строку подключения
             string connectionString = config.GetConnectionString("DefaultConnection");
-
+            
             var optionsBuilder = new DbContextOptionsBuilder<PuzzleContext>();
             Settings.Options = optionsBuilder
                 .UseMySql(connectionString, ServerVersion.Parse("8.0.27-mysql"))
@@ -49,6 +49,7 @@ namespace puzzle
             optionsBuilder.LogTo(message => Debug.WriteLine(message), LogLevel.Trace);
             //string s = BCrypt.Net.BCrypt.HashPassword("admin");
             //Debug.WriteLine("");
+            */
         }
 
         private void CreateTopControl()

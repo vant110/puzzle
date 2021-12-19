@@ -14,7 +14,7 @@ namespace puzzle.Services
         public RegAndAuth()
         {
             InitializeComponent();
-
+            /*
             buttonRegister.Click += new EventHandler((s, e) =>
             {
                 User.Login = textBoxLogin.Text;
@@ -68,16 +68,15 @@ namespace puzzle.Services
                 Hasher.HashPassword(User.Password);
                 using (var db = new PuzzleContext(Settings.Options))
                 {
-                    MySqlConnector.MySqlParameter param1 = new("@param1", User.Login);
-                    MySqlConnector.MySqlParameter param2 = new("@param2", User.PasswordHash);
-                    var result = db.Players.FromSqlRaw("CALL authorize_player (@param1, @param2)", param1, param2);      
-                    foreach (var i in result)
+                    var p1 = new MySqlConnector.MySqlParameter("@login", User.Login);
+                    var p2 = new MySqlConnector.MySqlParameter("@password_hash", User.PasswordHash);
+                    var results = db.Rs.From("CALL authorize_player (@login, @password_hash)", p1, p2).ToList();/*
+                    foreach (var r in results)
                     {
-                        Debug.WriteLine(i);
+                        Debug.WriteLine(r.RId);
                     }
-                }
-                         
-            });
+                }                         
+            });*/
         }
     }
 }
