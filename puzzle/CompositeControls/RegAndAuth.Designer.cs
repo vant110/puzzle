@@ -39,6 +39,7 @@ namespace puzzle.Services
             // 
             this.textBoxLogin.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.textBoxLogin.Location = new System.Drawing.Point(3, 3);
+            this.textBoxLogin.MaxLength = 8;
             this.textBoxLogin.Name = "textBoxLogin";
             this.textBoxLogin.PlaceholderText = "Логин";
             this.textBoxLogin.Size = new System.Drawing.Size(182, 21);
@@ -49,10 +50,12 @@ namespace puzzle.Services
             this.textBoxPassword.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.textBoxPassword.Location = new System.Drawing.Point(3, 37);
             this.textBoxPassword.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
+            this.textBoxPassword.MaxLength = 10;
             this.textBoxPassword.Name = "textBoxPassword";
             this.textBoxPassword.PlaceholderText = "Пароль";
             this.textBoxPassword.Size = new System.Drawing.Size(182, 21);
             this.textBoxPassword.TabIndex = 1;
+            this.textBoxPassword.UseSystemPasswordChar = true;
             // 
             // buttonRegister
             // 

@@ -15,7 +15,7 @@ namespace puzzle.Data
         public short ImageId { get; set; }
         public string Name { get; set; }
         public string Path { get; set; }
-        public byte[] ImageHash { get; set; }
+        public string ImageHash { get; set; }
 
         public virtual ICollection<Puzzle> Puzzles { get; set; }
     }

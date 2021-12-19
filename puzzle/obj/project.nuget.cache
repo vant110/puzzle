@@ -1,10 +1,9 @@
 {
   "version": 2,
-  "dgSpecHash": "r5g3S/SyJCjfXH9IT20B3GqlEYYLTAqbT/cg6GJyvQg7EmHBbodLFZbBY1NpocICMpTJj25J/MzI+q5yTt6DrQ==",
+  "dgSpecHash": "OdUnfrmFhcg/rcmm6tUc3r5dMvUmVPSmVc6P5D6zFSIb8rd0YSJoIRy6WNIOAbsAJeQCNMMIMcvRmnRtT+ayDQ==",
   "success": true,
   "projectFilePath": "F:\\VBFile\\Учеба\\4 курс\\ПИ\\puzzle\\puzzle\\puzzle.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\vant1\\.nuget\\packages\\bcrypt.net-next\\4.0.2\\bcrypt.net-next.4.0.2.nupkg.sha512",
     "C:\\Users\\vant1\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\vant1\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\vant1\\.nuget\\packages\\microsoft.entityframeworkcore\\5.0.11\\microsoft.entityframeworkcore.5.0.11.nupkg.sha512",

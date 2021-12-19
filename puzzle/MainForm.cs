@@ -20,16 +20,17 @@ namespace puzzle
     public partial class MainForm : Form
     {
         private TopControl topControl;
-        private Control fillControl;
+        private Control centerControl;
         private BottomControl bottomControl;
         
         public MainForm()
         {
             InitializeComponent();
-            
+                        
             CreateTopControl();
+            panelBottom.Hide();
             CreateRegAndAuth();
-            
+
             #region Инициализация options
             var builder = new ConfigurationBuilder();
             // установка пути к текущему каталогу
@@ -46,10 +47,7 @@ namespace puzzle
                 .UseMySql(connectionString, ServerVersion.Parse("8.0.27-mysql"))
                 .Options;
             #endregion
-            optionsBuilder.LogTo(message => Debug.WriteLine(message), LogLevel.Trace);
-            //string s = BCrypt.Net.BCrypt.HashPassword("admin");
-            //Debug.WriteLine("");
-            
+            optionsBuilder.LogTo(message => Debug.WriteLine(message));            
         }
 
         private void CreateTopControl()
@@ -58,7 +56,7 @@ namespace puzzle
             {
                 Dock = DockStyle.Top
             };
-            Controls.Add(topControl);
+            panelTop.Controls.Add(topControl);
         }
 
         private void CreateBottomControl()
@@ -67,23 +65,24 @@ namespace puzzle
             {
                 Dock = DockStyle.Bottom
             };
-            Controls.Add(bottomControl);
+            panelBottom.Controls.Add(bottomControl);
         }
 
-        private void ChangeFillControl(Control newControl)
+        private void ChangeCenterControl(Control newControl)
         {
-            Controls.Remove(fillControl);
-            fillControl = newControl;
-            Controls.Add(fillControl);
+            panelCenter.Controls.Remove(centerControl);
+            centerControl = newControl;
+            panelCenter.Controls.Add(centerControl);
         }
 
         private void CreateRegAndAuth()
         {
-            var newControl = new RegAndAuth
+            var newControl = new RegAndAuth(this)
             {
                 Dock = DockStyle.Fill
             };
-            ChangeFillControl(newControl);
+            Size = new Size(newControl.Width + 125, newControl.Height + topControl.Height + 100);
+            ChangeCenterControl(newControl);
 
             topControl.ButtonBackVisible = false;
             topControl.ButtonPauseOrPlayVisible = false;

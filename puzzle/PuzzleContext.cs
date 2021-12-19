@@ -35,8 +35,12 @@ namespace puzzle
         public virtual DbSet<SavedGameTape> SavedGameTapes { get; set; }
         public virtual DbSet<SavedGameTime> SavedGameTimes { get; set; }
 
+        public DbSet<Model.Result> Results { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Model.Result>().HasNoKey();
+
             modelBuilder.HasCharSet("utf8mb4")
                 .UseCollation("utf8mb4_0900_ai_ci");
 
@@ -148,7 +152,7 @@ namespace puzzle
 
                 entity.Property(e => e.ImageHash)
                     .IsRequired()
-                    .HasColumnType("tinyblob")
+                    .HasColumnType("tinytext")
                     .HasColumnName("image_hash");
 
                 entity.Property(e => e.Name)
@@ -178,7 +182,7 @@ namespace puzzle
 
                 entity.Property(e => e.PasswordHash)
                     .IsRequired()
-                    .HasColumnType("tinyblob")
+                    .HasColumnType("tinytext")
                     .HasColumnName("password_hash");
             });
 

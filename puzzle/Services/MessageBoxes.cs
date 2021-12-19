@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace puzzle.Services
 {
@@ -18,6 +13,15 @@ namespace puzzle.Services
                 caption,
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error);
+        }
+
+        public static void Info(string text)
+        {
+            MessageBox.Show(
+                text,
+                caption,
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
         }
     }
 }

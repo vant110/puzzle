@@ -15,7 +15,7 @@ namespace puzzle.Data
 
         public short PlayerId { get; set; }
         public string Login { get; set; }
-        public byte[] PasswordHash { get; set; }
+        public string PasswordHash { get; set; }
 
         public virtual ICollection<Record> Records { get; set; }
         public virtual ICollection<SavedGame> SavedGames { get; set; }
