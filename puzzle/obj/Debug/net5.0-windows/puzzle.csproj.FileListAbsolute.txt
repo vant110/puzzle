@@ -53,3 +53,4 @@ F:\VBFile\Учеба\4 курс\ПИ\puzzle\puzzle\obj\Debug\net5.0-windows\puzz
 F:\VBFile\Учеба\4 курс\ПИ\puzzle\puzzle\obj\Debug\net5.0-windows\ref\puzzle.dll
 F:\VBFile\Учеба\4 курс\ПИ\puzzle\puzzle\obj\Debug\net5.0-windows\puzzle.pdb
 F:\VBFile\Учеба\4 курс\ПИ\puzzle\puzzle\obj\Debug\net5.0-windows\puzzle.genruntimeconfig.cache
+F:\VBFile\Учеба\4 курс\ПИ\puzzle\puzzle\obj\Debug\net5.0-windows\ru-RU\puzzle.resources.cs

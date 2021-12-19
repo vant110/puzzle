@@ -14,7 +14,7 @@ namespace puzzle.Services
         public RegAndAuth()
         {
             InitializeComponent();
-            /*
+            
             buttonRegister.Click += new EventHandler((s, e) =>
             {
                 User.Login = textBoxLogin.Text;
@@ -70,13 +70,13 @@ namespace puzzle.Services
                 {
                     var p1 = new MySqlConnector.MySqlParameter("@login", User.Login);
                     var p2 = new MySqlConnector.MySqlParameter("@password_hash", User.PasswordHash);
-                    var results = db.Rs.From("CALL authorize_player (@login, @password_hash)", p1, p2).ToList();/*
+                    var results = db.Rs.From("CALL authorize_player (@login, @password_hash)", p1, p2).ToList();
                     foreach (var r in results)
                     {
                         Debug.WriteLine(r.RId);
                     }
                 }                         
-            });*/
+            });
         }
     }
 }

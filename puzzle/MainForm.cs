@@ -29,7 +29,7 @@ namespace puzzle
             
             CreateTopControl();
             CreateRegAndAuth();
-            /*
+            
             #region Инициализация options
             var builder = new ConfigurationBuilder();
             // установка пути к текущему каталогу
@@ -49,7 +49,7 @@ namespace puzzle
             optionsBuilder.LogTo(message => Debug.WriteLine(message), LogLevel.Trace);
             //string s = BCrypt.Net.BCrypt.HashPassword("admin");
             //Debug.WriteLine("");
-            */
+            
         }
 
         private void CreateTopControl()
