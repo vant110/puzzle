@@ -77,7 +77,7 @@ namespace puzzle
 
         private void CreateRegAndAuth()
         {
-            var newControl = new RegAndAuth(this)
+            var newControl = new RegAndAuth()
             {
                 Dock = DockStyle.Fill
             };

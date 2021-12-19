@@ -9,17 +9,13 @@ namespace puzzle.Services
 {
     public partial class RegAndAuth : UserControl
     {
-        Form form;
-
-        public RegAndAuth(Form form)
+        public RegAndAuth()
         {
             InitializeComponent();
 
-            this.form = form;
-
             buttonRegister.Click += new EventHandler((s, e) =>
             {
-                LongOperation(true);
+                Application.UseWaitCursor = true;
                 try
                 {
                     Init();
@@ -49,11 +45,11 @@ namespace puzzle.Services
                     // Логин UNIQUE.
                     MessageBoxes.Error("Логин занят.");
                 }
-                LongOperation(false);
+                Application.UseWaitCursor = false;
             });
             buttonAuthorize.Click += new EventHandler((s, e) =>
             {
-                LongOperation(true);
+                Application.UseWaitCursor = true;
                 try
                 {
                     Init();
@@ -73,7 +69,7 @@ namespace puzzle.Services
                 {
                     MessageBoxes.Error(ex.Message);
                 }
-                LongOperation(false);
+                Application.UseWaitCursor = false;
             });
         }
 
@@ -91,11 +87,6 @@ namespace puzzle.Services
             }
 
             Hasher.HashPassword(User.Password);
-        }
-
-        private void LongOperation(bool longOperation)
-        {
-            form.Cursor = longOperation ? Cursors.WaitCursor : Cursors.Default;
         }
     }
 }
