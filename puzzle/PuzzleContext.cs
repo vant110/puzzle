@@ -152,8 +152,9 @@ namespace puzzle
 
                 entity.Property(e => e.ImageHash)
                     .IsRequired()
-                    .HasColumnType("tinytext")
-                    .HasColumnName("image_hash");
+                    .HasMaxLength(88)
+                    .HasColumnName("image_hash")
+                    .IsFixedLength(true);
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -182,8 +183,9 @@ namespace puzzle
 
                 entity.Property(e => e.PasswordHash)
                     .IsRequired()
-                    .HasColumnType("tinytext")
-                    .HasColumnName("password_hash");
+                    .HasMaxLength(60)
+                    .HasColumnName("password_hash")
+                    .IsFixedLength(true);
             });
 
             modelBuilder.Entity<Puzzle>(entity =>

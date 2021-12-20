@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using puzzle.Model;
 using puzzle.Services;
+using System;
+using System.Windows.Forms;
 
 namespace puzzle.Dialogs
 {
@@ -23,6 +14,12 @@ namespace puzzle.Dialogs
 
             buttonFile.Click += new EventHandler((s, e) =>
             {
+                if (NewImage.Image != null)
+                {
+                    NewImage.Image.Close();
+                    NewImage.Path = null;
+                    labelFile.Text = "Название файла";
+                }
                 using (var openFileDialog = new OpenFileDialog())
                 {
                     openFileDialog.Filter = "Изображения (*.png)|*.png";
@@ -46,29 +43,41 @@ namespace puzzle.Dialogs
                     {
                         throw new Exception("Название изображения некорректно.");
                     }
+                    if (NewImage.Image == null)
+                    {
+                        throw new Exception("Выберите файл изображения.");
+                    }
 
                     Hasher.HashImage(NewImage.Image);
-
-                    var p1 = new MySqlConnector.MySqlParameter("@login", User.Login);
-                    var p2 = new MySqlConnector.MySqlParameter("@password_hash", User.PasswordHash);
+                    var p1 = new MySqlConnector.MySqlParameter("@name", NewImage.Name);
+                    var p2 = new MySqlConnector.MySqlParameter("@path", NewImage.Path);
+                    var p3 = new MySqlConnector.MySqlParameter("@image_hash", NewImage.Hash);
                     int rowsAffected;
                     using (var db = new PuzzleContext(Settings.Options))
                     {
-                        rowsAffected = db.Database.ExecuteSqlRaw("CALL `register_player` (@login, @password_hash)", p1, p2);
+                        rowsAffected = db.Database.ExecuteSqlRaw("CALL `insert_image` (@name, @path, @image_hash)", p1, p2, p3);
                     }
-                    if (rowsAffected == 1)
+                    if (rowsAffected != 1)
                     {
-                        MessageBoxes.Info("Регистрация прошла успешно.");
+                        throw new Exception("Ошибка.");
+                    }
+                    LocalStorage.SaveNewImage();
+                    MessageBoxes.Info("Успешно.");
+                }
+                catch (MySqlConnector.MySqlException ex) when (ex.Number == 1062)
+                {
+                    if (ex.Message.Contains("'gallery.name'"))
+                    {
+                        MessageBoxes.Error("Название изображения занято.");
+                    }
+                    else if (ex.Message.Contains("'gallery.path'"))
+                    {
+                        MessageBoxes.Error("Название файла занято.");
                     }
                     else
                     {
-                        // Введен логин администратора.
-                        MessageBoxes.Error("Логин занят.");
+                        MessageBoxes.Error(ex.Message);
                     }
-                }
-                catch (MySqlConnector.MySqlException ex)// when (ex.Number == 1062)
-                {
-                    MessageBoxes.Error(ex.Message);
                 }
                 catch (Exception ex)
                 {

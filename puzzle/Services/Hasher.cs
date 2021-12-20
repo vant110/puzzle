@@ -20,6 +20,7 @@ namespace puzzle.Services
         public static void HashImage(Stream image)
         {
             NewImage.Hash = Convert.ToBase64String(shaM.ComputeHash(image));
+            NewImage.Image.Seek(0, SeekOrigin.Begin);
         }
     }
 }

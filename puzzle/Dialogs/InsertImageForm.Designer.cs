@@ -59,6 +59,7 @@ namespace puzzle.Dialogs
             // 
             this.labelFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelFile.ForeColor = System.Drawing.SystemColors.ControlText;
             this.labelFile.Location = new System.Drawing.Point(190, 59);
             this.labelFile.Name = "labelFile";
             this.labelFile.Size = new System.Drawing.Size(204, 13);
@@ -73,7 +74,7 @@ namespace puzzle.Dialogs
             this.textBoxName.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.textBoxName.MaxLength = 30;
             this.textBoxName.Name = "textBoxName";
-            this.textBoxName.PlaceholderText = "Название";
+            this.textBoxName.PlaceholderText = "Название изображения";
             this.textBoxName.Size = new System.Drawing.Size(300, 21);
             this.textBoxName.TabIndex = 3;
             // 
