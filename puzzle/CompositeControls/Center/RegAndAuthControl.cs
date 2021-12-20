@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using puzzle.Model;
+using puzzle.Services;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace puzzle.Services
+namespace puzzle.CompositeControls
 {
-    public partial class RegAndAuth : UserControl
+    public partial class RegAndAuthControl : UserControl
     {
-        public RegAndAuth()
+        public RegAndAuthControl(MainForm form)
         {
             InitializeComponent();
 
@@ -57,12 +57,21 @@ namespace puzzle.Services
                     var p2 = new MySqlConnector.MySqlParameter("@password_hash", User.PasswordHash);
                     int result;
                     using (var db = new PuzzleContext(Settings.Options))
-                    {                    
+                    {
                         result = db.Results.FromSqlRaw("SELECT `authorize` (@login, @password_hash) AS `Value`", p1, p2).Single().Value;
                     }
                     if (result == -1)
                     {
                         MessageBoxes.Error("Неверный логин или пароль.");
+                    }
+                    else if (result == 0)
+                    {
+                        // Админ.
+                        form.ConfigureOnAdminMenu();
+                    }
+                    else
+                    {
+                        // Игрок.
                     }
                 }
                 catch (InvalidOperationException ex)

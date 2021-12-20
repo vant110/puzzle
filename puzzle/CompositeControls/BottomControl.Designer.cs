@@ -1,5 +1,5 @@
 ﻿
-namespace puzzle.Services
+namespace puzzle.CompositeControls
 {
     partial class BottomControl
     {

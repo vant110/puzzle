@@ -1,7 +1,7 @@
 ﻿
-namespace puzzle.Services
+namespace puzzle.CompositeControls
 {
-    partial class RegAndAuth
+    partial class RegAndAuthControl
     {
         /// <summary> 
         /// Обязательная переменная конструктора.
@@ -44,6 +44,7 @@ namespace puzzle.Services
             this.textBoxLogin.PlaceholderText = "Логин";
             this.textBoxLogin.Size = new System.Drawing.Size(182, 21);
             this.textBoxLogin.TabIndex = 0;
+            this.textBoxLogin.Text = "admin";
             // 
             // textBoxPassword
             // 
@@ -55,6 +56,7 @@ namespace puzzle.Services
             this.textBoxPassword.PlaceholderText = "Пароль";
             this.textBoxPassword.Size = new System.Drawing.Size(182, 21);
             this.textBoxPassword.TabIndex = 1;
+            this.textBoxPassword.Text = "admin";
             this.textBoxPassword.UseSystemPasswordChar = true;
             // 
             // buttonRegister
@@ -83,7 +85,7 @@ namespace puzzle.Services
             this.buttonAuthorize.Text = "Войти";
             this.buttonAuthorize.UseVisualStyleBackColor = true;
             // 
-            // RegAndAuth
+            // RegAndAuthControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -91,7 +93,7 @@ namespace puzzle.Services
             this.Controls.Add(this.buttonRegister);
             this.Controls.Add(this.textBoxPassword);
             this.Controls.Add(this.textBoxLogin);
-            this.Name = "RegAndAuth";
+            this.Name = "RegAndAuthControl";
             this.Size = new System.Drawing.Size(188, 97);
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -6,9 +6,9 @@ namespace puzzle.Services
     {
         private static readonly string loginPattern = @"^[A-Za-z\d]{4,8}$";
         private static readonly string passwordPattern = @"^[A-Za-z\d]{4,10}$";
-        private static readonly string imageNamePattern = @"^[A-Za-zА-Яа-я\d \-]{3,30}$";
-        private static readonly string levelNamePattern = @"^[A-Za-zА-Яа-я\d \,]{3,30}$";
-        private static readonly string puzzleNamePattern = @"^[A-Za-zА-Яа-я\d \-\,]{3,30}$";
+        private static readonly string imageNamePattern = @"^[A-Za-zА-Яа-я\d\ \-]{3,30}$";
+        private static readonly string levelNamePattern = @"^[A-Za-zА-Яа-я\d\ \,]{3,30}$";
+        private static readonly string puzzleNamePattern = @"^[A-Za-zА-Яа-я\d\ \-\,]{3,30}$";
 
         public static bool IsLogin(string input)
         {

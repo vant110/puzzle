@@ -1,7 +1,7 @@
 ﻿
-namespace puzzle.Services
+namespace puzzle.CompositeControls
 {
-    partial class List
+    partial class ListControl
     {
         /// <summary> 
         /// Обязательная переменная конструктора.
@@ -35,32 +35,34 @@ namespace puzzle.Services
             // 
             // comboBoxLevel
             // 
-            this.comboBoxLevel.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.comboBoxLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxLevel.FormattingEnabled = true;
             this.comboBoxLevel.Location = new System.Drawing.Point(13, 13);
-            this.comboBoxLevel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 10);
             this.comboBoxLevel.Name = "comboBoxLevel";
             this.comboBoxLevel.Size = new System.Drawing.Size(374, 21);
             this.comboBoxLevel.TabIndex = 0;
             // 
             // listView
             // 
-            this.listView.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.listView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listView.HideSelection = false;
-            this.listView.Location = new System.Drawing.Point(13, 54);
+            this.listView.Location = new System.Drawing.Point(13, 47);
             this.listView.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(374, 433);
+            this.listView.Size = new System.Drawing.Size(374, 440);
             this.listView.TabIndex = 2;
             this.listView.UseCompatibleStateImageBehavior = false;
             // 
-            // List
+            // ListControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.listView);
             this.Controls.Add(this.comboBoxLevel);
-            this.Name = "List";
+            this.Name = "ListControl";
             this.Padding = new System.Windows.Forms.Padding(10);
             this.Size = new System.Drawing.Size(400, 500);
             this.ResumeLayout(false);

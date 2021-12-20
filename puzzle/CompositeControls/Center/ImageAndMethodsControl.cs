@@ -8,20 +8,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace puzzle.Services
+namespace puzzle.CompositeControls
 {
-    public partial class List : UserControl
+    public partial class ImageAndMethodsControl : UserControl
     {
-        public List()
+        public ImageAndMethodsControl()
         {
             InitializeComponent();
         }
 
-        public bool ComboBoxLevelVisible
+        public bool PanelMethodsVisible
         {
             set
             {
-                comboBoxLevel.Visible = value;
+                panelMethods.Visible = value;
             }
         }
     }

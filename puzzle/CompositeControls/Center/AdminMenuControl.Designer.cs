@@ -1,7 +1,7 @@
 ﻿
-namespace puzzle.Services
+namespace puzzle.CompositeControls
 {
-    partial class AdminMenu
+    partial class AdminMenuControl
     {
         /// <summary> 
         /// Обязательная переменная конструктора.

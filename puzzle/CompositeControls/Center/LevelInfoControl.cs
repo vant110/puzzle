@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace puzzle.Services
+namespace puzzle.CompositeControls
 {
-    public partial class LevelInfo : UserControl
+    public partial class LevelInfoControl : UserControl
     {
-        public LevelInfo()
+        public LevelInfoControl()
         {
             InitializeComponent();
         }

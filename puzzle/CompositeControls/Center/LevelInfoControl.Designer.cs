@@ -1,7 +1,7 @@
 ﻿
-namespace puzzle.Services
+namespace puzzle.CompositeControls
 {
-    partial class LevelInfo
+    partial class LevelInfoControl
     {
         /// <summary> 
         /// Обязательная переменная конструктора.

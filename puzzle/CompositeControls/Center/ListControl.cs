@@ -8,13 +8,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace puzzle.Services
+namespace puzzle.CompositeControls
 {
-    public partial class ImageAndMethods : UserControl
+    public partial class ListControl : UserControl
     {
-        public ImageAndMethods()
+        public ListControl()
         {
             InitializeComponent();
+        }
+
+        public bool ComboBoxLevelVisible
+        {
+            set
+            {
+                comboBoxLevel.Visible = value;
+            }
         }
     }
 }
