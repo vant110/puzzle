@@ -17,10 +17,17 @@ namespace puzzle.Services
             User.PasswordHash = Convert.ToBase64String(pbkdf2.GetBytes(44));
         }
 
-        public static void HashImage(Stream image)
+        public static void HashNewImage()
         {
-            NewImage.Hash = Convert.ToBase64String(shaM.ComputeHash(image));
+            NewImage.Hash = Convert.ToBase64String(shaM.ComputeHash(NewImage.Image));
             NewImage.Image.Seek(0, SeekOrigin.Begin);
+        }
+
+        public static string HashAndCloseFile(Stream file)
+        {
+            string hash = Convert.ToBase64String(shaM.ComputeHash(file));
+            file.Close();
+            return hash;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace puzzle.CompositeControls
                     var p1 = new MySqlConnector.MySqlParameter("@login", User.Login);
                     var p2 = new MySqlConnector.MySqlParameter("@password_hash", User.PasswordHash);
                     int rowsAffected;
-                    using (var db = new PuzzleContext(Settings.Options))
+                    using (var db = new PuzzleContext(Db.Options))
                     {
                         rowsAffected = db.Database.ExecuteSqlRaw("CALL `register_player` (@login, @password_hash)", p1, p2);
                     }
@@ -56,7 +56,7 @@ namespace puzzle.CompositeControls
                     var p1 = new MySqlConnector.MySqlParameter("@login", User.Login);
                     var p2 = new MySqlConnector.MySqlParameter("@password_hash", User.PasswordHash);
                     int result;
-                    using (var db = new PuzzleContext(Settings.Options))
+                    using (var db = new PuzzleContext(Db.Options))
                     {
                         result = db.Results.FromSqlRaw("SELECT `authorize` (@login, @password_hash) AS `Value`", p1, p2).Single().Value;
                     }

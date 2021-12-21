@@ -44,9 +44,10 @@ namespace puzzle.CompositeControls
             this.pictureBoxImage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBoxImage.Location = new System.Drawing.Point(13, 13);
+            this.pictureBoxImage.Location = new System.Drawing.Point(13, 17);
             this.pictureBoxImage.Name = "pictureBoxImage";
-            this.pictureBoxImage.Size = new System.Drawing.Size(374, 280);
+            this.pictureBoxImage.Size = new System.Drawing.Size(374, 272);
+            this.pictureBoxImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBoxImage.TabIndex = 0;
             this.pictureBoxImage.TabStop = false;
             // 
@@ -105,7 +106,7 @@ namespace puzzle.CompositeControls
             this.panelMethods.Controls.Add(this.radioButton3);
             this.panelMethods.Controls.Add(this.radioButton1);
             this.panelMethods.Controls.Add(this.radioButton2);
-            this.panelMethods.Location = new System.Drawing.Point(13, 306);
+            this.panelMethods.Location = new System.Drawing.Point(13, 302);
             this.panelMethods.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.panelMethods.Name = "panelMethods";
             this.panelMethods.Size = new System.Drawing.Size(374, 181);
@@ -118,7 +119,7 @@ namespace puzzle.CompositeControls
             this.Controls.Add(this.panelMethods);
             this.Controls.Add(this.pictureBoxImage);
             this.Name = "ImageAndMethodsControl";
-            this.Padding = new System.Windows.Forms.Padding(10);
+            this.Padding = new System.Windows.Forms.Padding(10, 14, 10, 14);
             this.Size = new System.Drawing.Size(400, 500);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxImage)).EndInit();
             this.panelMethods.ResumeLayout(false);
@@ -128,12 +129,11 @@ namespace puzzle.CompositeControls
         }
 
         #endregion
-
-        private System.Windows.Forms.PictureBox pictureBoxImage;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.RadioButton radioButton3;
         private System.Windows.Forms.Panel panelMethods;
+        public System.Windows.Forms.PictureBox pictureBoxImage;
     }
 }

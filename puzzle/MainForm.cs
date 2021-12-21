@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using puzzle.CompositeControls;
+using puzzle.Data;
 using puzzle.Dialogs;
 using puzzle.Services;
 using System;
@@ -53,11 +54,13 @@ namespace puzzle
             string connectionString = config.GetConnectionString("DefaultConnection");
 
             var optionsBuilder = new DbContextOptionsBuilder<PuzzleContext>();
-            Settings.Options = optionsBuilder
+            Db.Options = optionsBuilder
                 .UseMySql(connectionString, ServerVersion.Parse("8.0.27-mysql"))
                 .Options;
             #endregion
             optionsBuilder.LogTo(message => Debug.WriteLine(message));
+
+            Db.Instance = new PuzzleContext(Db.Options);
         }
 
         private void ChangeFill(Control newFillControl)
@@ -74,15 +77,22 @@ namespace puzzle
             panelCenter.Controls.Add(rightControl);
         }
 
+        private void DisposeImage(ImageAndMethodsControl right)
+        {
+            if (right.pictureBoxImage.Image == null) return;
+            right.pictureBoxImage.Image.Dispose();
+            right.pictureBoxImage.Image = null;
+        }
+
         public void ConfigureOnRegAndAuth()
         {
-            var newFillControl = new RegAndAuthControl(this)
+            var fill = new RegAndAuthControl(this)
             {
                 Dock = DockStyle.Fill
             };
             Size = smallSize;
             CenterToScreen();
-            ChangeFill(newFillControl);
+            ChangeFill(fill);
             ChangeRight(null);
 
             topControl.ButtonBackVisible = false;
@@ -96,13 +106,13 @@ namespace puzzle
 
         public void ConfigureOnAdminMenu()
         {
-            var newFillControl = new AdminMenuControl(this)
+            var fill = new AdminMenuControl(this)
             {
                 Dock = DockStyle.Fill
             };
             Size = smallSize;
             CenterToScreen();
-            ChangeFill(newFillControl);
+            ChangeFill(fill);
             ChangeRight(null);
 
             topControl.ButtonBackVisible = true;
@@ -120,22 +130,39 @@ namespace puzzle
 
         public void ConfigureOnGallery()
         {
+            Db.LoadGalleries();
+
             Size = normalSize;
             CenterToScreen();
-            var newFillControl = new CompositeControls.ListControl()
-            {
-                Dock = DockStyle.Fill,
-                ComboBoxLevelVisible = false
-            };
-            ChangeFill(newFillControl);
-
-            var newRightControl = new ImageAndMethodsControl()
+            #region Right
+            var right = new ImageAndMethodsControl()
             {
                 Dock = DockStyle.Right,
                 PanelMethodsVisible = false
             };
-            ChangeRight(newRightControl);
+            ChangeRight(right);
+            #endregion
+            #region Fill
+            var fill = new CompositeControls.ListControl()
+            {
+                Dock = DockStyle.Fill,
+            };
+            ChangeFill(fill);
 
+            fill.comboBoxLevel.Visible = false;
+            fill.listBox.DataSource = Db.Instance.Galleries.Local.ToBindingList();
+            fill.listBox.DisplayMember = "Name";
+            fill.listBox.ValueMember = "ImageId";
+            fill.listBox.ClearSelected();
+            fill.listBox.SelectedValueChanged += new EventHandler((s, e) =>
+            {
+                DisposeImage(right);
+                if (fill.listBox.SelectedItems.Count == 0) return;
+                string path = ((Gallery)fill.listBox.SelectedItem).Path;
+                right.pictureBoxImage.Image = LocalStorage.LoadImage(path);
+            });
+            #endregion
+            #region Top
             topControl.ButtonBackVisible = true;
             topControl.ButtonBackClick = new EventHandler((s, e) =>
             {
@@ -145,11 +172,30 @@ namespace puzzle
             topControl.ButtonImageOrPuzzleVisible = false;
             topControl.ButtonSoundVisible = false;
             topControl.LabelTitleText = "Галерея";
-
+            #endregion
+            #region Bottom
             panelBottom.Show();
             bottomControl.ButtonDeleteClick = new EventHandler((s, e) =>
             {
-                //!!!
+                if (fill.listBox.SelectedItems.Count == 0) return;
+                try { 
+                    var p1 = new MySqlConnector.MySqlParameter("@id", fill.listBox.SelectedValue);
+                    int rowsAffected = Db.Instance.Database.ExecuteSqlRaw("CALL `delete_image` (@id)", p1);
+                    if (rowsAffected != 1)
+                    {
+                        throw new Exception("Ошибка.");
+                    }
+                    DisposeImage(right);
+                    LocalStorage.Delete(((Gallery)fill.listBox.SelectedItem).Path);
+                    Db.LoadGalleries();
+                    fill.listBox.ClearSelected();
+                    DisposeImage(right);
+                    MessageBoxes.Info("Успешно.");
+                }
+                catch (Exception ex)
+                {
+                    MessageBoxes.Error(ex.Message);
+                }
             });
             bottomControl.ButtonUpdateVisible = false;
             bottomControl.ButtonLoadVisible = false;
@@ -157,7 +203,10 @@ namespace puzzle
             bottomControl.ButtonInsertOrNewGameClick = new EventHandler((s, e) =>
             {
                 new InsertImageForm().ShowDialog();
+                fill.listBox.ClearSelected();
+                DisposeImage(right);
             });
+            #endregion
         }
     }
 }

@@ -12,6 +12,8 @@ namespace puzzle.Dialogs
         {
             InitializeComponent();
 
+            bool hadInsert = false;
+
             buttonFile.Click += new EventHandler((s, e) =>
             {
                 if (NewImage.Image != null)
@@ -35,7 +37,6 @@ namespace puzzle.Dialogs
             });
             buttonInsert.Click += new EventHandler((s, e) =>
             {
-                Application.UseWaitCursor = true;
                 try
                 {
                     NewImage.Name = textBoxName.Text;
@@ -48,20 +49,17 @@ namespace puzzle.Dialogs
                         throw new Exception("Выберите файл изображения.");
                     }
 
-                    Hasher.HashImage(NewImage.Image);
+                    Hasher.HashNewImage();
                     var p1 = new MySqlConnector.MySqlParameter("@name", NewImage.Name);
                     var p2 = new MySqlConnector.MySqlParameter("@path", NewImage.Path);
                     var p3 = new MySqlConnector.MySqlParameter("@image_hash", NewImage.Hash);
-                    int rowsAffected;
-                    using (var db = new PuzzleContext(Settings.Options))
-                    {
-                        rowsAffected = db.Database.ExecuteSqlRaw("CALL `insert_image` (@name, @path, @image_hash)", p1, p2, p3);
-                    }
+                    int rowsAffected = Db.Instance.Database.ExecuteSqlRaw("CALL `insert_image` (@name, @path, @image_hash)", p1, p2, p3);
                     if (rowsAffected != 1)
                     {
                         throw new Exception("Ошибка.");
                     }
-                    LocalStorage.SaveNewImage();
+                    LocalStorage.SaveAndCloseNewImage();
+                    hadInsert = true;
                     MessageBoxes.Info("Успешно.");
                 }
                 catch (MySqlConnector.MySqlException ex) when (ex.Number == 1062)
@@ -83,8 +81,15 @@ namespace puzzle.Dialogs
                 {
                     MessageBoxes.Error(ex.Message);
                 }
-                Application.UseWaitCursor = false;
             });
-        }
+
+            FormClosing += new FormClosingEventHandler((s, e) =>
+            {
+                if (hadInsert)
+                {
+                    Db.LoadGalleries();
+                }
+            });
+        }        
     }
 }

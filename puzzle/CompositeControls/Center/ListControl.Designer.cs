@@ -30,7 +30,7 @@ namespace puzzle.CompositeControls
         private void InitializeComponent()
         {
             this.comboBoxLevel = new System.Windows.Forms.ComboBox();
-            this.listView = new System.Windows.Forms.ListView();
+            this.listBox = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // comboBoxLevel
@@ -38,40 +38,40 @@ namespace puzzle.CompositeControls
             this.comboBoxLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxLevel.FormattingEnabled = true;
-            this.comboBoxLevel.Location = new System.Drawing.Point(13, 13);
+            this.comboBoxLevel.Location = new System.Drawing.Point(13, 17);
             this.comboBoxLevel.Name = "comboBoxLevel";
             this.comboBoxLevel.Size = new System.Drawing.Size(374, 21);
+            this.comboBoxLevel.Sorted = true;
             this.comboBoxLevel.TabIndex = 0;
             // 
-            // listView
+            // listBox
             // 
-            this.listView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.listView.HideSelection = false;
-            this.listView.Location = new System.Drawing.Point(13, 47);
-            this.listView.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
-            this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(374, 440);
-            this.listView.TabIndex = 2;
-            this.listView.UseCompatibleStateImageBehavior = false;
+            this.listBox.FormattingEnabled = true;
+            this.listBox.HorizontalScrollbar = true;
+            this.listBox.Location = new System.Drawing.Point(13, 51);
+            this.listBox.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
+            this.listBox.Name = "listBox";
+            this.listBox.Size = new System.Drawing.Size(374, 433);
+            this.listBox.Sorted = true;
+            this.listBox.TabIndex = 1;
             // 
             // ListControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.listView);
+            this.Controls.Add(this.listBox);
             this.Controls.Add(this.comboBoxLevel);
             this.Name = "ListControl";
-            this.Padding = new System.Windows.Forms.Padding(10);
-            this.Size = new System.Drawing.Size(400, 500);
+            this.Padding = new System.Windows.Forms.Padding(10, 14, 10, 14);
+            this.Size = new System.Drawing.Size(400, 501);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.ComboBox comboBoxLevel;
-        private System.Windows.Forms.ListView listView;
+        public System.Windows.Forms.ListBox listBox;
+        public System.Windows.Forms.ComboBox comboBoxLevel;
     }
 }
