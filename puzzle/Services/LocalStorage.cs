@@ -21,79 +21,55 @@ namespace puzzle.Services
                 directoryInfo.Create();
             }
         }
-        /*
-        public static MemoryStream ZoomImage(Stream imageStream)
-        {
-            float percent = 200;
-            using Image orig = Image.FromStream(imageStream);
-            Bitmap scaledImage;
-            /// Ширина и высота результирующего изображения
-            float w = orig.Width * percent / 100,
-                h = orig.Height * percent / 100;
-            w = 600;
-            h = 450;
-            scaledImage = new Bitmap((int)w, (int)h);
-            /// DPI результирующего изображения
-            scaledImage.SetResolution(orig.HorizontalResolution, orig.VerticalResolution);
-            /// Часть исходного изображения, для которой меняем масштаб.
-            /// В данном случае — всё изображение
-            Rectangle src = new(0, 0, orig.Width, orig.Height);
-            /// Часть изображения, которую будем рисовать
-            /// В данном случае — всё изображение
-            Rectangle dest = new(0, 0, (int)w, (int)h);
-            /// Прорисовка с изменённым масштабом
-            using (Graphics g = Graphics.FromImage(scaledImage))
-            {
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.DrawImage(orig, dest, src, GraphicsUnit.Pixel);
-            }
-            MemoryStream ms = new();
-            scaledImage.Save(ms, ImageFormat.Png);
-            return ms;
-        }
-        */
+
         public static MemoryStream ResizeImage(Stream imageStream)
         {
             using Bitmap bitmap = new(600, 450);
             using (Image image = Image.FromStream(imageStream))
             {
                 imageStream.Close();
-                 
-                int x0 = 0;
-                int y0 = 0;
-                int x1 = bitmap.Width;
-                int y1 = bitmap.Height;
-                if (image.Height < y1
-                    || image.Width < x1)
+                Rectangle destRect;                
                 {
-                    double k1 = (double)y1 / image.Height;
-                    double k2 = (double)x1 / image.Width;
-                    double k = k1 > k2 ? k1 : k2;
-                    int d1 = (int)((image.Width * k - bitmap.Width) * k / 2);
-                    x0 -= d1 / 2;
-                    x1 += d1;
-                    int d2 = (int)((image.Height * k - bitmap.Height) * k / 2);
-                    y0 -= d2 / 2;
-                    y1 += d2;
+                    int x0 = 0;
+                    int y0 = 0;
+                    int x1 = bitmap.Width;
+                    int y1 = bitmap.Height;
+                    int dx;
+                    int dy;
+                    if (image.Width < bitmap.Width
+                        || image.Height < bitmap.Height)
+                    {
+                        double kx = (double)bitmap.Width / image.Width;
+                        double ky = (double)bitmap.Height / image.Height;
+                        double k = ky > kx ? ky : kx;
+                        dx = (int)((image.Width * k - bitmap.Width) * k / 2);
+                        dy = (int)((image.Height * k - bitmap.Height) * k / 2);
+                    }
+                    else
+                    {
+                        double kx = (double)image.Width / bitmap.Width;
+                        double ky = (double)image.Height / bitmap.Height;
+                        double k = ky < kx ? ky : kx;
+                        dx = (int)((image.Width / k - bitmap.Width) * k / 2);
+                        dy = (int)((image.Height / k - bitmap.Height) * k / 2);
+                    }
+                    x0 -= dx / 2;
+                    x1 += dx;
+                    y0 -= dy / 2;
+                    y1 += dy;
+                    destRect = new(
+                        x0, y0, 
+                        x1, y1);
                 }
-                else
-                {
-                    double k1 = (double)image.Height / y1;
-                    double k2 = (double)image.Width / x1;
-                    double k = k1 < k2 ? k1 : k2;
-                    int d1 = (int)((image.Width / k - bitmap.Width) * k / 2);
-                    x0 -= d1 / 2;
-                    x1 += d1;
-                    int d2 = (int)((image.Height / k - bitmap.Height) * k / 2);
-                    y0 -= d2 / 2;
-                    y1 += d2;
-                }
-                Rectangle destRect = new(
-                    x0, y0, x1, y1);
                 Rectangle srcRect = new(
-                    0, 0,
-                    image.Width, image.Height);
+                    0, 0, 
+                    image.Width, 
+                    image.Height);
                 using Graphics graphics = Graphics.FromImage(bitmap);
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
                 graphics.DrawImage(
                     image,
                     destRect,

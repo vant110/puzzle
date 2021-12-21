@@ -1,3 +1,4 @@
 .vs
-puzzle/bin
-puzzle/obj
+
+.puzzle/bin
+.puzzle/obj
