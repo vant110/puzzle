@@ -1,5 +1,6 @@
 ﻿using puzzle.Model;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -17,16 +18,17 @@ namespace puzzle.Services
             User.PasswordHash = Convert.ToBase64String(pbkdf2.GetBytes(44));
         }
 
-        public static void HashNewImage()
+        public static string HashImage(Stream imageStream)
         {
-            NewImage.Hash = Convert.ToBase64String(shaM.ComputeHash(NewImage.Image));
-            NewImage.Image.Seek(0, SeekOrigin.Begin);
+            string hash = Convert.ToBase64String(shaM.ComputeHash(imageStream));
+            imageStream.Seek(0, SeekOrigin.Begin);
+            return hash;
         }
 
-        public static string HashAndCloseFile(Stream file)
+        public static string HashAndCloseImage(MemoryStream imageMemoryStream)
         {
-            string hash = Convert.ToBase64String(shaM.ComputeHash(file));
-            file.Close();
+            string hash = Convert.ToBase64String(shaM.ComputeHash(imageMemoryStream));
+            imageMemoryStream.Close();
             return hash;
         }
     }

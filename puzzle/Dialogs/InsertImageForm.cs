@@ -22,17 +22,14 @@ namespace puzzle.Dialogs
                     NewImage.Path = null;
                     labelFile.Text = "Название файла";
                 }
-                using (var openFileDialog = new OpenFileDialog())
+                using var openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "Изображения (*.png)|*.png";
+                openFileDialog.RestoreDirectory = true;
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    openFileDialog.Filter = "Изображения (*.png)|*.png";
-                    openFileDialog.RestoreDirectory = true;
-
-                    if (openFileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        NewImage.Image = openFileDialog.OpenFile();
-                        NewImage.Path = openFileDialog.SafeFileName;
-                        labelFile.Text = NewImage.Path;
-                    }
+                    NewImage.Image = openFileDialog.OpenFile();
+                    NewImage.Path = openFileDialog.SafeFileName;
+                    labelFile.Text = NewImage.Path;
                 }
             });
             buttonInsert.Click += new EventHandler((s, e) =>
@@ -49,7 +46,8 @@ namespace puzzle.Dialogs
                         throw new Exception("Выберите файл изображения.");
                     }
 
-                    Hasher.HashNewImage();
+                    NewImage.Image = LocalStorage.ResizeImage(NewImage.Image);
+                    NewImage.Hash = Hasher.HashImage(NewImage.Image);
                     var p1 = new MySqlConnector.MySqlParameter("@name", NewImage.Name);
                     var p2 = new MySqlConnector.MySqlParameter("@path", NewImage.Path);
                     var p3 = new MySqlConnector.MySqlParameter("@image_hash", NewImage.Hash);
@@ -58,7 +56,8 @@ namespace puzzle.Dialogs
                     {
                         throw new Exception("Ошибка.");
                     }
-                    LocalStorage.SaveAndCloseNewImage();
+                    LocalStorage.SaveImage(NewImage.Image, NewImage.Path);
+                    NewImage.Image.Close();
                     hadInsert = true;
                     MessageBoxes.Info("Успешно.");
                 }
@@ -80,11 +79,15 @@ namespace puzzle.Dialogs
                 catch (Exception ex)
                 {
                     MessageBoxes.Error(ex.Message);
-                }
+                }         
             });
 
             FormClosing += new FormClosingEventHandler((s, e) =>
             {
+                if (NewImage.Image != null)
+                {
+                    NewImage.Image.Close();
+                }
                 if (hadInsert)
                 {
                     Db.LoadGalleries();

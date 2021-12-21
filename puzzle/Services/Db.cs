@@ -17,7 +17,7 @@ namespace puzzle.Services
             foreach (var g in gs.Local)
             {
                 if (!LocalStorage.Exists(g.Path)
-                    || Hasher.HashAndCloseFile(LocalStorage.Load(g.Path)) != g.ImageHash)
+                    || Hasher.HashAndCloseImage(LocalStorage.Load(g.Path)) != g.ImageHash)
                 {
                     gs.Local.Remove(g);
                 }
