@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using puzzle.ViewModel;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace puzzle.Services
 {
     static class Db
     {
-        private static DbContextOptions<PuzzleContext> options;
-
-        public static DbContextOptions<PuzzleContext> Options { get => options; set => options = value; }
+        public static DbContextOptions<PuzzleContext> Options { get; set; }
 
         public static PuzzleContext Instance { get; set; }
 
@@ -39,6 +40,21 @@ namespace puzzle.Services
         public static void LoadPuzzles()
         {
             Instance.Puzzles.Load();
+        }
+
+        public static IEnumerable<LevelViewModel> GetLevels()
+        {
+            using var db = new PuzzleContext(Options);
+            return db.DifficultyLevels
+                .Select(level => new LevelViewModel 
+                {
+                    Id = level.DifficultyLevelId,
+                    Name = level.Name,
+                    HorizontalFragmentCount = level.HorizontalFragmentCount,
+                    VerticalFragmentCount = level.VerticalFragmentCount,
+                    FragmentTypeId = level.FragmentTypeId,
+                    AssemblyTypeId = level.AssemblyTypeId
+                }).ToList();
         }
     }
 }

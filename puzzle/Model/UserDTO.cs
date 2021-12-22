@@ -1,4 +1,4 @@
-﻿namespace puzzle.DTO
+﻿namespace puzzle.Model
 {
     static class UserDTO
     {

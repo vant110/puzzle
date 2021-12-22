@@ -2,14 +2,17 @@
 using Microsoft.Extensions.Configuration;
 using puzzle.Data;
 using puzzle.Dialogs;
-using puzzle.DTO;
+using puzzle.Model;
 using puzzle.Services;
 using puzzle.UserControls;
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using System.ComponentModel;
+using puzzle.ViewModel;
 
 namespace puzzle
 {
@@ -87,29 +90,24 @@ namespace puzzle
             right.pictureBoxImage.Image = null;
         }
 
-        private void SetLevelDTO(InsertOrUpdateLevelForm form)
+        private void SetPuzzleDTO(InsertOrUpdatePuzzleForm form)
         {
-            LevelDTO.Name = form.textBoxName.Text;
-            if (!Validator.IsLevelName(LevelDTO.Name))
+            PuzzleDTO.Name = form.textBoxName.Text;
+            if (!Validator.IsPuzzleName(PuzzleDTO.Name))
             {
-                throw new Exception("Название уровня сложности некорректно.");
+                throw new Exception("Название пазла некорректно.");
             }
-            LevelDTO.HorizontalFragmentCount = (int)form.numericUpDownHorizontal.Value;
-            if (LevelDTO.HorizontalFragmentCount < 3
-                || LevelDTO.HorizontalFragmentCount > 10)
+            if (form.comboBoxImage.SelectedItem == null)
             {
-                throw new Exception("Количество фрагментов по горизонтали некорректно.");
+                throw new Exception("Выберите изображение.");
             }
-            if (form.comboBoxFragmentType.SelectedItem == null)
+            PuzzleDTO.ImageId = ((Gallery)form.comboBoxImage.SelectedItem).ImageId;
+            if (form.comboBoxLevel.SelectedItem == null)
             {
-                throw new Exception("Выберите тип фрагментов.");
+                throw new Exception("Выберите уровень сложности.");
             }
-            LevelDTO.FragmentTypeId = ((FragmentType)form.comboBoxFragmentType.SelectedItem).FragmentTypeId;
-            if (form.comboBoxAssemblyType.SelectedItem == null)
-            {
-                throw new Exception("Выберите тип сборки.");
-            }
-            LevelDTO.AssemblyTypeId = ((AssemblyType)form.comboBoxAssemblyType.SelectedItem).AssemblyTypeId;
+            PuzzleDTO.DifficultyLevelId = ((DifficultyLevel)form.comboBoxLevel.SelectedItem).DifficultyLevelId;
+            PuzzleDTO.FragmentNumbers = MyPuzzle.Instance.FragmentNumbers;             
         }
 
         public void ConfigureOnRegAndAuth()
@@ -263,21 +261,24 @@ namespace puzzle
                 Dock = DockStyle.Fill,
             };
             ChangeFill(fill);
-
             fill.PanelLevelVisible = false;
-            fill.listBox.DataSource = Db.Instance.DifficultyLevels.Local.ToBindingList();
+
+            BindingList<LevelViewModel> levels = new BindingList<LevelViewModel>();
+            foreach (var level in Db.GetLevels())
+            {
+                levels.Add(level);
+            }
+            bindingSourceLevels.DataSource = levels;
+            fill.listBox.DataSource = bindingSourceLevels.DataSource; 
             fill.listBox.DisplayMember = "Name";
-            fill.listBox.ValueMember = "DifficultyLevelId";
-            fill.listBox.ClearSelected();
-            right.Visible = false;
+            fill.listBox.ValueMember = "Id";
             fill.listBox.SelectedValueChanged += new EventHandler((s, e) =>
             {
-                if (fill.listBox.SelectedItems.Count == 0) return;
-                right.Visible = true;
-                right.labelHorizontal.Text = ((DifficultyLevel)fill.listBox.SelectedItem).HorizontalFragmentCount.ToString();
-                right.labelVertical.Text = ((DifficultyLevel)fill.listBox.SelectedItem).VerticalFragmentCount.ToString();
-                right.labelFragmentType.Text = ((DifficultyLevel)fill.listBox.SelectedItem).FragmentType.Name;
-                right.labelAssemblyType.Text = ((DifficultyLevel)fill.listBox.SelectedItem).AssemblyType.Name;
+                if (fill.listBox.SelectedItem == null) return;
+                right.labelHorizontal.Text = ((LevelViewModel)fill.listBox.SelectedItem).HorizontalFragmentCount.ToString();
+                right.labelVertical.Text = ((LevelViewModel)fill.listBox.SelectedItem).VerticalFragmentCount.ToString();
+                right.labelFragmentType.Text = ((LevelViewModel)fill.listBox.SelectedItem).FragmentTypeId.ToString(); // !!!
+                right.labelAssemblyType.Text = ((LevelViewModel)fill.listBox.SelectedItem).AssemblyTypeId.ToString(); // !!!
             });
             #endregion
             #region Top
@@ -313,46 +314,64 @@ namespace puzzle
             bottomControl.ButtonUpdateVisible = true;
             bottomControl.ButtonUpdateClick = new EventHandler((s, e) =>
             {
-                if (fill.listBox.SelectedItems.Count == 0) return;
+                if (fill.listBox.SelectedItem == null) return;
                 var form = new InsertOrUpdateLevelForm
                 {
                     Text = "Изменение уровня сложности",
                 };
-                form.textBoxName.Text = ((DifficultyLevel)fill.listBox.SelectedItem).Name;
-                form.numericUpDownHorizontal.Value = ((DifficultyLevel)fill.listBox.SelectedItem).HorizontalFragmentCount;
-                form.labelVertical.Text = ((DifficultyLevel)fill.listBox.SelectedItem).VerticalFragmentCount.ToString();
-                form.comboBoxFragmentType.SelectedItem = ((DifficultyLevel)fill.listBox.SelectedItem).FragmentType;
-                form.comboBoxAssemblyType.SelectedItem = ((DifficultyLevel)fill.listBox.SelectedItem).AssemblyType;
+                form.textBoxName.Text = 
+                    ((LevelViewModel)fill.listBox.SelectedItem).Name;
+                form.numericUpDownHorizontal.Value = 
+                    ((LevelViewModel)fill.listBox.SelectedItem).HorizontalFragmentCount;
+                form.labelVertical.Text = 
+                    ((LevelViewModel)fill.listBox.SelectedItem).VerticalFragmentCount.ToString();
+                form.comboBoxFragmentType.SelectedValue = 
+                    ((LevelViewModel)fill.listBox.SelectedItem).FragmentTypeId;
+                form.comboBoxAssemblyType.SelectedValue = 
+                    ((LevelViewModel)fill.listBox.SelectedItem).AssemblyTypeId;
                 form.buttonInsertOrUpdate.Text = "Изменить";
                 form.ButtonInsertOrUpdateClick = new EventHandler((s, e) =>
                 {
                     try
                     {
-                        SetLevelDTO(form);
-
-                        var id = new MySqlConnector.MySqlParameter("@id", ((DifficultyLevel)fill.listBox.SelectedItem).DifficultyLevelId);
-                        var p1 = new MySqlConnector.MySqlParameter("@p1", LevelDTO.Name);
-                        var p2 = new MySqlConnector.MySqlParameter("@p2", LevelDTO.HorizontalFragmentCount);
-                        var p3 = new MySqlConnector.MySqlParameter("@p3", LevelDTO.VerticalFragmentCount);
-                        var p4 = new MySqlConnector.MySqlParameter("@p4", LevelDTO.FragmentTypeId);
-                        var p5 = new MySqlConnector.MySqlParameter("@p5", LevelDTO.AssemblyTypeId);
-                        int rowsAffected = Db.Instance.Database.ExecuteSqlRaw("CALL `update_level` (@id, @p1, @p2, @p3, @p4, @p5)", id, p1, p2, p3, p4, p5);
-                        if (rowsAffected != 1)
+                        if (form.comboBoxFragmentType.SelectedItem == null)
                         {
-                            throw new Exception("Можно изменить только название уровня сложности (пока он используется хотя бы в одном пазле).");
+                            throw new Exception("Выберите тип фрагментов.");
                         }
+                        if (form.comboBoxAssemblyType.SelectedItem == null)
+                        {
+                            throw new Exception("Выберите тип сборки.");
+                        }
+                        var level = ((LevelViewModel)fill.listBox.SelectedItem);
+                        level.Name = form.textBoxName.Text;
+                        level.HorizontalFragmentCount = (sbyte)form.numericUpDownHorizontal.Value;
+                        level.FragmentTypeId = ((FragmentType)form.comboBoxFragmentType.SelectedItem).FragmentTypeId;
+                        level.AssemblyTypeId = ((AssemblyType)form.comboBoxAssemblyType.SelectedItem).AssemblyTypeId;
+
+                        var id = new MySqlConnector.MySqlParameter("@id", level.Id);
+                        var p1 = new MySqlConnector.MySqlParameter("@p1", level.Name);
+                        var p2 = new MySqlConnector.MySqlParameter("@p2", level.HorizontalFragmentCount);
+                        var p3 = new MySqlConnector.MySqlParameter("@p3", level.VerticalFragmentCount);
+                        var p4 = new MySqlConnector.MySqlParameter("@p4", level.FragmentTypeId);
+                        var p5 = new MySqlConnector.MySqlParameter("@p5", level.AssemblyTypeId);
+                        using (var db = new PuzzleContext(Db.Options))
+                        {
+                            int rowsAffected = db.Database.ExecuteSqlRaw("CALL `update_level` (@id, @p1, @p2, @p3, @p4, @p5)", id, p1, p2, p3, p4, p5);
+                            if (rowsAffected != 1)
+                            {
+                                throw new Exception("Можно изменить только название уровня сложности (пока он используется хотя бы в одном пазле).");
+                            }
+                        }               
                         MessageBoxes.Info("Успешно.");
                     }
                     catch (MySqlConnector.MySqlException ex) when (ex.Number == 1062)
                     {
                         if (ex.Message.Contains("'difficulty_levels.name'"))
                         {
+                            //throw;// !!!
                             MessageBoxes.Error("Название уровня сложности занято.");
                         }
-                        else
-                        {
-                            MessageBoxes.Error(ex.Message);
-                        }
+                        throw;// ???
                     }
                     catch (Exception ex)
                     {
@@ -360,9 +379,6 @@ namespace puzzle
                     }
                 });
                 form.ShowDialog();
-                Db.LoadDifficultyLevels();
-                fill.listBox.ClearSelected();
-                right.Visible = false;
             });
             bottomControl.ButtonLoadVisible = false;
             bottomControl.ButtonInsertOrNewGameText = "Добавить";
@@ -377,7 +393,7 @@ namespace puzzle
                 {
                     try
                     {
-                        SetLevelDTO(form);
+                        //SetLevelDTO(form);
 
                         var p1 = new MySqlConnector.MySqlParameter("@p1", LevelDTO.Name);
                         var p2 = new MySqlConnector.MySqlParameter("@p2", LevelDTO.HorizontalFragmentCount);
@@ -417,6 +433,7 @@ namespace puzzle
 
         public void ConfigureOnPuzzles()
         {
+            Db.LoadGalleries();
             Db.LoadDifficultyLevels();
             Db.LoadPuzzles();
 
@@ -451,7 +468,8 @@ namespace puzzle
             fill.comboBoxLevel.SelectedValueChanged += new EventHandler((s, e) =>
             {
                 if (fill.comboBoxLevel.SelectedItem == null) return;
-                Db.LoadPuzzles();
+                //Db.LoadPuzzles();
+                /*
                 var ps = Db.Instance.Puzzles.Local;
                 foreach (var p in ps)
                 {
@@ -459,14 +477,14 @@ namespace puzzle
                     {
                         ps.Remove(p);
                     }
-                }
+                }*/
             });
             fill.listBox.SelectedValueChanged += new EventHandler((s, e) =>
             {
                 DisposeImage(right);
                 if (fill.listBox.SelectedItem == null) return;
                 right.Visible = true;
-                string path = ((Data.Puzzle)fill.listBox.SelectedItem).Image.Path;
+                string path = ((Puzzle)fill.listBox.SelectedItem).Image.Path;
                 right.pictureBoxImage.Image = LocalStorage.LoadImage(path);
             });
             #endregion
@@ -489,7 +507,7 @@ namespace puzzle
                 if (fill.listBox.SelectedItems.Count == 0) return;
                 try
                 {
-                    Db.Instance.DifficultyLevels.Remove((DifficultyLevel)fill.listBox.SelectedItem);
+                    Db.Instance.Puzzles.Remove((Puzzle)fill.listBox.SelectedItem);
                     Db.Instance.SaveChanges();
                     fill.listBox.ClearSelected();
                     right.Visible = false;
@@ -504,40 +522,60 @@ namespace puzzle
             bottomControl.ButtonUpdateClick = new EventHandler((s, e) =>
             {
                 if (fill.listBox.SelectedItems.Count == 0) return;
-                var form = new InsertOrUpdateLevelForm
+                var form = new InsertOrUpdatePuzzleForm
                 {
-                    Text = "Изменение уровня сложности",
+                    Text = "Изменение пазла",
                 };
-                form.textBoxName.Text = ((DifficultyLevel)fill.listBox.SelectedItem).Name;
-                form.numericUpDownHorizontal.Value = ((DifficultyLevel)fill.listBox.SelectedItem).HorizontalFragmentCount;
-                form.labelVertical.Text = ((DifficultyLevel)fill.listBox.SelectedItem).VerticalFragmentCount.ToString();
-                form.comboBoxFragmentType.SelectedItem = ((DifficultyLevel)fill.listBox.SelectedItem).FragmentType;
-                form.comboBoxAssemblyType.SelectedItem = ((DifficultyLevel)fill.listBox.SelectedItem).AssemblyType;
+                form.textBoxName.Text = ((Puzzle)fill.listBox.SelectedItem).Name;
+                form.comboBoxImage.SelectedItem = ((Puzzle)fill.listBox.SelectedItem).Image;
+                form.comboBoxLevel.SelectedItem = ((Puzzle)fill.listBox.SelectedItem).DifficultyLevel;
+                var gallery = (Gallery)form.comboBoxImage.SelectedItem;
+                var image = LocalStorage.LoadImage(gallery.Path);
+                MyPuzzle myPuzzle = new(
+                    ((Puzzle)fill.listBox.SelectedItem).DifficultyLevel.FragmentTypeId,
+                    ((Puzzle)fill.listBox.SelectedItem).DifficultyLevel.AssemblyTypeId,
+                    ((Puzzle)fill.listBox.SelectedItem).DifficultyLevel.HorizontalFragmentCount,
+                    ((Puzzle)fill.listBox.SelectedItem).DifficultyLevel.VerticalFragmentCount,
+                    image);
+                MyPuzzle.Instance.SplitIntoFragments();
+                if (((Puzzle)fill.listBox.SelectedItem).DifficultyLevel.AssemblyTypeId == 1)
+                {
+                    Db.Instance.PuzzleFields.Load();
+                    MyPuzzle.Instance.FragmentNumbers = Db.Instance.PuzzleFields.Find(((Puzzle)fill.listBox.SelectedItem).PuzzleId).FragmentNumbers;
+                }
+                else
+                {
+                    Db.Instance.PuzzleTapes.Load();
+                    MyPuzzle.Instance.FragmentNumbers = Db.Instance.PuzzleTapes.Find(((Puzzle)fill.listBox.SelectedItem).PuzzleId).FragmentNumbers;
+                }
+                using var graphics = form.pictureBoxField.CreateGraphics();
+                MyPuzzle.Instance.DrawField(graphics);
                 form.buttonInsertOrUpdate.Text = "Изменить";
                 form.ButtonInsertOrUpdateClick = new EventHandler((s, e) =>
                 {
                     try
                     {
-                        SetLevelDTO(form);
+                        SetPuzzleDTO(form);
 
-                        var id = new MySqlConnector.MySqlParameter("@id", ((DifficultyLevel)fill.listBox.SelectedItem).DifficultyLevelId);
-                        var p1 = new MySqlConnector.MySqlParameter("@p1", LevelDTO.Name);
-                        var p2 = new MySqlConnector.MySqlParameter("@p2", LevelDTO.HorizontalFragmentCount);
-                        var p3 = new MySqlConnector.MySqlParameter("@p3", LevelDTO.VerticalFragmentCount);
-                        var p4 = new MySqlConnector.MySqlParameter("@p4", LevelDTO.FragmentTypeId);
-                        var p5 = new MySqlConnector.MySqlParameter("@p5", LevelDTO.AssemblyTypeId);
-                        int rowsAffected = Db.Instance.Database.ExecuteSqlRaw("CALL `update_level` (@id, @p1, @p2, @p3, @p4, @p5)", id, p1, p2, p3, p4, p5);
+                        var id = new MySqlConnector.MySqlParameter("@id", ((Puzzle)fill.listBox.SelectedItem).PuzzleId);
+                        var p1 = new MySqlConnector.MySqlParameter("@p1", PuzzleDTO.Name);
+                        var p2 = new MySqlConnector.MySqlParameter("@p2", PuzzleDTO.ImageId);
+                        var p3 = new MySqlConnector.MySqlParameter("@p3", PuzzleDTO.DifficultyLevelId);
+                        var p4 = new MySqlConnector.MySqlParameter("@p4", PuzzleDTO.FragmentNumbers);
+                        int rowsAffected = Db.Instance.Database.ExecuteSqlRaw("CALL `update_puzzle` (@id, @p1, @p2, @p3, @p4)", id, p1, p2, p3, p4);
                         if (rowsAffected != 1)
                         {
-                            throw new Exception("Можно изменить только название уровня сложности (пока он используется хотя бы в одном пазле).");
-                        }
+                            throw new Exception("Ошибка.");
+                        } /*
+                        Db.Instance.Puzzles.Update((Puzzle)fill.listBox.SelectedItem);
+                        Db.Instance.SaveChanges();*/
                         MessageBoxes.Info("Успешно.");
                     }
                     catch (MySqlConnector.MySqlException ex) when (ex.Number == 1062)
                     {
-                        if (ex.Message.Contains("'difficulty_levels.name'"))
+                        if (ex.Message.Contains("'puzzles.name'"))
                         {
-                            MessageBoxes.Error("Название уровня сложности занято.");
+                            MessageBoxes.Error("Название пазла занято.");
                         }
                         else
                         {
@@ -550,7 +588,19 @@ namespace puzzle
                     }
                 });
                 form.ShowDialog();
+                /*
+                Db.Instance.Dispose();
+                Db.Instance = new PuzzleContext(Db.Options);
+                Db.FirstLoad();
+                Db.LoadGalleries();
                 Db.LoadDifficultyLevels();
+                Db.LoadPuzzles(); 
+                fill.comboBoxLevel.DataSource = Db.Instance.DifficultyLevels.Local.ToBindingList();
+                fill.comboBoxLevel.DisplayMember = "Name";
+                fill.comboBoxLevel.ValueMember = "DifficultyLevelId";
+                fill.listBox.DataSource = Db.Instance.Puzzles.Local.ToBindingList();
+                fill.listBox.DisplayMember = "Name";
+                fill.listBox.ValueMember = "PuzzleId";*/
                 fill.listBox.ClearSelected();
                 right.Visible = false;
             });
@@ -558,7 +608,7 @@ namespace puzzle
             bottomControl.ButtonInsertOrNewGameText = "Добавить";
             bottomControl.ButtonInsertOrNewGameClick = new EventHandler((s, e) =>
             {
-                var form = new InsertOrUpdateLevelForm
+                var form = new InsertOrUpdatePuzzleForm
                 {
                     Text = "Добавление пазла",
                 };
@@ -567,25 +617,25 @@ namespace puzzle
                 {
                     try
                     {
-                        //SetLevelDTO(form);
+                        SetPuzzleDTO(form);
 
-                        var p1 = new MySqlConnector.MySqlParameter("@p1", LevelDTO.Name);
-                        var p2 = new MySqlConnector.MySqlParameter("@p2", LevelDTO.HorizontalFragmentCount);
-                        var p3 = new MySqlConnector.MySqlParameter("@p3", LevelDTO.VerticalFragmentCount);
-                        var p4 = new MySqlConnector.MySqlParameter("@p4", LevelDTO.FragmentTypeId);
-                        var p5 = new MySqlConnector.MySqlParameter("@p5", LevelDTO.AssemblyTypeId);
-                        int rowsAffected = Db.Instance.Database.ExecuteSqlRaw("CALL `insert_level` (@p1, @p2, @p3, @p4, @p5)", p1, p2, p3, p4, p5);
+                        var p1 = new MySqlConnector.MySqlParameter("@p1", PuzzleDTO.Name);
+                        var p2 = new MySqlConnector.MySqlParameter("@p2", PuzzleDTO.ImageId);
+                        var p3 = new MySqlConnector.MySqlParameter("@p3", PuzzleDTO.DifficultyLevelId);
+                        var p4 = new MySqlConnector.MySqlParameter("@p4", PuzzleDTO.FragmentNumbers);
+                        int rowsAffected = Db.Instance.Database.ExecuteSqlRaw("CALL `insert_puzzle` (@p1, @p2, @p3, @p4)", p1, p2, p3, p4);
                         if (rowsAffected != 1)
                         {
                             throw new Exception("Ошибка.");
                         }
+                        Db.LoadPuzzles();
                         MessageBoxes.Info("Успешно.");
                     }
                     catch (MySqlConnector.MySqlException ex) when (ex.Number == 1062)
                     {
-                        if (ex.Message.Contains("'difficulty_levels.name'"))
+                        if (ex.Message.Contains("'puzzles.name'"))
                         {
-                            MessageBoxes.Error("Название уровня сложности занято.");
+                            MessageBoxes.Error("Название пазла занято.");
                         }
                         else
                         {

@@ -28,14 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panelCenter = new System.Windows.Forms.Panel();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.bindingSourceLevels = new System.Windows.Forms.BindingSource(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceLevels)).BeginInit();
             this.SuspendLayout();
             // 
             // panelCenter
             // 
-            this.panelCenter.BackColor = System.Drawing.Color.DarkOrange;
+            this.panelCenter.BackColor = System.Drawing.SystemColors.Control;
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(0, 46);
             this.panelCenter.Margin = new System.Windows.Forms.Padding(0);
@@ -77,6 +80,7 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Игра \"Puzzle\"";
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceLevels)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -86,6 +90,7 @@
         private System.Windows.Forms.Panel panelCenter;
         private System.Windows.Forms.Panel panelBottom;
         private System.Windows.Forms.Panel panelTop;
+        public System.Windows.Forms.BindingSource bindingSourceLevels;
     }
 }
 

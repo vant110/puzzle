@@ -1,4 +1,4 @@
-﻿using puzzle.DTO;
+﻿using puzzle.Model;
 using System;
 using System.IO;
 using System.Security.Cryptography;

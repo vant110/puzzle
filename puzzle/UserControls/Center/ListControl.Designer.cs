@@ -29,10 +29,13 @@ namespace puzzle.UserControls
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.comboBoxLevel = new System.Windows.Forms.ComboBox();
             this.listBox = new System.Windows.Forms.ListBox();
             this.panelLevel = new System.Windows.Forms.Panel();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.panelLevel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // comboBoxLevel
@@ -80,6 +83,7 @@ namespace puzzle.UserControls
             this.Padding = new System.Windows.Forms.Padding(13, 18, 13, 18);
             this.Size = new System.Drawing.Size(400, 495);
             this.panelLevel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -88,5 +92,6 @@ namespace puzzle.UserControls
         public System.Windows.Forms.ListBox listBox;
         public System.Windows.Forms.ComboBox comboBoxLevel;
         private System.Windows.Forms.Panel panelLevel;
+        private System.Windows.Forms.BindingSource bindingSource1;
     }
 }

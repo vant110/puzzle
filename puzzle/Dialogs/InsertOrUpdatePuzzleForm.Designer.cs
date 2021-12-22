@@ -88,12 +88,12 @@ namespace puzzle.Dialogs
             this.buttonInsertOrUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonInsertOrUpdate.AutoSize = true;
             this.buttonInsertOrUpdate.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonInsertOrUpdate.Location = new System.Drawing.Point(652, 433);
+            this.buttonInsertOrUpdate.Location = new System.Drawing.Point(704, 433);
             this.buttonInsertOrUpdate.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.buttonInsertOrUpdate.Name = "buttonInsertOrUpdate";
-            this.buttonInsertOrUpdate.Size = new System.Drawing.Size(119, 23);
+            this.buttonInsertOrUpdate.Size = new System.Drawing.Size(67, 23);
             this.buttonInsertOrUpdate.TabIndex = 23;
-            this.buttonInsertOrUpdate.Text = "Добавить/Изменить";
+            this.buttonInsertOrUpdate.Text = "Добавить";
             this.buttonInsertOrUpdate.UseVisualStyleBackColor = true;
             // 
             // textBoxName
@@ -121,8 +121,8 @@ namespace puzzle.Dialogs
             this.buttonMix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonMix.AutoSize = true;
             this.buttonMix.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonMix.Location = new System.Drawing.Point(559, 433);
-            this.buttonMix.Margin = new System.Windows.Forms.Padding(3, 10, 10, 3);
+            this.buttonMix.Location = new System.Drawing.Point(608, 433);
+            this.buttonMix.Margin = new System.Windows.Forms.Padding(3, 10, 13, 3);
             this.buttonMix.Name = "buttonMix";
             this.buttonMix.Size = new System.Drawing.Size(80, 23);
             this.buttonMix.TabIndex = 32;
@@ -134,6 +134,7 @@ namespace puzzle.Dialogs
             this.pictureBoxImage.Location = new System.Drawing.Point(13, 144);
             this.pictureBoxImage.Name = "pictureBoxImage";
             this.pictureBoxImage.Size = new System.Drawing.Size(368, 276);
+            this.pictureBoxImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBoxImage.TabIndex = 33;
             this.pictureBoxImage.TabStop = false;
             // 
@@ -143,6 +144,7 @@ namespace puzzle.Dialogs
             this.pictureBoxField.Margin = new System.Windows.Forms.Padding(13, 13, 3, 3);
             this.pictureBoxField.Name = "pictureBoxField";
             this.pictureBoxField.Size = new System.Drawing.Size(368, 276);
+            this.pictureBoxField.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBoxField.TabIndex = 34;
             this.pictureBoxField.TabStop = false;
             // 
@@ -174,16 +176,16 @@ namespace puzzle.Dialogs
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
             this.ClientSize = new System.Drawing.Size(784, 469);
+            this.Controls.Add(this.buttonMix);
+            this.Controls.Add(this.buttonInsertOrUpdate);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBoxField);
             this.Controls.Add(this.pictureBoxImage);
-            this.Controls.Add(this.buttonMix);
             this.Controls.Add(this.comboBoxLevel);
             this.Controls.Add(this.comboBoxImage);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.buttonInsertOrUpdate);
             this.Controls.Add(this.textBoxName);
             this.Controls.Add(this.labelName);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;

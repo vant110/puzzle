@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace puzzle.DTO
+namespace puzzle.Model
 {
     static class LevelDTO
     {

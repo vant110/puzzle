@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace puzzle.DTO
+namespace puzzle.Model
 {
     static class ImageDTO
     {

@@ -1,4 +1,4 @@
-﻿using puzzle.DTO;
+﻿using puzzle.Model;
 using puzzle.Services;
 using System;
 using System.Windows.Forms;
