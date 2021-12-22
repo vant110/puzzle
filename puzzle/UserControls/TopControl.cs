@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace puzzle.CompositeControls
+namespace puzzle.UserControls
 {
     public partial class TopControl : UserControl
     {

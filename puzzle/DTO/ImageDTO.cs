@@ -1,13 +1,14 @@
 ﻿using System.IO;
 
-namespace puzzle.Model
+namespace puzzle.DTO
 {
-    static class NewImage
+    static class ImageDTO
     {
         private static string path;
-        
+
         public static string Name { get; set; }
-        public static string Path {
+        public static string Path
+        {
             get
             {
                 return path;
@@ -17,15 +18,10 @@ namespace puzzle.Model
                 if (value == null)
                 {
                     path = value;
+                    return;
                 }
-                else if (value.Length > 34)
-                {
-                    path = value.Substring(value.Length - 34, 30);
-                }
-                else
-                {
-                    path = value.Substring(0, value.Length - 4);
-                }
+                int length = value.Length > 34 ? 34 : value.Length;
+                path = value.Substring(0, length - 4);
             }
         }
         public static string Hash { get; set; }

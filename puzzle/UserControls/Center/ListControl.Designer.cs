@@ -1,5 +1,5 @@
 ﻿
-namespace puzzle.CompositeControls
+namespace puzzle.UserControls
 {
     partial class ListControl
     {
@@ -31,14 +31,15 @@ namespace puzzle.CompositeControls
         {
             this.comboBoxLevel = new System.Windows.Forms.ComboBox();
             this.listBox = new System.Windows.Forms.ListBox();
+            this.panelLevel = new System.Windows.Forms.Panel();
+            this.panelLevel.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBoxLevel
             // 
-            this.comboBoxLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxLevel.Location = new System.Drawing.Point(13, 17);
+            this.comboBoxLevel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.comboBoxLevel.Location = new System.Drawing.Point(0, 0);
+            this.comboBoxLevel.Margin = new System.Windows.Forms.Padding(0);
             this.comboBoxLevel.Name = "comboBoxLevel";
             this.comboBoxLevel.Size = new System.Drawing.Size(374, 21);
             this.comboBoxLevel.Sorted = true;
@@ -46,26 +47,39 @@ namespace puzzle.CompositeControls
             // 
             // listBox
             // 
-            this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBox.FormattingEnabled = true;
             this.listBox.HorizontalScrollbar = true;
-            this.listBox.Location = new System.Drawing.Point(13, 51);
-            this.listBox.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
+            this.listBox.Location = new System.Drawing.Point(13, 57);
+            this.listBox.Margin = new System.Windows.Forms.Padding(0);
             this.listBox.Name = "listBox";
-            this.listBox.Size = new System.Drawing.Size(374, 433);
-            this.listBox.Sorted = true;
+            this.listBox.Size = new System.Drawing.Size(374, 420);
             this.listBox.TabIndex = 1;
+            // 
+            // panelLevel
+            // 
+            this.panelLevel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panelLevel.BackColor = System.Drawing.Color.Transparent;
+            this.panelLevel.Controls.Add(this.comboBoxLevel);
+            this.panelLevel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelLevel.Location = new System.Drawing.Point(13, 18);
+            this.panelLevel.Margin = new System.Windows.Forms.Padding(0);
+            this.panelLevel.Name = "panelLevel";
+            this.panelLevel.Padding = new System.Windows.Forms.Padding(0, 0, 0, 18);
+            this.panelLevel.Size = new System.Drawing.Size(374, 39);
+            this.panelLevel.TabIndex = 2;
             // 
             // ListControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.listBox);
-            this.Controls.Add(this.comboBoxLevel);
+            this.Controls.Add(this.panelLevel);
             this.Name = "ListControl";
-            this.Padding = new System.Windows.Forms.Padding(10, 14, 10, 14);
-            this.Size = new System.Drawing.Size(400, 501);
+            this.Padding = new System.Windows.Forms.Padding(13, 18, 13, 18);
+            this.Size = new System.Drawing.Size(400, 495);
+            this.panelLevel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -73,5 +87,6 @@ namespace puzzle.CompositeControls
         #endregion
         public System.Windows.Forms.ListBox listBox;
         public System.Windows.Forms.ComboBox comboBoxLevel;
+        private System.Windows.Forms.Panel panelLevel;
     }
 }

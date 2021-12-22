@@ -10,18 +10,35 @@ namespace puzzle.Services
 
         public static PuzzleContext Instance { get; set; }
 
+        public static void FirstLoad()
+        {
+            Instance.FragmentTypes.Load();
+            Instance.AssemblyTypes.Load();
+            Instance.CountingMethods.Load();
+        }
+
         public static void LoadGalleries()
         {
-            var gs = Instance.Galleries;
-            gs.Load();
-            foreach (var g in gs.Local)
+            Instance.Galleries.Load();
+            var gs = Instance.Galleries.Local;
+            foreach (var g in gs)
             {
                 if (!LocalStorage.Exists(g.Path)
-                    || Hasher.HashAndCloseImage(LocalStorage.Load(g.Path)) != g.ImageHash)
+                    || Hasher.HashImage(LocalStorage.Load(g.Path), true) != g.ImageHash)
                 {
-                    gs.Local.Remove(g);
+                    gs.Remove(g);
                 }
             }
+        }
+
+        public static void LoadDifficultyLevels()
+        {
+            Instance.DifficultyLevels.Load();
+        }
+
+        public static void LoadPuzzles()
+        {
+            Instance.Puzzles.Load();
         }
     }
 }

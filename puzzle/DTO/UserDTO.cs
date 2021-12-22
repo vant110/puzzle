@@ -1,6 +1,6 @@
-﻿namespace puzzle.Model
+﻿namespace puzzle.DTO
 {
-    static class User
+    static class UserDTO
     {
         public static short Id { get; set; }
         public static string Login { get; set; }

@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using puzzle.Model;
+using puzzle.DTO;
 using puzzle.Services;
 using System;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace puzzle.CompositeControls
+namespace puzzle.UserControls
 {
     public partial class RegAndAuthControl : UserControl
     {
@@ -19,8 +19,8 @@ namespace puzzle.CompositeControls
                 try
                 {
                     Init();
-                    var p1 = new MySqlConnector.MySqlParameter("@login", User.Login);
-                    var p2 = new MySqlConnector.MySqlParameter("@password_hash", User.PasswordHash);
+                    var p1 = new MySqlConnector.MySqlParameter("@login", UserDTO.Login);
+                    var p2 = new MySqlConnector.MySqlParameter("@password_hash", UserDTO.PasswordHash);
                     int rowsAffected;
                     using (var db = new PuzzleContext(Db.Options))
                     {
@@ -53,8 +53,8 @@ namespace puzzle.CompositeControls
                 try
                 {
                     Init();
-                    var p1 = new MySqlConnector.MySqlParameter("@login", User.Login);
-                    var p2 = new MySqlConnector.MySqlParameter("@password_hash", User.PasswordHash);
+                    var p1 = new MySqlConnector.MySqlParameter("@login", UserDTO.Login);
+                    var p2 = new MySqlConnector.MySqlParameter("@password_hash", UserDTO.PasswordHash);
                     int result;
                     using (var db = new PuzzleContext(Db.Options))
                     {
@@ -84,18 +84,18 @@ namespace puzzle.CompositeControls
 
         private void Init()
         {
-            User.Login = textBoxLogin.Text;
-            User.Password = textBoxPassword.Text;
-            if (!Validator.IsLogin(User.Login))
+            UserDTO.Login = textBoxLogin.Text;
+            UserDTO.Password = textBoxPassword.Text;
+            if (!Validator.IsLogin(UserDTO.Login))
             {
                 throw new InvalidOperationException("Логин некорректен.");
             }
-            if (!Validator.IsPassword(User.Password))
+            if (!Validator.IsPassword(UserDTO.Password))
             {
                 throw new InvalidOperationException("Пароль некорректен.");
             }
 
-            Hasher.HashPassword(User.Password);
+            UserDTO.PasswordHash = Hasher.HashPassword(UserDTO.Password);
         }
     }
 }

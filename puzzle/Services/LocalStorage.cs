@@ -1,6 +1,4 @@
-﻿using puzzle.Model;
-using System.Diagnostics;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
@@ -10,105 +8,111 @@ namespace puzzle.Services
 {
     static class LocalStorage
     {
-        private static string imagesDir = Application.StartupPath + "images\\";
-        private static string format = ".png";
+        private static readonly string images = Application.StartupPath + "images\\";
+        private static readonly string format = ".png";
 
         private static void CreateDirectory()
         {
-            var directoryInfo = new DirectoryInfo(imagesDir);
+            var directoryInfo = new DirectoryInfo(images);
             if (!directoryInfo.Exists)
             {
                 directoryInfo.Create();
             }
         }
 
-        public static MemoryStream ResizeImage(Stream imageStream)
+        public static MemoryStream Resize(Stream imageStream)
         {
             using Bitmap bitmap = new(600, 450);
             using (Image image = Image.FromStream(imageStream))
             {
                 imageStream.Close();
-                Rectangle destRect;                
+                Rectangle destRect;
                 {
                     int x0 = 0;
                     int y0 = 0;
                     int x1 = bitmap.Width;
                     int y1 = bitmap.Height;
-                    int dx;
-                    int dy;
-                    if (image.Width < bitmap.Width
-                        || image.Height < bitmap.Height)
                     {
-                        double kx = (double)bitmap.Width / image.Width;
-                        double ky = (double)bitmap.Height / image.Height;
-                        double k = ky > kx ? ky : kx;
-                        dx = (int)((image.Width * k - bitmap.Width) * k / 2);
-                        dy = (int)((image.Height * k - bitmap.Height) * k / 2);
+                        int dx;
+                        int dy;
+                        double k;
+                        {
+                            double kx = (double)bitmap.Width / image.Width;
+                            double ky = (double)bitmap.Height / image.Height;
+                            k = kx > ky ? kx : ky;
+                        }
+                        if (image.Width < bitmap.Width
+                            || image.Height < bitmap.Height)
+                        {
+                            dx = (int)((image.Width * k - bitmap.Width) * k / 2);
+                            dy = (int)((image.Height * k - bitmap.Height) * k / 2);
+                        }
+                        else
+                        {
+                            dx = (int)((image.Width * k - bitmap.Width) / k / 2);
+                            dy = (int)((image.Height * k - bitmap.Height) / k / 2);
+                        }
+                        x0 -= dx / 2;
+                        y0 -= dy / 2;
+                        x1 += dx;
+                        y1 += dy;
                     }
-                    else
-                    {
-                        double kx = (double)image.Width / bitmap.Width;
-                        double ky = (double)image.Height / bitmap.Height;
-                        double k = ky < kx ? ky : kx;
-                        dx = (int)((image.Width / k - bitmap.Width) * k / 2);
-                        dy = (int)((image.Height / k - bitmap.Height) * k / 2);
-                    }
-                    x0 -= dx / 2;
-                    x1 += dx;
-                    y0 -= dy / 2;
-                    y1 += dy;
                     destRect = new(
-                        x0, y0, 
+                        x0, y0,
                         x1, y1);
                 }
-                Rectangle srcRect = new(
-                    0, 0, 
-                    image.Width, 
-                    image.Height);
+                bitmap.SetResolution(image.HorizontalResolution, image.VerticalResolution);
                 using Graphics graphics = Graphics.FromImage(bitmap);
+                graphics.CompositingMode = CompositingMode.SourceCopy;
                 graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 graphics.SmoothingMode = SmoothingMode.HighQuality;
                 graphics.CompositingQuality = CompositingQuality.HighQuality;
                 graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                using ImageAttributes wrapMode = new();
+                wrapMode.SetWrapMode(WrapMode.TileFlipXY);
                 graphics.DrawImage(
                     image,
                     destRect,
-                    srcRect,
-                    GraphicsUnit.Pixel);
+                    0, 0,
+                    image.Width,
+                    image.Height,
+                    GraphicsUnit.Pixel,
+                    wrapMode);
             }
             MemoryStream ms = new();
             bitmap.Save(ms, ImageFormat.Png);
             return ms;
         }
 
-        public static void SaveImage(Stream imageStream, string path)
+        public static void Save(Stream imageStream, string path)
         {
             CreateDirectory();
-            using var outFileStream = File.Create($"{imagesDir}{path}{format}");
+            using var outFileStream = File.Create($"{images}{path}{format}");
             imageStream.CopyTo(outFileStream);
+            imageStream.Close();
         }
 
         public static MemoryStream Load(string path)
         {
             var ms = new MemoryStream();
-            using var inStream = File.OpenRead($"{imagesDir}{path}.png");
-            inStream.CopyTo(ms);
+            using var inFileStream = File.OpenRead($"{images}{path}{format}");
+            inFileStream.CopyTo(ms);
             return ms;
         }
 
         public static Image LoadImage(string path)
         {
-            return Image.FromFile($"{imagesDir}{path}.png");
+            return Image.FromFile($"{images}{path}{format}");
         }
 
         public static bool Exists(string path)
         {
-            return File.Exists($"{imagesDir}{path}.png");
+            return File.Exists($"{images}{path}{format}");
         }
 
         public static void Delete(string path)
         {
-            File.Delete($"{imagesDir}{path}.png");
+            File.Delete($"{images}{path}{format}");
         }
     }
 }

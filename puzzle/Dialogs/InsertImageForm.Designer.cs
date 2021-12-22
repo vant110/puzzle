@@ -40,6 +40,7 @@ namespace puzzle.Dialogs
             // labelName
             // 
             this.labelName.AutoSize = true;
+            this.labelName.ForeColor = System.Drawing.SystemColors.GrayText;
             this.labelName.Location = new System.Drawing.Point(33, 23);
             this.labelName.Name = "labelName";
             this.labelName.Size = new System.Drawing.Size(55, 13);
@@ -49,6 +50,7 @@ namespace puzzle.Dialogs
             // labelImage
             // 
             this.labelImage.AutoSize = true;
+            this.labelImage.ForeColor = System.Drawing.SystemColors.GrayText;
             this.labelImage.Location = new System.Drawing.Point(13, 59);
             this.labelImage.Name = "labelImage";
             this.labelImage.Size = new System.Drawing.Size(75, 13);

@@ -35,11 +35,11 @@ namespace puzzle
         public virtual DbSet<SavedGameTape> SavedGameTapes { get; set; }
         public virtual DbSet<SavedGameTime> SavedGameTimes { get; set; }
 
-        public DbSet<Model.Result> Results { get; set; }
+        public DbSet<DTO.ResultDTO> Results { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Model.Result>().HasNoKey();
+            modelBuilder.Entity<DTO.ResultDTO>().HasNoKey();
 
             modelBuilder.HasCharSet("utf8mb4")
                 .UseCollation("utf8mb4_0900_ai_ci");

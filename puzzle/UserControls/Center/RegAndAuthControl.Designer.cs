@@ -1,5 +1,5 @@
 ﻿
-namespace puzzle.CompositeControls
+namespace puzzle.UserControls
 {
     partial class RegAndAuthControl
     {

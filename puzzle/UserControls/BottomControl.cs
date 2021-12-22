@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace puzzle.CompositeControls
+namespace puzzle.UserControls
 {
     public partial class BottomControl : UserControl
     {

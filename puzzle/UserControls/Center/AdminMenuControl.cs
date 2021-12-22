@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace puzzle.CompositeControls
+namespace puzzle.UserControls
 {
     public partial class AdminMenuControl : UserControl
     {
@@ -15,9 +15,11 @@ namespace puzzle.CompositeControls
             });
             buttonLevels.Click += new EventHandler((s, e) =>
             {
+                form.ConfigureOnLevels();
             });
             buttonPuzzles.Click += new EventHandler((s, e) =>
             {
+                form.ConfigureOnPuzzles();
             });
         }
     }
