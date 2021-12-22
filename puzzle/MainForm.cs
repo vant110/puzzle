@@ -364,14 +364,11 @@ namespace puzzle
                         }               
                         MessageBoxes.Info("Успешно.");
                     }
-                    catch (MySqlConnector.MySqlException ex) when (ex.Number == 1062)
+                    catch (MySqlConnector.MySqlException ex)
+                    when (ex.Number == 1062
+                    && ex.Message.Contains("'difficulty_levels.name'"))
                     {
-                        if (ex.Message.Contains("'difficulty_levels.name'"))
-                        {
-                            //throw;// !!!
-                            MessageBoxes.Error("Название уровня сложности занято.");
-                        }
-                        throw;// ???
+                        MessageBoxes.Error("Название уровня сложности занято.");
                     }
                     catch (Exception ex)
                     {
