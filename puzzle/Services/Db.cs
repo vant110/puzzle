@@ -1,59 +1,89 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using puzzle.ViewModel;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace puzzle.Services
 {
     static class Db
     {
-        public static DbContextOptions<PuzzleContext> Options { get; set; }
+        public static DbContextOptions<PuzzleContext> Options { get; private set; }
 
-        public static PuzzleContext Instance { get; set; }
-
-        public static void FirstLoad()
+        public static void InitOptions()
         {
-            Instance.FragmentTypes.Load();
-            Instance.AssemblyTypes.Load();
-            Instance.CountingMethods.Load();
+            if (Options != null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            var builder = new ConfigurationBuilder();
+            builder.SetBasePath(Directory.GetCurrentDirectory());
+            builder.AddJsonFile("appsettings.json");
+            var config = builder.Build();
+            string connectionString = config.GetConnectionString("DefaultConnection");
+            var optionsBuilder = new DbContextOptionsBuilder<PuzzleContext>();
+            Options = optionsBuilder
+                .UseMySql(connectionString, ServerVersion.Parse("8.0.27-mysql"))
+                .Options;
+
+            optionsBuilder.LogTo(
+                message => Debug.WriteLine(message),
+                LogLevel.Trace);
         }
 
-        public static void LoadGalleries()
+        public static IList<ImageVM> LoadGallery()
         {
-            Instance.Galleries.Load();
-            var gs = Instance.Galleries.Local;
-            foreach (var g in gs)
+            List<ImageVM> gallery;
+            using (var db = new PuzzleContext(Options))
             {
-                if (!LocalStorage.Exists(g.Path)
-                    || Hasher.HashImage(LocalStorage.Load(g.Path), true) != g.ImageHash)
+                gallery = db.Galleries
+                    .Select(i => new ImageVM
+                    {
+                        Id = i.ImageId,
+                        Name = i.Name,
+                        Path = i.Path,
+                        ImageHash = i.ImageHash
+                    }).ToList();
+            }
+            List<ImageVM> newGallery = new();
+            foreach (var g in gallery)
+            {
+                if (LocalStorage.Exists(g.Path)
+                    && Hasher.HashImageAndClose(LocalStorage.Load(g.Path)) == g.ImageHash)
                 {
-                    gs.Remove(g);
+                    newGallery.Add(g);
                 }
             }
+            return newGallery;
         }
-
-        public static void LoadDifficultyLevels()
-        {
-            Instance.DifficultyLevels.Load();
-        }
-
-        public static void LoadPuzzles()
-        {
-            Instance.Puzzles.Load();
-        }
-
-        public static IEnumerable<LevelViewModel> GetLevels()
+        public static IList<LevelVM> LoadLevels()
         {
             using var db = new PuzzleContext(Options);
             return db.DifficultyLevels
-                .Select(level => new LevelViewModel 
+                .Select(i => new LevelVM
                 {
-                    Id = level.DifficultyLevelId,
-                    Name = level.Name,
-                    HorizontalFragmentCount = level.HorizontalFragmentCount,
-                    VerticalFragmentCount = level.VerticalFragmentCount,
-                    FragmentTypeId = level.FragmentTypeId,
-                    AssemblyTypeId = level.AssemblyTypeId
+                    Id = i.DifficultyLevelId,
+                    Name = i.Name,
+                    HorizontalFragmentCount = i.HorizontalFragmentCount,
+                    FragmentTypeId = i.FragmentTypeId,
+                    AssemblyTypeId = i.AssemblyTypeId
+                }).ToList();
+        }
+        public static IList<PuzzleVM> LoadPuzzles()
+        {
+            using var db = new PuzzleContext(Options);
+            return db.Puzzles
+                .Select(i => new PuzzleVM
+                {
+                    Id = i.PuzzleId,
+                    Name = i.Name,
+                    ImageId = i.ImageId,
+                    DifficultyLevelId = i.DifficultyLevelId
                 }).ToList();
         }
     }

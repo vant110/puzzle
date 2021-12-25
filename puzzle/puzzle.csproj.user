@@ -4,25 +4,25 @@
     <Compile Update="Dialogs\InsertOrUpdatePuzzleForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="UserControls\Center\AdminMenuControl.cs">
+    <Compile Update="UserControls\Center\AdminMenuUC.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\BottomControl.cs">
+    <Compile Update="UserControls\BottomUC.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\Center\ImageAndMethodsControl.cs">
+    <Compile Update="UserControls\Center\ImageAndMethodsUC.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\Center\LevelInfoControl.cs">
+    <Compile Update="UserControls\Center\LevelInfoUC.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\Center\ListControl.cs">
+    <Compile Update="UserControls\Center\ListUC.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\Center\RegAndAuthControl.cs">
+    <Compile Update="UserControls\Center\RegAndAuthUC.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\TopControl.cs">
+    <Compile Update="UserControls\TopUC.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Dialogs\InsertImageForm.cs">

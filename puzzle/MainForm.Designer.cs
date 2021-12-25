@@ -33,7 +33,17 @@
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelTop = new System.Windows.Forms.Panel();
             this.bindingSourceLevels = new System.Windows.Forms.BindingSource(this.components);
+            this.bindingSourceGallery = new System.Windows.Forms.BindingSource(this.components);
+            this.bindingSourcePuzzles = new System.Windows.Forms.BindingSource(this.components);
+            this.bindingSourceFragmentTypes = new System.Windows.Forms.BindingSource(this.components);
+            this.bindingSourceAssemblyTypes = new System.Windows.Forms.BindingSource(this.components);
+            this.bindingSourceMethods = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceLevels)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceGallery)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePuzzles)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFragmentTypes)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceAssemblyTypes)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceMethods)).BeginInit();
             this.SuspendLayout();
             // 
             // panelCenter
@@ -58,7 +68,7 @@
             // 
             // panelTop
             // 
-            this.panelTop.BackColor = System.Drawing.Color.DarkTurquoise;
+            this.panelTop.BackColor = System.Drawing.Color.Lime;
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
             this.panelTop.Margin = new System.Windows.Forms.Padding(0);
@@ -81,6 +91,11 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Игра \"Puzzle\"";
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceLevels)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceGallery)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePuzzles)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFragmentTypes)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceAssemblyTypes)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceMethods)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -90,7 +105,12 @@
         private System.Windows.Forms.Panel panelCenter;
         private System.Windows.Forms.Panel panelBottom;
         private System.Windows.Forms.Panel panelTop;
+        public System.Windows.Forms.BindingSource bindingSourceGallery;
+        public System.Windows.Forms.BindingSource bindingSourcePuzzles;
         public System.Windows.Forms.BindingSource bindingSourceLevels;
+        public System.Windows.Forms.BindingSource bindingSourceFragmentTypes;
+        public System.Windows.Forms.BindingSource bindingSourceAssemblyTypes;
+        public System.Windows.Forms.BindingSource bindingSourceMethods;
     }
 }
 

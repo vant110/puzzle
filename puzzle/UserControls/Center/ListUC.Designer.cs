@@ -1,7 +1,7 @@
 ﻿
 namespace puzzle.UserControls
 {
-    partial class ListControl
+    partial class ListUC
     {
         /// <summary> 
         /// Обязательная переменная конструктора.
@@ -29,17 +29,15 @@ namespace puzzle.UserControls
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.comboBoxLevel = new System.Windows.Forms.ComboBox();
             this.listBox = new System.Windows.Forms.ListBox();
             this.panelLevel = new System.Windows.Forms.Panel();
-            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.panelLevel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // comboBoxLevel
             // 
+            this.comboBoxLevel.DisplayMember = "Name";
             this.comboBoxLevel.Dock = System.Windows.Forms.DockStyle.Top;
             this.comboBoxLevel.Location = new System.Drawing.Point(0, 0);
             this.comboBoxLevel.Margin = new System.Windows.Forms.Padding(0);
@@ -47,9 +45,11 @@ namespace puzzle.UserControls
             this.comboBoxLevel.Size = new System.Drawing.Size(374, 21);
             this.comboBoxLevel.Sorted = true;
             this.comboBoxLevel.TabIndex = 0;
+            this.comboBoxLevel.ValueMember = "Id";
             // 
             // listBox
             // 
+            this.listBox.DisplayMember = "Name";
             this.listBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBox.FormattingEnabled = true;
             this.listBox.HorizontalScrollbar = true;
@@ -58,6 +58,7 @@ namespace puzzle.UserControls
             this.listBox.Name = "listBox";
             this.listBox.Size = new System.Drawing.Size(374, 420);
             this.listBox.TabIndex = 1;
+            this.listBox.ValueMember = "Id";
             // 
             // panelLevel
             // 
@@ -72,18 +73,17 @@ namespace puzzle.UserControls
             this.panelLevel.Size = new System.Drawing.Size(374, 39);
             this.panelLevel.TabIndex = 2;
             // 
-            // ListControl
+            // ListUC
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.listBox);
             this.Controls.Add(this.panelLevel);
-            this.Name = "ListControl";
+            this.Name = "ListUC";
             this.Padding = new System.Windows.Forms.Padding(13, 18, 13, 18);
             this.Size = new System.Drawing.Size(400, 495);
             this.panelLevel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -91,7 +91,6 @@ namespace puzzle.UserControls
         #endregion
         public System.Windows.Forms.ListBox listBox;
         public System.Windows.Forms.ComboBox comboBoxLevel;
-        private System.Windows.Forms.Panel panelLevel;
-        private System.Windows.Forms.BindingSource bindingSource1;
+        public System.Windows.Forms.Panel panelLevel;
     }
 }

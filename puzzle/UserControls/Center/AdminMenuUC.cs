@@ -3,23 +3,23 @@ using System.Windows.Forms;
 
 namespace puzzle.UserControls
 {
-    public partial class AdminMenuControl : UserControl
+    public partial class AdminMenuUC : UserControl
     {
-        public AdminMenuControl(MainForm form)
+        public AdminMenuUC(MainForm form)
         {
             InitializeComponent();
 
             buttonGallery.Click += new EventHandler((s, e) =>
             {
-                form.ConfigureOnGallery();
+                form.DisplayGallery();
             });
             buttonLevels.Click += new EventHandler((s, e) =>
             {
-                form.ConfigureOnLevels();
+                form.DisplayLevels();
             });
             buttonPuzzles.Click += new EventHandler((s, e) =>
             {
-                form.ConfigureOnPuzzles();
+                form.DisplayPuzzles();
             });
         }
     }

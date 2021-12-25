@@ -1,7 +1,7 @@
 ﻿
 namespace puzzle.UserControls
 {
-    partial class RegAndAuthControl
+    partial class RegAndAuthUC
     {
         /// <summary> 
         /// Обязательная переменная конструктора.

@@ -1,7 +1,7 @@
 ﻿
 namespace puzzle.UserControls
 {
-    partial class ImageAndMethodsControl
+    partial class ImageAndMethodsUC
     {
         /// <summary> 
         /// Обязательная переменная конструктора.
@@ -109,7 +109,7 @@ namespace puzzle.UserControls
             this.panelMethods.Size = new System.Drawing.Size(166, 106);
             this.panelMethods.TabIndex = 5;
             // 
-            // ImageAndMethodsControl
+            // ImageAndMethodsUC
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -117,7 +117,7 @@ namespace puzzle.UserControls
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.Controls.Add(this.panelMethods);
             this.Controls.Add(this.pictureBoxImage);
-            this.Name = "ImageAndMethodsControl";
+            this.Name = "ImageAndMethodsUC";
             this.Padding = new System.Windows.Forms.Padding(13, 19, 13, 13);
             this.Size = new System.Drawing.Size(426, 451);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxImage)).EndInit();
@@ -134,6 +134,6 @@ namespace puzzle.UserControls
         private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.RadioButton radioButton3;
         public System.Windows.Forms.PictureBox pictureBoxImage;
-        private System.Windows.Forms.Panel panelMethods;
+        public System.Windows.Forms.Panel panelMethods;
     }
 }

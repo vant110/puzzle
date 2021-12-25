@@ -1,7 +1,7 @@
 ﻿
 namespace puzzle.UserControls
 {
-    partial class TopControl
+    partial class TopUC
     {
         /// <summary> 
         /// Обязательная переменная конструктора.
@@ -30,7 +30,7 @@ namespace puzzle.UserControls
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TopControl));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TopUC));
             this.buttonBack = new System.Windows.Forms.Button();
             this.imageListPictograms = new System.Windows.Forms.ImageList(this.components);
             this.labelTitle = new System.Windows.Forms.Label();

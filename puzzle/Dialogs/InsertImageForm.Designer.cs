@@ -66,7 +66,7 @@ namespace puzzle.Dialogs
             this.labelFile.Name = "labelFile";
             this.labelFile.Size = new System.Drawing.Size(204, 13);
             this.labelFile.TabIndex = 2;
-            this.labelFile.Text = "Название файла";
+            this.labelFile.Text = "Файл не выбран";
             // 
             // textBoxName
             // 
@@ -133,9 +133,9 @@ namespace puzzle.Dialogs
 
         private System.Windows.Forms.Label labelName;
         private System.Windows.Forms.Label labelImage;
-        private System.Windows.Forms.Label labelFile;
-        private System.Windows.Forms.TextBox textBoxName;
-        private System.Windows.Forms.Button buttonFile;
-        private System.Windows.Forms.Button buttonInsert;
+        public System.Windows.Forms.Label labelFile;
+        public System.Windows.Forms.TextBox textBoxName;
+        public System.Windows.Forms.Button buttonFile;
+        public System.Windows.Forms.Button buttonInsert;
     }
 }

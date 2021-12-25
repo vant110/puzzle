@@ -10,11 +10,11 @@ using System.Windows.Forms;
 
 namespace puzzle.UserControls
 {
-    public partial class TopControl : UserControl
+    public partial class TopUC : UserControl
     {
         private EventHandler buttonBackClick;
 
-        public TopControl()
+        public TopUC()
         {
             InitializeComponent();
         }        

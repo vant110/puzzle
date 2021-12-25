@@ -9,7 +9,7 @@ namespace puzzle.Services
     static class LocalStorage
     {
         private static readonly string images = Application.StartupPath + "images\\";
-        private static readonly string format = ".png";
+        private static readonly string format = "";
 
         private static void CreateDirectory()
         {
@@ -86,10 +86,11 @@ namespace puzzle.Services
 
         public static void Save(Stream imageStream, string path)
         {
+            imageStream.Seek(0, SeekOrigin.Begin);
+
             CreateDirectory();
             using var outFileStream = File.Create($"{images}{path}{format}");
             imageStream.CopyTo(outFileStream);
-            imageStream.Close();
         }
 
         public static MemoryStream Load(string path)

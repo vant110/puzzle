@@ -14,22 +14,18 @@ namespace puzzle.Services
         {
             return input != null && Regex.IsMatch(input, loginPattern);
         }
-
         public static bool IsPassword(string input)
         {
             return input != null && Regex.IsMatch(input, passwordPattern);
         }
-
         public static bool IsImageName(string input)
         {
             return input != null && Regex.IsMatch(input, imageNamePattern);
         }
-
         public static bool IsLevelName(string input)
         {
             return input != null && Regex.IsMatch(input, levelNamePattern);
         }
-
         public static bool IsPuzzleName(string input)
         {
             return input != null && Regex.IsMatch(input, puzzleNamePattern);

@@ -3,14 +3,14 @@ using System.Windows.Forms;
 
 namespace puzzle.UserControls
 {
-    public partial class BottomControl : UserControl
+    public partial class BottomUC : UserControl
     {
         private EventHandler buttonDeleteClick;
         private EventHandler buttonUpdateClick;
         private EventHandler buttonLoadClick;
         private EventHandler buttonInsertOrNewGameClick;
 
-        public BottomControl()
+        public BottomUC()
         {
             InitializeComponent();
         }

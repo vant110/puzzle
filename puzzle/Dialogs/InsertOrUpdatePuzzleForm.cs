@@ -19,7 +19,7 @@ namespace puzzle.Dialogs
         {
             InitializeComponent();
 
-            comboBoxImage.DataSource = Db.Instance.Galleries.Local.ToBindingList();
+            //comboBoxImage.DataSource = Db.Instance.Galleries.Local.ToBindingList();
             comboBoxImage.DisplayMember = "Name";
             comboBoxImage.ValueMember = "ImageId";
             if (comboBoxImage.SelectedItem != null)
@@ -42,7 +42,7 @@ namespace puzzle.Dialogs
                 TryCreatePuzzle();
             });
 
-            comboBoxLevel.DataSource = Db.Instance.DifficultyLevels.Local.ToBindingList();
+            //comboBoxLevel.DataSource = Db.Instance.DifficultyLevels.Local.ToBindingList();
             comboBoxLevel.DisplayMember = "Name";
             comboBoxLevel.ValueMember = "DifficultyLevelId";
             if (comboBoxLevel.SelectedItem != null)

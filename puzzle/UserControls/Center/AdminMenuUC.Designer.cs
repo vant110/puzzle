@@ -1,7 +1,7 @@
 ﻿
 namespace puzzle.UserControls
 {
-    partial class AdminMenuControl
+    partial class AdminMenuUC
     {
         /// <summary> 
         /// Обязательная переменная конструктора.

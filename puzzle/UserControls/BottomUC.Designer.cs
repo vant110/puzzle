@@ -1,7 +1,7 @@
 ﻿
 namespace puzzle.UserControls
 {
-    partial class BottomControl
+    partial class BottomUC
     {
         /// <summary> 
         /// Обязательная переменная конструктора.

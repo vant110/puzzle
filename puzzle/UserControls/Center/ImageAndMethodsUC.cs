@@ -2,9 +2,9 @@
 
 namespace puzzle.UserControls
 {
-    public partial class LevelInfoControl : UserControl
+    public partial class ImageAndMethodsUC : UserControl
     {
-        public LevelInfoControl()
+        public ImageAndMethodsUC()
         {
             InitializeComponent();
         }

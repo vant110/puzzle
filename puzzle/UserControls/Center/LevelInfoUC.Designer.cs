@@ -1,7 +1,7 @@
 ﻿
 namespace puzzle.UserControls
 {
-    partial class LevelInfoControl
+    partial class LevelInfoUC
     {
         /// <summary> 
         /// Обязательная переменная конструктора.

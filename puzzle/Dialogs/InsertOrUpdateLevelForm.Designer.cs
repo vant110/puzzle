@@ -148,21 +148,25 @@ namespace puzzle.Dialogs
             // 
             this.comboBoxFragmentType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxFragmentType.DisplayMember = "Name";
             this.comboBoxFragmentType.FormattingEnabled = true;
             this.comboBoxFragmentType.Location = new System.Drawing.Point(150, 128);
             this.comboBoxFragmentType.Name = "comboBoxFragmentType";
             this.comboBoxFragmentType.Size = new System.Drawing.Size(171, 21);
             this.comboBoxFragmentType.TabIndex = 18;
+            this.comboBoxFragmentType.ValueMember = "FragmentTypeId";
             // 
             // comboBoxAssemblyType
             // 
             this.comboBoxAssemblyType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxAssemblyType.DisplayMember = "Name";
             this.comboBoxAssemblyType.FormattingEnabled = true;
             this.comboBoxAssemblyType.Location = new System.Drawing.Point(150, 155);
             this.comboBoxAssemblyType.Name = "comboBoxAssemblyType";
             this.comboBoxAssemblyType.Size = new System.Drawing.Size(171, 21);
             this.comboBoxAssemblyType.TabIndex = 19;
+            this.comboBoxAssemblyType.ValueMember = "AssemblyTypeId";
             // 
             // numericUpDownHorizontal
             // 

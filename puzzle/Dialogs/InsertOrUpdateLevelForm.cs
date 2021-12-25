@@ -1,6 +1,4 @@
-﻿using puzzle.Model;
-using puzzle.Services;
-using System;
+﻿using System;
 using System.Windows.Forms;
 
 namespace puzzle.Dialogs
@@ -9,25 +7,17 @@ namespace puzzle.Dialogs
     {
         private EventHandler buttonInsertOrUpdateClick;
 
-        public InsertOrUpdateLevelForm()
+        public InsertOrUpdateLevelForm(MainForm form)
         {
             InitializeComponent();
 
-            LevelDTO.HorizontalFragmentCount = (int)numericUpDownHorizontal.Value;
-            labelVertical.Text = LevelDTO.VerticalFragmentCount.ToString();
-            numericUpDownHorizontal.ValueChanged += new EventHandler((s, e) => 
+            comboBoxFragmentType.DataSource = form.bindingSourceFragmentTypes.DataSource;
+            comboBoxAssemblyType.DataSource = form.bindingSourceAssemblyTypes.DataSource;
+            numericUpDownHorizontal.ValueChanged += new EventHandler((s, e) =>
             {
-                LevelDTO.HorizontalFragmentCount = (int)numericUpDownHorizontal.Value;
-                labelVertical.Text = LevelDTO.VerticalFragmentCount.ToString();
+                SetLabelVertical();
             });
-
-            comboBoxFragmentType.DataSource = Db.Instance.FragmentTypes.Local.ToBindingList();
-            comboBoxFragmentType.DisplayMember = "Name";
-            comboBoxFragmentType.ValueMember = "FragmentTypeId";
-
-            comboBoxAssemblyType.DataSource = Db.Instance.AssemblyTypes.Local.ToBindingList();
-            comboBoxAssemblyType.DisplayMember = "Name";
-            comboBoxAssemblyType.ValueMember = "AssemblyTypeId";
+            SetLabelVertical();
         }
 
         public EventHandler ButtonInsertOrUpdateClick
@@ -38,6 +28,11 @@ namespace puzzle.Dialogs
                 buttonInsertOrUpdateClick = value;
                 buttonInsertOrUpdate.Click += buttonInsertOrUpdateClick;
             }
+        }
+
+        private void SetLabelVertical()
+        {
+            labelVertical.Text = Math.Round((double)numericUpDownHorizontal.Value / ((double)600 / 450)).ToString();
         }
     }
 }
