@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -48,10 +50,13 @@ namespace puzzle.Model
             Fragment.Size = new(
                 MyImage.Width / NHorizontal,
                 MyImage.Height / NVertical);
+
+            SplitIntoFragments();
         }
 
-        public void SplitIntoFragments()
+        private void SplitIntoFragments()
         {
+            // Создает изображения фрагментов в обычном порядке.
             Fragment[] arr = Field;
             if (AssemblyType == 2)
             {
@@ -91,7 +96,8 @@ namespace puzzle.Model
                         size.Height,
                         GraphicsUnit.Pixel,
                         wrapMode);
-                    arr[i * NHorizontal + j] = new Fragment(position, bitmap);
+                    byte number = (byte)(i * NHorizontal + j);
+                    arr[i * NHorizontal + j] = new Fragment(number, position, bitmap);
                 }
             }
         }
@@ -113,12 +119,13 @@ namespace puzzle.Model
             }
         }
 
-        public void DrawField(Graphics graphics)
+        public void DrawField(Image image)
         {
+            using var graphics = Graphics.FromImage(image);
             graphics.Clear(Color.White);
             Size sizeGraphics = new(
-                368 / NHorizontal,
-                276 / NVertical);
+                image.Width / NHorizontal,
+                image.Height / NVertical);
             graphics.CompositingMode = CompositingMode.SourceOver;
             graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
             graphics.SmoothingMode = SmoothingMode.HighQuality;
@@ -149,7 +156,7 @@ namespace puzzle.Model
         }
 
         public byte[] FragmentNumbers
-        {
+        {            
             get
             {
                 Fragment[] arr = Field;
@@ -157,25 +164,28 @@ namespace puzzle.Model
                 {
                     arr = Tape;
                 }
+
                 byte[] fragmentNumbers = new byte[Length];
                 for (int i = 0; i < Length; i++)
                 {
-                    fragmentNumbers[i] = (byte)(arr[i].Position.Y * NHorizontal + arr[i].Position.X);
+                    fragmentNumbers[arr[i].Number] = (byte)i;
                 }
-                return fragmentNumbers; 
+                return fragmentNumbers;
             }
             set
             {
-                if (value.Length != Length) return;
+                //if (value.Length != Length) return;
                 Fragment[] arr = Field;
                 if (AssemblyType == 2)
                 {
                     arr = Tape;
                 }
-                byte[] fragmentNumbers = value;                
+
+                var oldArr = new Fragment[Length];
+                arr.CopyTo(oldArr, 0);
                 for (int i = 0; i < Length; i++)
-                {
-                    arr[i].Position = new Point(fragmentNumbers[i] % NHorizontal, fragmentNumbers[i] / NHorizontal);
+                {                    
+                    arr[value[i]] = oldArr[i];
                 }
             }
         }

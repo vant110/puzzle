@@ -1,6 +1,4 @@
-﻿using puzzle.Data;
-using puzzle.Model;
-using puzzle.Services;
+﻿using puzzle.Model;
 using puzzle.ViewModel;
 using System;
 using System.Drawing;
@@ -9,7 +7,7 @@ using System.Windows.Forms;
 namespace puzzle.Dialogs
 {
     public partial class InsertOrUpdatePuzzleForm : Form
-    { 
+    {
         private EventHandler buttonInsertOrUpdateClick;
 
         private Image image;
@@ -21,24 +19,43 @@ namespace puzzle.Dialogs
 
             comboBoxImage.SelectedValueChanged += new EventHandler((s, e) =>
             {
+                MyPuzzle.Instance = null;
+                if (pictureBoxField.Image != null)
+                {
+                    pictureBoxField.Image.Dispose();
+                    pictureBoxField.Image = null;
+                }
                 if (pictureBoxImage.Image != null)
                 {
                     pictureBoxImage.Image.Dispose();
                     pictureBoxImage.Image = null;
                 }
-                if (comboBoxImage.SelectedItem == null) return;
+                var selectedItem = (ImageVM)comboBoxImage.SelectedItem;
+                if (selectedItem == null)
+                {
+                    return;
+                }
 
-                image = Image.FromStream(((ImageVM)comboBoxImage.SelectedItem).Image);
+                image = Image.FromStream(selectedItem.Image);
                 pictureBoxImage.Image = image;
-                TryCreatePuzzle();
             });
             comboBoxImage.DataSource = form.bindingSourceGallery.DataSource;
 
             comboBoxLevel.SelectedValueChanged += new EventHandler((s, e) =>
             {
-                if (comboBoxLevel.SelectedItem == null) return;
-                level = (LevelVM)comboBoxLevel.SelectedItem;
-                TryCreatePuzzle();
+                MyPuzzle.Instance = null;
+                if (pictureBoxField.Image != null)
+                {
+                    pictureBoxField.Image.Dispose();
+                    pictureBoxField.Image = null;
+                }
+                var selectedItem = (LevelVM)comboBoxLevel.SelectedItem;
+                if (selectedItem == null)
+                {
+                    return;
+                }
+
+                level = selectedItem;
             });
             comboBoxLevel.DataSource = form.bindingSourceLevels.DataSource;
 
@@ -49,33 +66,53 @@ namespace puzzle.Dialogs
                     pictureBoxField.Image.Dispose();
                     pictureBoxField.Image = null;
                 }
-                MyPuzzle.Instance.Mix();
-                using var graphics = pictureBoxField.CreateGraphics();
-                MyPuzzle.Instance.DrawField(graphics);
-            });
-        }
 
-        private void TryCreatePuzzle()
-        {
-            if (image != null
-                && level != null)
+                CreatePuzzle();
+                DrawField();
+            });
+
+            Shown += new EventHandler((s, e) =>
+            {
+                DrawField();
+            });
+
+            FormClosed += new FormClosedEventHandler((s, e) => 
             {
                 if (pictureBoxField.Image != null)
                 {
                     pictureBoxField.Image.Dispose();
                     pictureBoxField.Image = null;
                 }
-                MyPuzzle.Instance = new(
-                    level.FragmentTypeId,
-                    level.AssemblyTypeId,
-                    level.HorizontalFragmentCount,
-                    level.VerticalFragmentCount,
-                    image);
-                MyPuzzle.Instance.SplitIntoFragments();
-                MyPuzzle.Instance.Mix();
-                using var graphics = pictureBoxField.CreateGraphics();
-                MyPuzzle.Instance.DrawField(graphics);
+                if (MyPuzzle.Instance != null)
+                {
+                    MyPuzzle.Instance = null;
+                }
+            });
+        }
+
+        private void CreatePuzzle()
+        {
+            if (image == null || level == null)
+            {
+                return;
             }
+
+            MyPuzzle.Instance = new(
+                level.FragmentTypeId,
+                level.AssemblyTypeId,
+                level.HorizontalFragmentCount,
+                level.VerticalFragmentCount,
+                image);
+            MyPuzzle.Instance.Mix();
+        }
+
+        private void DrawField()
+        {
+            if (MyPuzzle.Instance == null) return;
+
+            var bitmap = new Bitmap(pictureBoxField.Width, pictureBoxField.Height);
+            MyPuzzle.Instance.DrawField(bitmap);
+            pictureBoxField.Image = bitmap;
         }
 
         public EventHandler ButtonInsertOrUpdateClick

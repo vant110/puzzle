@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -10,14 +11,14 @@ namespace puzzle.Model
     class Fragment
     {
         public static Size Size { get; set; }
-        public Point OriginPosition { get; set; }
+        public byte Number { get; set; }
         public Point Position { get; set; }
         public Image Image { get; set; }
 
-        public Fragment(Point originPosition, Image image)
+        public Fragment(byte number, Point position, Image image)
         {
-            OriginPosition = originPosition;
-            Position = OriginPosition;
+            Number = number;
+            Position = position;
             Image = image;           
         }
     }

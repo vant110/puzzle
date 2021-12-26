@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace puzzle.Services
 {
@@ -76,44 +77,61 @@ namespace puzzle.Services
                     AssemblyTypeId = i.AssemblyTypeId
                 }).ToList();
         }
-        public static IList<PuzzleVM> LoadPuzzles()
+        public static IList<PuzzleVM> LoadPuzzles(IList<ImageVM> gallery)
         {
-            using var db = new PuzzleContext(Options);
-            /*
-            var puzzles = db.Puzzles
-                .Select(i => new PuzzleVM
+            List<PuzzleVM> puzzleFields;
+            List<PuzzleVM> puzzleTapes;
+            using (var db = new PuzzleContext(Options))
+            {
+                puzzleFields = db.PuzzleFields.Join(
+                    db.Puzzles,
+                    p => p.PuzzleId,
+                    pf => pf.PuzzleField.PuzzleId,
+                    (pf, p) => new PuzzleVM
+                    {
+                        Id = p.PuzzleId,
+                        Name = p.Name,
+                        ImageId = p.ImageId,
+                        DifficultyLevelId = p.DifficultyLevelId,
+                        FragmentNumbers = pf.FragmentNumbers
+                    }).ToList();
+                puzzleTapes = db.PuzzleTapes.Join(
+                    db.Puzzles,
+                    p => p.PuzzleId,
+                    pf => pf.PuzzleTape.PuzzleId,
+                    (pf, p) => new PuzzleVM
+                    {
+                        Id = p.PuzzleId,
+                        Name = p.Name,
+                        ImageId = p.ImageId,
+                        DifficultyLevelId = p.DifficultyLevelId,
+                        FragmentNumbers = pf.FragmentNumbers
+                    }).ToList();
+            }
+            List<PuzzleVM> newGallery = new();
+            foreach (var p in puzzleFields.Union(puzzleTapes).ToList())
+            {
+                ImageVM image;
+                try
                 {
-                    Id = i.PuzzleId,
-                    Name = i.Name,
-                    ImageId = i.ImageId,
-                    DifficultyLevelId = i.DifficultyLevelId
-                }).ToList();*/
+                    image = gallery
+                        .Where(i => i.Id == p.ImageId)
+                        .Single();
+                }
+                catch
+                {
+                    continue;
+                }
 
-            var puzzleFields = db.PuzzleFields.Join(
-                db.Puzzles,
-                p => p.PuzzleId,
-                pf => pf.PuzzleField.PuzzleId,
-                (pf, p) => new PuzzleVM
+                if (!LocalStorage.Exists(image.Path)) continue;
+
+                image.Image = LocalStorage.Load(image.Path);
+                if (Hasher.HashImage(image.Image) == image.ImageHash)
                 {
-                    Id = p.PuzzleId,
-                    Name = p.Name,
-                    ImageId = p.ImageId,
-                    DifficultyLevelId = p.DifficultyLevelId,
-                    FragmentNumbers = pf.FragmentNumbers
-                }).ToList();
-            var puzzleTapes = db.PuzzleTapes.Join(
-                db.Puzzles,
-                p => p.PuzzleId,
-                pf => pf.PuzzleTape.PuzzleId,
-                (pf, p) => new PuzzleVM
-                {
-                    Id = p.PuzzleId,
-                    Name = p.Name,
-                    ImageId = p.ImageId,
-                    DifficultyLevelId = p.DifficultyLevelId,
-                    FragmentNumbers = pf.FragmentNumbers
-                }).ToList();
-            return puzzleFields.Union(puzzleTapes).ToList();
+                    newGallery.Add(p);
+                }
+            }
+            return newGallery;
         }
     }
 }

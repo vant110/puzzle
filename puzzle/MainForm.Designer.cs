@@ -38,14 +38,16 @@
             this.bindingSourceFragmentTypes = new System.Windows.Forms.BindingSource(this.components);
             this.bindingSourceAssemblyTypes = new System.Windows.Forms.BindingSource(this.components);
             this.bindingSourceMethods = new System.Windows.Forms.BindingSource(this.components);
-            this.bindingSourceFilteredPuzzle = new System.Windows.Forms.BindingSource(this.components);
+            this.bindingSourcePuzzlesFilteredByLevel = new System.Windows.Forms.BindingSource(this.components);
+            this.bindingSourceLevelsFilteredByPuzzles = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceLevels)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceGallery)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePuzzles)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFragmentTypes)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceAssemblyTypes)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceMethods)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFilteredPuzzle)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePuzzlesFilteredByLevel)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceLevelsFilteredByPuzzles)).BeginInit();
             this.SuspendLayout();
             // 
             // panelCenter
@@ -102,7 +104,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFragmentTypes)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceAssemblyTypes)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceMethods)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFilteredPuzzle)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePuzzlesFilteredByLevel)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceLevelsFilteredByPuzzles)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -118,7 +121,8 @@
         public System.Windows.Forms.BindingSource bindingSourceFragmentTypes;
         public System.Windows.Forms.BindingSource bindingSourceAssemblyTypes;
         public System.Windows.Forms.BindingSource bindingSourceMethods;
-        private System.Windows.Forms.BindingSource bindingSourceFilteredPuzzle;
+        private System.Windows.Forms.BindingSource bindingSourcePuzzlesFilteredByLevel;
+        private System.Windows.Forms.BindingSource bindingSourceLevelsFilteredByPuzzles;
     }
 }
 
