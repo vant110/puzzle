@@ -79,14 +79,41 @@ namespace puzzle.Services
         public static IList<PuzzleVM> LoadPuzzles()
         {
             using var db = new PuzzleContext(Options);
-            return db.Puzzles
+            /*
+            var puzzles = db.Puzzles
                 .Select(i => new PuzzleVM
                 {
                     Id = i.PuzzleId,
                     Name = i.Name,
                     ImageId = i.ImageId,
                     DifficultyLevelId = i.DifficultyLevelId
+                }).ToList();*/
+
+            var puzzleFields = db.PuzzleFields.Join(
+                db.Puzzles,
+                p => p.PuzzleId,
+                pf => pf.PuzzleField.PuzzleId,
+                (pf, p) => new PuzzleVM
+                {
+                    Id = p.PuzzleId,
+                    Name = p.Name,
+                    ImageId = p.ImageId,
+                    DifficultyLevelId = p.DifficultyLevelId,
+                    FragmentNumbers = pf.FragmentNumbers
                 }).ToList();
+            var puzzleTapes = db.PuzzleTapes.Join(
+                db.Puzzles,
+                p => p.PuzzleId,
+                pf => pf.PuzzleTape.PuzzleId,
+                (pf, p) => new PuzzleVM
+                {
+                    Id = p.PuzzleId,
+                    Name = p.Name,
+                    ImageId = p.ImageId,
+                    DifficultyLevelId = p.DifficultyLevelId,
+                    FragmentNumbers = pf.FragmentNumbers
+                }).ToList();
+            return puzzleFields.Union(puzzleTapes).ToList();
         }
     }
 }

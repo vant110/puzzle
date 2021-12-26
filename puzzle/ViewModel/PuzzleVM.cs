@@ -9,6 +9,7 @@ namespace puzzle.ViewModel
         private string name;
         private short imageId;
         private sbyte difficultyLevelId;
+        private byte[] fragmentNumbers;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
@@ -49,6 +50,15 @@ namespace puzzle.ViewModel
             set
             {
                 difficultyLevelId = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public byte[] FragmentNumbers
+        {
+            get { return fragmentNumbers; }
+            set
+            {
+                fragmentNumbers = value;
                 NotifyPropertyChanged();
             }
         }

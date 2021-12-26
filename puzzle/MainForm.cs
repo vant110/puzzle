@@ -60,6 +60,8 @@ namespace puzzle
                 bindingSourceAssemblyTypes.DataSource = db.AssemblyTypes.Local.ToBindingList();
                 bindingSourceMethods.DataSource = db.CountingMethods.Local.ToBindingList();
             }
+
+            bindingSourceFilteredPuzzle.DataSource = new BindingList<PuzzleVM>();
         }
 
         private static void DisposeImage(ImageAndMethodsUC right)
@@ -619,7 +621,7 @@ namespace puzzle
             ChangeFill(fill);
 
             fill.panelLevel.Visible = true;
-            
+
             fill.comboBoxLevel.SelectedValueChanged += new EventHandler((s, e) =>
             {
                 var selectedItem = (LevelVM)fill.comboBoxLevel.SelectedItem;
@@ -627,12 +629,19 @@ namespace puzzle
                 {
                     return;
                 }
-                bindingSourcePuzzles.Filter = $"difficultyLevelId = {selectedItem.Id}";
+
+                bindingSourceFilteredPuzzle.Clear();
+                var newList = ((IList<PuzzleVM>)bindingSourcePuzzles.List).
+                    Where(i => i.DifficultyLevelId == selectedItem.Id).ToList();
+                foreach (var p in newList)
+                {
+                    bindingSourceFilteredPuzzle.Add(p);
+                }
             });
             fill.comboBoxLevel.DataSource = bindingSourceLevels.DataSource;
             fill.comboBoxLevel.DisplayMember = "Name";
-            /*
-            bindingSourcePuzzles.ListChanged += new ListChangedEventHandler((s, e) =>
+            
+            bindingSourceFilteredPuzzle.ListChanged += new ListChangedEventHandler((s, e) =>
             {
                 var selectedItem = (PuzzleVM)fill.listBox.SelectedItem;
                 if (selectedItem == null)
@@ -640,9 +649,9 @@ namespace puzzle
                     return;
                 }
 
-                if (bindingSourcePuzzles.List.Count > 0)
+                if (bindingSourceFilteredPuzzle.List.Count > 0)
                 {
-                    selectedItem = (PuzzleVM)bindingSourcePuzzles.List[fill.listBox.SelectedIndex];
+                    selectedItem = (PuzzleVM)bindingSourceFilteredPuzzle.List[fill.listBox.SelectedIndex];
 
                     right.pictureBoxImage.Image = Image.FromStream(
                         ((IList<ImageVM>)bindingSourceGallery.List)
@@ -663,8 +672,8 @@ namespace puzzle
                     ((IList<ImageVM>)bindingSourceGallery.List)
                     .Where(i => i.Id == selectedItem.ImageId)
                     .Select(i => i.Image).Single());
-            });*/
-            fill.listBox.DataSource = bindingSourcePuzzles.DataSource;
+            });
+            fill.listBox.DataSource = bindingSourceFilteredPuzzle.DataSource;
             #endregion
             #region Top
             topControl.ButtonBackVisible = true;
@@ -752,9 +761,7 @@ namespace puzzle
                             {
                                 throw new Exception("Ошибка.");
                             }
-                        }/*
-                        Db.Instance.Puzzles.Update((Puzzle)fill.listBox.SelectedItem);
-                        Db.Instance.SaveChanges();*/
+                        }
                         MessageBoxes.Info("Успешно.");
                     }
                     catch (MySqlConnector.MySqlException ex) when (ex.Number == 1062)
@@ -773,22 +780,8 @@ namespace puzzle
                         MessageBoxes.Error(ex.Message);
                     }
                 });
+
                 form.ShowDialog();
-                /*
-                Db.Instance.Dispose();
-                Db.Instance = new PuzzleContext(Db.Options);
-                Db.FirstLoad();
-                Db.LoadGalleries();
-                Db.LoadDifficultyLevels();
-                Db.LoadPuzzles(); 
-                fill.comboBoxLevel.DataSource = Db.Instance.DifficultyLevels.Local.ToBindingList();
-                fill.comboBoxLevel.DisplayMember = "Name";
-                fill.comboBoxLevel.ValueMember = "DifficultyLevelId";
-                fill.listBox.DataSource = Db.Instance.Puzzles.Local.ToBindingList();
-                fill.listBox.DisplayMember = "Name";
-                fill.listBox.ValueMember = "PuzzleId";*/
-                fill.listBox.ClearSelected();
-                right.Visible = false;
             });
 
             bottomControl.ButtonLoadVisible = false;
@@ -820,15 +813,15 @@ namespace puzzle
                         var puzzle = new PuzzleVM
                         {
                             Name = form.textBoxName.Text,
-                            ImageId = ((Gallery)form.comboBoxImage.SelectedItem).ImageId,
-                            DifficultyLevelId = ((DifficultyLevel)form.comboBoxLevel.SelectedItem).DifficultyLevelId,
-                            //FragmentNumbers = MyPuzzle.Instance.FragmentNumbers
+                            ImageId = ((ImageVM)form.comboBoxImage.SelectedItem).Id,
+                            DifficultyLevelId = ((LevelVM)form.comboBoxLevel.SelectedItem).Id,
+                            FragmentNumbers = MyPuzzle.Instance.FragmentNumbers
                         };
 
-                        var p1 = new MySqlConnector.MySqlParameter("@p1", PuzzleDTO.Name);
-                        var p2 = new MySqlConnector.MySqlParameter("@p2", PuzzleDTO.ImageId);
-                        var p3 = new MySqlConnector.MySqlParameter("@p3", PuzzleDTO.DifficultyLevelId);
-                        var p4 = new MySqlConnector.MySqlParameter("@p4", PuzzleDTO.FragmentNumbers);
+                        var p1 = new MySqlConnector.MySqlParameter("@p1", puzzle.Name);
+                        var p2 = new MySqlConnector.MySqlParameter("@p2", puzzle.ImageId);
+                        var p3 = new MySqlConnector.MySqlParameter("@p3", puzzle.DifficultyLevelId);
+                        var p4 = new MySqlConnector.MySqlParameter("@p4", puzzle.FragmentNumbers);
                         using (var db = new PuzzleContext(Db.Options))
                         {
                             int rowsAffected = db.Database.ExecuteSqlRaw("CALL `insert_puzzle` (@p1, @p2, @p3, @p4)", p1, p2, p3, p4);
@@ -836,30 +829,26 @@ namespace puzzle
                             {
                                 throw new Exception("Ошибка.");
                             }
+                            puzzle.Id = db.Puzzles
+                                .Where(i => i.Name == puzzle.Name)
+                                .Select(i => i.PuzzleId).Single();
                         }
-                        Db.LoadPuzzles();
+
+                        bindingSourcePuzzles.Add(puzzle);
                         MessageBoxes.Info("Успешно.");
                     }
-                    catch (MySqlConnector.MySqlException ex) when (ex.Number == 1062)
+                    catch (MySqlConnector.MySqlException ex) 
+                    when (ex.Number == 1062)
                     {
-                        if (ex.Message.Contains("'puzzles.name'"))
-                        {
-                            MessageBoxes.Error("Название пазла занято.");
-                        }
-                        else
-                        {
-                            MessageBoxes.Error(ex.Message);
-                        }
+                        MessageBoxes.Error("Название пазла занято.");
                     }
                     catch (Exception ex)
                     {
                         MessageBoxes.Error(ex.Message);
                     }
                 });
+
                 form.ShowDialog();
-                //Db.LoadDifficultyLevels();
-                fill.listBox.ClearSelected();
-                right.Visible = false;
             });
             #endregion
         }
