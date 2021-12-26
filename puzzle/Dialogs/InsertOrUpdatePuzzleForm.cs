@@ -1,6 +1,7 @@
 ﻿using puzzle.Data;
 using puzzle.Model;
 using puzzle.Services;
+using puzzle.ViewModel;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -11,23 +12,13 @@ namespace puzzle.Dialogs
     { 
         private EventHandler buttonInsertOrUpdateClick;
 
-        private Gallery gallery;
         private Image image;
-        private DifficultyLevel difficultyLevel;
+        private LevelVM level;
 
-        public InsertOrUpdatePuzzleForm()
+        public InsertOrUpdatePuzzleForm(MainForm form)
         {
             InitializeComponent();
 
-            //comboBoxImage.DataSource = Db.Instance.Galleries.Local.ToBindingList();
-            comboBoxImage.DisplayMember = "Name";
-            comboBoxImage.ValueMember = "ImageId";
-            if (comboBoxImage.SelectedItem != null)
-            {
-                gallery = (Gallery)comboBoxImage.SelectedItem;
-                image = LocalStorage.LoadImage(gallery.Path);
-                pictureBoxImage.Image = image;
-            }
             comboBoxImage.SelectedValueChanged += new EventHandler((s, e) =>
             {
                 if (pictureBoxImage.Image != null)
@@ -36,26 +27,20 @@ namespace puzzle.Dialogs
                     pictureBoxImage.Image = null;
                 }
                 if (comboBoxImage.SelectedItem == null) return;
-                gallery = (Gallery)comboBoxImage.SelectedItem;
-                image = LocalStorage.LoadImage(gallery.Path);
+
+                image = Image.FromStream(((ImageVM)comboBoxImage.SelectedItem).Image);
                 pictureBoxImage.Image = image;
                 TryCreatePuzzle();
             });
+            comboBoxImage.DataSource = form.bindingSourceGallery.DataSource;
 
-            //comboBoxLevel.DataSource = Db.Instance.DifficultyLevels.Local.ToBindingList();
-            comboBoxLevel.DisplayMember = "Name";
-            comboBoxLevel.ValueMember = "DifficultyLevelId";
-            if (comboBoxLevel.SelectedItem != null)
-            {
-                difficultyLevel = (DifficultyLevel)comboBoxLevel.SelectedItem;
-                TryCreatePuzzle();
-            }
             comboBoxLevel.SelectedValueChanged += new EventHandler((s, e) =>
             {
                 if (comboBoxLevel.SelectedItem == null) return;
-                difficultyLevel = (DifficultyLevel)comboBoxLevel.SelectedItem;
+                level = (LevelVM)comboBoxLevel.SelectedItem;
                 TryCreatePuzzle();
             });
+            comboBoxLevel.DataSource = form.bindingSourceLevels.DataSource;
 
             buttonMix.Click += new EventHandler((s, e) =>
             {
@@ -72,9 +57,8 @@ namespace puzzle.Dialogs
 
         private void TryCreatePuzzle()
         {
-            if (gallery != null
-                && image != null
-                && difficultyLevel != null)
+            if (image != null
+                && level != null)
             {
                 if (pictureBoxField.Image != null)
                 {
@@ -82,10 +66,10 @@ namespace puzzle.Dialogs
                     pictureBoxField.Image = null;
                 }
                 MyPuzzle.Instance = new(
-                    difficultyLevel.FragmentTypeId,
-                    difficultyLevel.AssemblyTypeId,
-                    difficultyLevel.HorizontalFragmentCount,
-                    difficultyLevel.VerticalFragmentCount,
+                    level.FragmentTypeId,
+                    level.AssemblyTypeId,
+                    level.HorizontalFragmentCount,
+                    level.VerticalFragmentCount,
                     image);
                 MyPuzzle.Instance.SplitIntoFragments();
                 MyPuzzle.Instance.Mix();

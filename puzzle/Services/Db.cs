@@ -53,8 +53,10 @@ namespace puzzle.Services
             List<ImageVM> newGallery = new();
             foreach (var g in gallery)
             {
-                if (LocalStorage.Exists(g.Path)
-                    && Hasher.HashImageAndClose(LocalStorage.Load(g.Path)) == g.ImageHash)
+                if (!LocalStorage.Exists(g.Path)) continue;
+
+                g.Image = LocalStorage.Load(g.Path);
+                if (Hasher.HashImage(g.Image) == g.ImageHash)
                 {
                     newGallery.Add(g);
                 }

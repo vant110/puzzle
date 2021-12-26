@@ -47,19 +47,23 @@ namespace puzzle.Dialogs
             // 
             // comboBoxLevel
             // 
+            this.comboBoxLevel.DisplayMember = "Name";
             this.comboBoxLevel.FormattingEnabled = true;
             this.comboBoxLevel.Location = new System.Drawing.Point(403, 74);
             this.comboBoxLevel.Name = "comboBoxLevel";
             this.comboBoxLevel.Size = new System.Drawing.Size(368, 21);
             this.comboBoxLevel.TabIndex = 31;
+            this.comboBoxLevel.ValueMember = "Id";
             // 
             // comboBoxImage
             // 
+            this.comboBoxImage.DisplayMember = "Name";
             this.comboBoxImage.FormattingEnabled = true;
             this.comboBoxImage.Location = new System.Drawing.Point(403, 47);
             this.comboBoxImage.Name = "comboBoxImage";
             this.comboBoxImage.Size = new System.Drawing.Size(368, 21);
             this.comboBoxImage.TabIndex = 30;
+            this.comboBoxImage.ValueMember = "Id";
             // 
             // label2
             // 

@@ -20,9 +20,7 @@ namespace puzzle.Services
             imageStream.Seek(0, SeekOrigin.Begin);
 
             SHA512 shaM = new SHA512Managed();
-            string hash = Convert.ToBase64String(shaM.ComputeHash(imageStream));
-            Debug.WriteLine(hash.Length);
-            return hash;
+            return Convert.ToBase64String(shaM.ComputeHash(imageStream));
         }
 
         public static string HashImageAndClose(Stream imageStream)
