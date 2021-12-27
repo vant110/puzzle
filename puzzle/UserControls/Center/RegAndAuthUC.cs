@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using puzzle.Services;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -75,11 +76,12 @@ namespace puzzle.UserControls
                     using (var db = new PuzzleContext(Db.Options))
                     {
                         result = db.Results.FromSqlRaw("SELECT `authorize` (@p1, @p2) AS `Value`", p1, p2).Single().Value;
+                        if (result == -1)
+                        {
+                            throw new Exception("Неверный логин или пароль.");
+                        }
                     }
-                    if (result == -1)
-                    {
-                        throw new Exception("Неверный логин или пароль.");
-                    }
+
                     if (result == 0)
                     {
                         // Админ.
@@ -88,6 +90,7 @@ namespace puzzle.UserControls
                     else
                     {
                         // Игрок.
+                        form.DisplayGameChoice();
                     }
                 }
                 catch (Exception ex)

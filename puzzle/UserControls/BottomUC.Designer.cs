@@ -33,13 +33,17 @@ namespace puzzle.UserControls
             this.buttonUpdate = new System.Windows.Forms.Button();
             this.buttonLoad = new System.Windows.Forms.Button();
             this.buttonInsertOrNewGame = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonDelete
             // 
             this.buttonDelete.AutoSize = true;
             this.buttonDelete.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonDelete.Location = new System.Drawing.Point(13, 13);
+            this.buttonDelete.Location = new System.Drawing.Point(16, 13);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(61, 23);
             this.buttonDelete.TabIndex = 0;
@@ -50,7 +54,7 @@ namespace puzzle.UserControls
             // 
             this.buttonUpdate.AutoSize = true;
             this.buttonUpdate.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonUpdate.Location = new System.Drawing.Point(87, 13);
+            this.buttonUpdate.Location = new System.Drawing.Point(90, 13);
             this.buttonUpdate.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
             this.buttonUpdate.Name = "buttonUpdate";
             this.buttonUpdate.Size = new System.Drawing.Size(65, 23);
@@ -60,41 +64,69 @@ namespace puzzle.UserControls
             // 
             // buttonLoad
             // 
-            this.buttonLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonLoad.AutoSize = true;
             this.buttonLoad.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonLoad.Location = new System.Drawing.Point(477, 13);
-            this.buttonLoad.Margin = new System.Windows.Forms.Padding(3, 3, 10, 3);
+            this.buttonLoad.Enabled = false;
+            this.buttonLoad.Location = new System.Drawing.Point(13, 0);
+            this.buttonLoad.Margin = new System.Windows.Forms.Padding(0);
             this.buttonLoad.Name = "buttonLoad";
             this.buttonLoad.Size = new System.Drawing.Size(69, 23);
-            this.buttonLoad.TabIndex = 2;
+            this.buttonLoad.TabIndex = 5;
             this.buttonLoad.Text = "Загрузить";
             this.buttonLoad.UseVisualStyleBackColor = true;
             // 
             // buttonInsertOrNewGame
             // 
-            this.buttonInsertOrNewGame.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonInsertOrNewGame.AutoSize = true;
             this.buttonInsertOrNewGame.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonInsertOrNewGame.Location = new System.Drawing.Point(559, 13);
+            this.buttonInsertOrNewGame.Location = new System.Drawing.Point(13, 0);
+            this.buttonInsertOrNewGame.Margin = new System.Windows.Forms.Padding(0);
             this.buttonInsertOrNewGame.Name = "buttonInsertOrNewGame";
             this.buttonInsertOrNewGame.Size = new System.Drawing.Size(128, 23);
-            this.buttonInsertOrNewGame.TabIndex = 3;
+            this.buttonInsertOrNewGame.TabIndex = 7;
             this.buttonInsertOrNewGame.Text = "Добавить/Новая игра";
             this.buttonInsertOrNewGame.UseVisualStyleBackColor = true;
             // 
-            // BottomControl
+            // panel1
+            // 
+            this.panel1.AutoSize = true;
+            this.panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panel1.BackColor = System.Drawing.Color.Transparent;
+            this.panel1.Controls.Add(this.buttonLoad);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel1.Location = new System.Drawing.Point(464, 13);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(82, 24);
+            this.panel1.TabIndex = 6;
+            // 
+            // panel2
+            // 
+            this.panel2.AutoSize = true;
+            this.panel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panel2.BackColor = System.Drawing.Color.Transparent;
+            this.panel2.Controls.Add(this.buttonInsertOrNewGame);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel2.Location = new System.Drawing.Point(546, 13);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(141, 24);
+            this.panel2.TabIndex = 8;
+            // 
+            // BottomUC
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.Controls.Add(this.buttonInsertOrNewGame);
-            this.Controls.Add(this.buttonLoad);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.buttonUpdate);
             this.Controls.Add(this.buttonDelete);
-            this.Name = "BottomControl";
-            this.Padding = new System.Windows.Forms.Padding(10);
+            this.Name = "BottomUC";
+            this.Padding = new System.Windows.Forms.Padding(13);
             this.Size = new System.Drawing.Size(700, 50);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -106,5 +138,7 @@ namespace puzzle.UserControls
         private System.Windows.Forms.Button buttonUpdate;
         private System.Windows.Forms.Button buttonLoad;
         private System.Windows.Forms.Button buttonInsertOrNewGame;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
     }
 }

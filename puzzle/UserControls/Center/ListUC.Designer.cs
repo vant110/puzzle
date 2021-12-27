@@ -29,7 +29,7 @@ namespace puzzle.UserControls
         /// </summary>
         private void InitializeComponent()
         {
-            this.comboBoxLevel = new System.Windows.Forms.ComboBox();
+            this.comboBoxLevels = new System.Windows.Forms.ComboBox();
             this.listBox = new System.Windows.Forms.ListBox();
             this.panelLevel = new System.Windows.Forms.Panel();
             this.panelLevel.SuspendLayout();
@@ -37,15 +37,14 @@ namespace puzzle.UserControls
             // 
             // comboBoxLevel
             // 
-            this.comboBoxLevel.DisplayMember = "Name";
-            this.comboBoxLevel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.comboBoxLevel.Location = new System.Drawing.Point(0, 0);
-            this.comboBoxLevel.Margin = new System.Windows.Forms.Padding(0);
-            this.comboBoxLevel.Name = "comboBoxLevel";
-            this.comboBoxLevel.Size = new System.Drawing.Size(374, 21);
-            this.comboBoxLevel.Sorted = true;
-            this.comboBoxLevel.TabIndex = 0;
-            this.comboBoxLevel.ValueMember = "Id";
+            this.comboBoxLevels.Dock = System.Windows.Forms.DockStyle.Top;
+            this.comboBoxLevels.Location = new System.Drawing.Point(0, 0);
+            this.comboBoxLevels.Margin = new System.Windows.Forms.Padding(0);
+            this.comboBoxLevels.Name = "comboBoxLevel";
+            this.comboBoxLevels.Size = new System.Drawing.Size(374, 21);
+            this.comboBoxLevels.Sorted = true;
+            this.comboBoxLevels.TabIndex = 0;
+            this.comboBoxLevels.ValueMember = "Id";
             // 
             // listBox
             // 
@@ -64,7 +63,7 @@ namespace puzzle.UserControls
             // 
             this.panelLevel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panelLevel.BackColor = System.Drawing.Color.Transparent;
-            this.panelLevel.Controls.Add(this.comboBoxLevel);
+            this.panelLevel.Controls.Add(this.comboBoxLevels);
             this.panelLevel.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelLevel.Location = new System.Drawing.Point(13, 18);
             this.panelLevel.Margin = new System.Windows.Forms.Padding(0);
@@ -90,7 +89,7 @@ namespace puzzle.UserControls
 
         #endregion
         public System.Windows.Forms.ListBox listBox;
-        public System.Windows.Forms.ComboBox comboBoxLevel;
+        public System.Windows.Forms.ComboBox comboBoxLevels;
         public System.Windows.Forms.Panel panelLevel;
     }
 }

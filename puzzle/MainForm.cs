@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using puzzle.ViewModel;
 using System.Collections.Generic;
+using puzzle.UserControls.Center;
 
 namespace puzzle
 {
@@ -59,10 +60,7 @@ namespace puzzle
                 bindingSourceFragmentTypes.DataSource = db.FragmentTypes.Local.ToBindingList();
                 bindingSourceAssemblyTypes.DataSource = db.AssemblyTypes.Local.ToBindingList();
                 bindingSourceMethods.DataSource = db.CountingMethods.Local.ToBindingList();
-            }
-
-            bindingSourceLevelsFilteredByPuzzles.DataSource = new BindingList<LevelVM>();
-            bindingSourcePuzzlesFilteredByLevel.DataSource = new BindingList<PuzzleVM>();
+            }            
         }
 
         private static void DisposeImage(ImageAndMethodsUC right)
@@ -92,6 +90,70 @@ namespace puzzle
             }
             rightControl = newRightControl;
             panelCenter.Controls.Add(rightControl);
+        }
+
+        private void FilterLevels(ComboBox comboBoxLevels)
+        {
+            Debug.WriteLine(0);
+
+            var filteredLevels = ((IList<LevelVM>)bindingSourceLevels.List)
+                .Join((IList<PuzzleVM>)bindingSourcePuzzles.List,
+                    l => l.Id,
+                    p => p.DifficultyLevelId,
+                    (l, p) => l)
+                .Distinct()
+                .OrderBy(i => i.Name)
+                .ToList();
+            bindingSourceFilteredLevels.DataSource = new BindingList<LevelVM>(filteredLevels);
+
+            comboBoxLevels.DataSource = bindingSourceFilteredLevels.DataSource;
+            comboBoxLevels.DisplayMember = "Name";
+        }
+        private void FilterPuzzles(Control listOrGrid)
+        {
+            Debug.WriteLine(1);
+
+            if (bindingSourceFilteredLevels.Current == null)
+            {
+                bindingSourceFilteredPuzzles.Clear();
+                return;
+            }
+
+            var filteredPuzzles = ((IList<PuzzleVM>)bindingSourcePuzzles.List)
+                .Where(i => i.DifficultyLevelId == ((LevelVM)bindingSourceFilteredLevels.Current).Id)
+                .OrderBy(i => i.Name)
+                .ToList();
+            bindingSourceFilteredPuzzles.DataSource = new BindingList<PuzzleVM>(filteredPuzzles);
+
+            if (listOrGrid is ListBox listBox)
+            {
+                listBox.DataSource = bindingSourceFilteredPuzzles.DataSource;
+            }
+            else if (listOrGrid is DataGridView dataGridView)
+            {
+                dataGridView.AutoGenerateColumns = false;
+                dataGridView.DataSource = bindingSourceFilteredPuzzles.DataSource;
+                for (int i = 0; i < dataGridView.RowCount; i++)
+                {
+                    // !!! если нет сохраненной игры
+                    dataGridView.Rows[i].Cells[1].Value = new Bitmap(1, 1);
+                }
+            }
+        }
+        private void DisplayImage(ImageAndMethodsUC right)
+        {
+            Debug.WriteLine(2);
+
+            if (bindingSourceFilteredPuzzles.Position == -1)
+            {
+                right.pictureBoxImage.Image = null;
+                return;
+            }
+
+            right.pictureBoxImage.Image = Image.FromStream(
+                ((IList<ImageVM>)bindingSourceGallery.List)
+                .Where(i => i.Id == ((PuzzleVM)bindingSourceFilteredPuzzles.Current).ImageId)
+                .Select(i => i.Image).Single());
         }
 
         public void DisplayRegAndAuth()
@@ -650,95 +712,21 @@ namespace puzzle
                 Dock = DockStyle.Fill,
             };
             ChangeFill(fill);
-
             fill.panelLevel.Visible = true;
 
+            fill.comboBoxLevels.SelectedValueChanged += new EventHandler((s, e) =>
             {
-                bindingSourceLevelsFilteredByPuzzles.Clear();
-                var newList = ((IList<LevelVM>)bindingSourceLevels.List).Join(
-                    ((IList<PuzzleVM>)bindingSourcePuzzles.List),
-                    l => l.Id,
-                    p => p.DifficultyLevelId,
-                    (l, p) => l)
-                    .Distinct()
-                    .ToList();
-                foreach (var p in newList)
-                {
-                    bindingSourceLevelsFilteredByPuzzles.Add(p);
-                }
-            }
-            fill.comboBoxLevel.SelectedValueChanged += new EventHandler((s, e) =>
-            {
-                var selectedLevel = (LevelVM)fill.comboBoxLevel.SelectedItem;
-                if (selectedLevel == null)
-                {
-                    return;
-                }
-
-                bindingSourcePuzzlesFilteredByLevel.Clear();
-                var newList = ((IList<PuzzleVM>)bindingSourcePuzzles.List).
-                    Where(i => i.DifficultyLevelId == selectedLevel.Id).ToList();
-                foreach (var p in newList)
-                {
-                    bindingSourcePuzzlesFilteredByLevel.Add(p);
-                }
-
-                var selectedItem = (PuzzleVM)fill.listBox.SelectedItem;
-                if (selectedItem == null)
-                {                    
-                    return;
-                }
-                right.pictureBoxImage.Image = Image.FromStream(
-                    ((IList<ImageVM>)bindingSourceGallery.List)
-                    .Where(i => i.Id == selectedItem.ImageId)
-                    .Select(i => i.Image).Single());
-            });
-            fill.comboBoxLevel.DataSource = bindingSourceLevelsFilteredByPuzzles.DataSource;
-            fill.comboBoxLevel.DisplayMember = "Name";
-
-            bindingSourcePuzzlesFilteredByLevel.ListChanged += new ListChangedEventHandler((s, e) =>
-            {
-                var selectedItem = (PuzzleVM)fill.listBox.SelectedItem;
-                if (selectedItem == null)
-                {
-                    return;
-                }
-
-                var selectedIndex = fill.listBox.SelectedIndex;
-                if (selectedIndex != bindingSourcePuzzlesFilteredByLevel.List.Count
-                && bindingSourcePuzzlesFilteredByLevel.List.Count > 0)
-                {
-                    fill.listBox.SelectedItem = (PuzzleVM)bindingSourcePuzzlesFilteredByLevel.List[selectedIndex];
-
-                    right.pictureBoxImage.Image = Image.FromStream(
-                        ((IList<ImageVM>)bindingSourceGallery.List)
-                        .Where(i => i.Id == selectedItem.ImageId)
-                        .Select(i => i.Image).Single());                
-                }
-                else
-                {
-                    if (right.pictureBoxImage.Image != null)
-                    {
-                        right.pictureBoxImage.Image.Dispose();
-                        right.pictureBoxImage.Image = null;
-                    }
-                }
+                bindingSourceFilteredLevels.Position = fill.comboBoxLevels.SelectedIndex;
+                FilterPuzzles(fill.listBox);
             });
 
             fill.listBox.SelectedValueChanged += new EventHandler((s, e) =>
             {
-                var selectedItem = (PuzzleVM)fill.listBox.SelectedItem;
-                if (selectedItem == null)
-                {
-                    return;
-                }
-
-                right.pictureBoxImage.Image = Image.FromStream(
-                    ((IList<ImageVM>)bindingSourceGallery.List)
-                    .Where(i => i.Id == selectedItem.ImageId)
-                    .Select(i => i.Image).Single());
+                bindingSourceFilteredPuzzles.Position = fill.listBox.SelectedIndex;
+                DisplayImage(right);
             });
-            fill.listBox.DataSource = bindingSourcePuzzlesFilteredByLevel.DataSource;
+            
+            FilterLevels(fill.comboBoxLevels);
             #endregion
             #region Top
             topControl.ButtonBackVisible = true;
@@ -757,11 +745,11 @@ namespace puzzle
             bottomControl.ButtonDeleteVisible = true;
             bottomControl.ButtonDeleteClick = new EventHandler((s, e) =>
             {
-                var selectedItem = (PuzzleVM)fill.listBox.SelectedItem;
-                if (selectedItem == null) return;
+                var puzzle = (PuzzleVM)fill.listBox.SelectedItem;
+                if (puzzle == null) return;
                 try
                 {
-                    var id = new MySqlConnector.MySqlParameter("@id", selectedItem.Id);
+                    var id = new MySqlConnector.MySqlParameter("@id", puzzle.Id);
                     using (var db = new PuzzleContext(Db.Options))
                     {
                         int rowsAffected = db.Database.ExecuteSqlRaw("CALL `delete_puzzle` (@id)", id);
@@ -771,40 +759,33 @@ namespace puzzle
                         }
                     }
 
-                    bindingSourcePuzzles.Remove(selectedItem);
-                    bindingSourcePuzzlesFilteredByLevel.Remove(selectedItem);
-                    if (fill.listBox.SelectedIndex == -1) {
+                    var level = fill.comboBoxLevels.SelectedItem;
+                    var puzzleIndex = fill.listBox.SelectedIndex;
+
+                    bindingSourcePuzzles.Remove(puzzle);
+
+                    FilterLevels(fill.comboBoxLevels);
+                    if (bindingSourceFilteredLevels.Contains(level)) 
+                    {
+                        fill.comboBoxLevels.SelectedItem = level;
+                        if (bindingSourceFilteredPuzzles.Count > 1) 
                         {
-                            bindingSourceLevelsFilteredByPuzzles.Clear();
-                            var newList = ((IList<LevelVM>)bindingSourceLevels.List).Join(
-                                ((IList<PuzzleVM>)bindingSourcePuzzles.List),
-                                l => l.Id,
-                                p => p.DifficultyLevelId,
-                                (l, p) => l)
-                                .Distinct()
-                                .ToList();
-                            foreach (var p in newList)
+                            if (bindingSourceFilteredPuzzles.Count > puzzleIndex)
                             {
-                                bindingSourceLevelsFilteredByPuzzles.Add(p);
-                            }
-                        }
-                        {
-                            var selectedLevel = (LevelVM)fill.comboBoxLevel.SelectedItem;
-                            bindingSourcePuzzlesFilteredByLevel.Clear();
-                            var newList = ((IList<PuzzleVM>)bindingSourcePuzzles.List).
-                                Where(i => i.DifficultyLevelId == selectedLevel.Id).ToList();
-                            foreach (var p in newList)
+                                fill.listBox.SelectedIndex = puzzleIndex;
+                            }                            
+                            else if (bindingSourceFilteredPuzzles.Count == puzzleIndex)
                             {
-                                bindingSourcePuzzlesFilteredByLevel.Add(p);
+                                fill.listBox.SelectedIndex = puzzleIndex - 1;
                             }
                         }
                     }
+                    else if (bindingSourceFilteredLevels.Count == 0)
+                    {
+                        FilterPuzzles(fill.listBox);
+                    }
+
                     MessageBoxes.Info("Успешно.");
-                }
-                catch (MySqlConnector.MySqlException ex)
-                when (ex.Number == 1451)
-                {
-                    MessageBoxes.Error("Невозможно удалить уровень сложности,\nпока он используется хотя бы в одном пазле.");
                 }
                 catch (Exception ex)
                 {
@@ -815,23 +796,23 @@ namespace puzzle
             bottomControl.ButtonUpdateVisible = true;
             bottomControl.ButtonUpdateClick = new EventHandler((s, e) =>
             {
-                var selectedItem = (PuzzleVM)fill.listBox.SelectedItem;
-                if (selectedItem == null) return;
+                var puzzle = (PuzzleVM)fill.listBox.SelectedItem;
+                if (puzzle == null) return;
                 var form = new InsertOrUpdatePuzzleForm(this)
                 {
                     Text = "Изменение пазла",
                 };
 
-                form.textBoxName.Text = selectedItem.Name;
-                form.comboBoxImage.SelectedValue = selectedItem.ImageId;
-                form.comboBoxLevel.SelectedValue = selectedItem.DifficultyLevelId;
+                form.textBoxName.Text = puzzle.Name;
+                form.comboBoxImage.SelectedValue = puzzle.ImageId;
+                form.comboBoxLevel.SelectedValue = puzzle.DifficultyLevelId;
 
                 Image image = Image.FromStream(
                         ((IList<ImageVM>)bindingSourceGallery.List)
-                        .Where(i => i.Id == selectedItem.ImageId)
+                        .Where(i => i.Id == puzzle.ImageId)
                         .Select(i => i.Image).Single());
-                LevelVM level = ((IList<LevelVM>)bindingSourceLevelsFilteredByPuzzles.List)
-                        .Where(i => i.Id == selectedItem.DifficultyLevelId).Single();
+                LevelVM level = ((IList<LevelVM>)bindingSourceFilteredLevels.List)
+                        .Where(i => i.Id == puzzle.DifficultyLevelId).Single();
 
                 MyPuzzle.Instance = new(
                     level.FragmentTypeId,
@@ -839,7 +820,7 @@ namespace puzzle
                     level.HorizontalFragmentCount,
                     level.VerticalFragmentCount,
                     image);
-                MyPuzzle.Instance.FragmentNumbers = selectedItem.FragmentNumbers;
+                MyPuzzle.Instance.FragmentNumbers = puzzle.FragmentNumbers;
 
                 form.buttonInsertOrUpdate.Text = "Изменить";
                 form.ButtonInsertOrUpdateClick = new EventHandler((s, e) =>
@@ -858,8 +839,12 @@ namespace puzzle
                         {
                             throw new Exception("Выберите уровень сложности.");
                         }
+                        if (MyPuzzle.Instance == null)
+                        {
+                            throw new Exception("Перемешайте фрагменты.");
+                        }
 
-                        var puzzle = new PuzzleVM
+                        var tempPuzzle = new PuzzleVM
                         {
                             Name = form.textBoxName.Text,
                             ImageId = ((ImageVM)form.comboBoxImage.SelectedItem).Id,
@@ -867,11 +852,11 @@ namespace puzzle
                             FragmentNumbers = MyPuzzle.Instance.FragmentNumbers
                         };
 
-                        var id = new MySqlConnector.MySqlParameter("@id", selectedItem.Id);
-                        var p1 = new MySqlConnector.MySqlParameter("@p1", puzzle.Name);
-                        var p2 = new MySqlConnector.MySqlParameter("@p2", puzzle.ImageId);
-                        var p3 = new MySqlConnector.MySqlParameter("@p3", puzzle.DifficultyLevelId);
-                        var p4 = new MySqlConnector.MySqlParameter("@p4", puzzle.FragmentNumbers);
+                        var id = new MySqlConnector.MySqlParameter("@id", puzzle.Id);
+                        var p1 = new MySqlConnector.MySqlParameter("@p1", tempPuzzle.Name);
+                        var p2 = new MySqlConnector.MySqlParameter("@p2", tempPuzzle.ImageId);
+                        var p3 = new MySqlConnector.MySqlParameter("@p3", tempPuzzle.DifficultyLevelId);
+                        var p4 = new MySqlConnector.MySqlParameter("@p4", tempPuzzle.FragmentNumbers);
                         using (var db = new PuzzleContext(Db.Options))
                         {
                             int rowsAffected = db.Database.ExecuteSqlRaw("CALL `update_puzzle` (@id, @p1, @p2, @p3, @p4)", id, p1, p2, p3, p4);
@@ -881,65 +866,21 @@ namespace puzzle
                             }
                         }
 
-                        selectedItem.Name = puzzle.Name;
-                        selectedItem.ImageId = puzzle.ImageId;
-                        selectedItem.DifficultyLevelId = puzzle.DifficultyLevelId;
-                        selectedItem.FragmentNumbers = puzzle.FragmentNumbers;
-                        {
-                            bindingSourceLevelsFilteredByPuzzles.Clear();
-                            var newList = ((IList<LevelVM>)bindingSourceLevels.List).Join(
-                                ((IList<PuzzleVM>)bindingSourcePuzzles.List),
-                                l => l.Id,
-                                p => p.DifficultyLevelId,
-                                (l, p) => l)
-                                .Distinct()
-                                .ToList();
-                            foreach (var p in newList)
-                            {
-                                bindingSourceLevelsFilteredByPuzzles.Add(p);
-                            }
-                            fill.comboBoxLevel.SelectedValue = puzzle.DifficultyLevelId;
+                        puzzle.Name = tempPuzzle.Name;
+                        puzzle.ImageId = tempPuzzle.ImageId;
+                        puzzle.DifficultyLevelId = tempPuzzle.DifficultyLevelId;
+                        puzzle.FragmentNumbers = tempPuzzle.FragmentNumbers;
 
-                            var selectedIndex = fill.comboBoxLevel.SelectedIndex;
-                            if (selectedIndex != bindingSourceLevelsFilteredByPuzzles.List.Count
-                            && bindingSourceLevelsFilteredByPuzzles.List.Count > 0)
-                            {
-                                fill.comboBoxLevel.SelectedItem = (LevelVM)bindingSourceLevelsFilteredByPuzzles.List[selectedIndex];
-                            }
-                        }
-                        {
-                            var selectedLevel = (LevelVM)fill.comboBoxLevel.SelectedItem;
-                            bindingSourcePuzzlesFilteredByLevel.Clear();
-                            var newList1 = ((IList<PuzzleVM>)bindingSourcePuzzles.List).
-                                Where(i => i.DifficultyLevelId == selectedLevel.Id).ToList();
-                            foreach (var p in newList1)
-                            {
-                                bindingSourcePuzzlesFilteredByLevel.Add(p);
-                            }
-                            fill.listBox.SelectedItem = puzzle;
-
-                            var selectedItem = (PuzzleVM)fill.listBox.SelectedItem;
-                            if (selectedItem != null)
-                            {
-                                right.pictureBoxImage.Image = Image.FromStream(
-                                    ((IList<ImageVM>)bindingSourceGallery.List)
-                                    .Where(i => i.Id == selectedItem.ImageId)
-                                    .Select(i => i.Image).Single());
-                            }
-                        }
+                        FilterLevels(fill.comboBoxLevels);
+                        fill.comboBoxLevels.SelectedValue = puzzle.DifficultyLevelId;
+                        fill.listBox.SelectedItem = puzzle;
 
                         MessageBoxes.Info("Успешно.");
                     }
-                    catch (MySqlConnector.MySqlException ex) when (ex.Number == 1062)
+                    catch (MySqlConnector.MySqlException ex) 
+                    when (ex.Number == 1062)
                     {
-                        if (ex.Message.Contains("'puzzles.name'"))
-                        {
-                            MessageBoxes.Error("Название пазла занято.");
-                        }
-                        else
-                        {
-                            MessageBoxes.Error(ex.Message);
-                        }
+                        MessageBoxes.Error("Название пазла занято.");
                     }
                     catch (Exception ex)
                     {
@@ -954,7 +895,6 @@ namespace puzzle
             bottomControl.ButtonInsertOrNewGameText = "Добавить";
             bottomControl.ButtonInsertOrNewGameClick = new EventHandler((s, e) =>
             {
-
                 var form = new InsertOrUpdatePuzzleForm(this)
                 {
                     Text = "Добавление пазла",
@@ -1006,48 +946,10 @@ namespace puzzle
                         }
 
                         bindingSourcePuzzles.Add(puzzle);
-                        {
-                            bindingSourceLevelsFilteredByPuzzles.Clear();
-                            var newList = ((IList<LevelVM>)bindingSourceLevels.List).Join(
-                                ((IList<PuzzleVM>)bindingSourcePuzzles.List),
-                                l => l.Id,
-                                p => p.DifficultyLevelId,
-                                (l, p) => l)
-                                .Distinct()
-                                .ToList();
-                            foreach (var p in newList)
-                            {
-                                bindingSourceLevelsFilteredByPuzzles.Add(p);
-                            }
-                            fill.comboBoxLevel.SelectedValue = puzzle.DifficultyLevelId;
 
-                            var selectedIndex = fill.comboBoxLevel.SelectedIndex;
-                            if (selectedIndex != bindingSourceLevelsFilteredByPuzzles.List.Count
-                            && bindingSourceLevelsFilteredByPuzzles.List.Count > 0)
-                            {
-                                fill.comboBoxLevel.SelectedItem = (LevelVM)bindingSourceLevelsFilteredByPuzzles.List[selectedIndex];
-                            }
-                        }
-                        { 
-                            var selectedLevel = (LevelVM)fill.comboBoxLevel.SelectedItem;
-                            bindingSourcePuzzlesFilteredByLevel.Clear();
-                            var newList1 = ((IList<PuzzleVM>)bindingSourcePuzzles.List).
-                                Where(i => i.DifficultyLevelId == selectedLevel.Id).ToList();
-                            foreach (var p in newList1)
-                            {
-                                bindingSourcePuzzlesFilteredByLevel.Add(p);
-                            }
-                            fill.listBox.SelectedItem = puzzle;
-
-                            var selectedItem = (PuzzleVM)fill.listBox.SelectedItem;
-                            if (selectedItem != null)
-                            {
-                                right.pictureBoxImage.Image = Image.FromStream(
-                                    ((IList<ImageVM>)bindingSourceGallery.List)
-                                    .Where(i => i.Id == selectedItem.ImageId)
-                                    .Select(i => i.Image).Single());
-                            }
-                        }
+                        FilterLevels(fill.comboBoxLevels);
+                        fill.comboBoxLevels.SelectedValue = puzzle.DifficultyLevelId;
+                        fill.listBox.SelectedItem = puzzle;
 
                         MessageBoxes.Info("Успешно.");
                     }
@@ -1063,6 +965,130 @@ namespace puzzle
                 });
 
                 form.ShowDialog();
+            });
+            #endregion
+        }
+
+        public void DisplayGameChoice()
+        {
+            Size = normalFormSize;
+            CenterToScreen();
+
+            #region Right
+            var right = new ImageAndMethodsUC()
+            {
+                Dock = DockStyle.Right
+            };
+            ChangeRight(right);
+            right.panelMethods.Visible = true;
+            #endregion
+            #region Fill
+            var fill = new listWithPictogramsUC()
+            {
+                Dock = DockStyle.Fill,
+            };
+            ChangeFill(fill);
+            fill.panelLevel.Visible = true;
+
+            fill.comboBoxLevels.SelectedValueChanged += new EventHandler((s, e) =>
+            {
+                bindingSourceFilteredLevels.Position = fill.comboBoxLevels.SelectedIndex;
+                FilterPuzzles(fill.dataGridView);
+            });
+
+            fill.dataGridView.SelectionChanged += new EventHandler((s, e) =>
+            {
+                bindingSourceFilteredPuzzles.Position = fill.dataGridView.CurrentRow.Index;
+                DisplayImage(right);
+            });
+
+            FilterLevels(fill.comboBoxLevels);
+            #endregion            
+            #region Top
+            topControl.ButtonBackVisible = true;
+            topControl.ButtonBackClick = new EventHandler((s, e) =>
+            {
+                DisposeImage(right);
+                DisplayRegAndAuth();
+            });
+            topControl.ButtonPauseOrPlayVisible = false;
+            topControl.ButtonImageOrPuzzleVisible = false;
+            topControl.ButtonSoundVisible = true;
+            topControl.LabelTitleText = "Выбор игры";
+            #endregion            
+            #region Bottom
+            panelBottom.Show();
+            bottomControl.ButtonDeleteVisible = false;
+            bottomControl.ButtonUpdateVisible = false;
+            bottomControl.ButtonLoadVisible = true;
+            bottomControl.ButtonInsertOrNewGameClick = new EventHandler((s, e) =>
+            {                
+                DisplayGame();
+            });
+
+            bottomControl.ButtonInsertOrNewGameText = "Новая игра";
+            bottomControl.ButtonInsertOrNewGameClick = new EventHandler((s, e) =>
+            {
+                DisplayGame();
+            });
+            #endregion
+        }
+
+        public void DisplayGame()
+        {
+            Size = normalFormSize;
+            CenterToScreen();
+
+            #region Right
+            var right = new ImageAndMethodsUC()
+            {
+                Dock = DockStyle.Right
+            };
+            ChangeRight(right);
+            right.panelMethods.Visible = true;
+            #endregion
+            #region Fill
+            var fill = new listWithPictogramsUC()
+            {
+                Dock = DockStyle.Fill,
+            };
+            ChangeFill(fill);
+            fill.panelLevel.Visible = true;
+
+            fill.comboBoxLevels.SelectedValueChanged += new EventHandler((s, e) =>
+            {
+                bindingSourceFilteredLevels.Position = fill.comboBoxLevels.SelectedIndex;
+                FilterPuzzles(fill.dataGridView);
+            });
+
+            fill.dataGridView.SelectionChanged += new EventHandler((s, e) =>
+            {
+                bindingSourceFilteredPuzzles.Position = fill.dataGridView.CurrentRow.Index;
+                DisplayImage(right);
+            });
+
+            FilterLevels(fill.comboBoxLevels);
+            #endregion            
+            #region Top
+            topControl.ButtonBackVisible = true;
+            topControl.ButtonBackClick = new EventHandler((s, e) =>
+            {
+                DisposeImage(right);
+                DisplayRegAndAuth();
+            });
+            topControl.ButtonPauseOrPlayVisible = false;
+            topControl.ButtonImageOrPuzzleVisible = false;
+            topControl.ButtonSoundVisible = true;
+            topControl.LabelTitleText = "Выбор игры";
+            #endregion            
+            #region Bottom
+            panelBottom.Show();
+            bottomControl.ButtonDeleteVisible = false;
+            bottomControl.ButtonUpdateVisible = false;
+            bottomControl.ButtonLoadVisible = true;
+            bottomControl.ButtonInsertOrNewGameText = "Новая игра";
+            bottomControl.ButtonInsertOrNewGameClick = new EventHandler((s, e) =>
+            {
             });
             #endregion
         }
