@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace puzzle.Model
 {
@@ -12,14 +6,16 @@ namespace puzzle.Model
     {
         public static Size Size { get; set; }
         public byte Number { get; set; }
-        public Point Position { get; set; }
+        public Point OriginalPosition { get; set; }
         public Image Image { get; set; }
+        public bool InOriginalPosition { get; set; }
 
-        public Fragment(byte number, Point position, Image image)
+        public Fragment(byte number, Point originalPosition, Image image)
         {
             Number = number;
-            Position = position;
-            Image = image;           
+            OriginalPosition = originalPosition;
+            Image = image;
+            InOriginalPosition = true;
         }
     }
 }

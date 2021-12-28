@@ -10,7 +10,7 @@
     <Compile Update="UserControls\BottomUC.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\Center\Game.cs">
+    <Compile Update="UserControls\Center\GameUC.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="UserControls\Center\ImageAndMethodsUC.cs">

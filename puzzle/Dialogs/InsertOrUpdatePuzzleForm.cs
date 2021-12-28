@@ -19,22 +19,11 @@ namespace puzzle.Dialogs
 
             comboBoxImage.SelectedValueChanged += new EventHandler((s, e) =>
             {
-                MyPuzzle.Instance = null;
-                if (pictureBoxField.Image != null)
-                {
-                    pictureBoxField.Image.Dispose();
-                    pictureBoxField.Image = null;
-                }
-                if (pictureBoxImage.Image != null)
-                {
-                    pictureBoxImage.Image.Dispose();
-                    pictureBoxImage.Image = null;
-                }
+                Game.Instance = null;
+                pictureBoxField.Image?.Dispose();
+                pictureBoxImage.Image?.Dispose();
                 var selectedItem = (ImageVM)comboBoxImage.SelectedItem;
-                if (selectedItem == null)
-                {
-                    return;
-                }
+                if (selectedItem == null) return;
 
                 image = Image.FromStream(selectedItem.Image);
                 pictureBoxImage.Image = image;
@@ -43,17 +32,10 @@ namespace puzzle.Dialogs
 
             comboBoxLevel.SelectedValueChanged += new EventHandler((s, e) =>
             {
-                MyPuzzle.Instance = null;
-                if (pictureBoxField.Image != null)
-                {
-                    pictureBoxField.Image.Dispose();
-                    pictureBoxField.Image = null;
-                }
+                Game.Instance = null;
+                pictureBoxField.Image?.Dispose();
                 var selectedItem = (LevelVM)comboBoxLevel.SelectedItem;
-                if (selectedItem == null)
-                {
-                    return;
-                }
+                if (selectedItem == null) return;
 
                 level = selectedItem;
             });
@@ -61,11 +43,7 @@ namespace puzzle.Dialogs
 
             buttonMix.Click += new EventHandler((s, e) =>
             {
-                if (pictureBoxField.Image != null)
-                {
-                    pictureBoxField.Image.Dispose();
-                    pictureBoxField.Image = null;
-                }
+                pictureBoxField.Image?.Dispose();
 
                 CreatePuzzle();
                 DrawField();
@@ -76,42 +54,35 @@ namespace puzzle.Dialogs
                 DrawField();
             });
 
-            FormClosed += new FormClosedEventHandler((s, e) => 
+            FormClosed += new FormClosedEventHandler((s, e) =>
             {
-                if (pictureBoxField.Image != null)
-                {
-                    pictureBoxField.Image.Dispose();
-                    pictureBoxField.Image = null;
-                }
-                if (MyPuzzle.Instance != null)
-                {
-                    MyPuzzle.Instance = null;
-                }
+                pictureBoxField.Image?.Dispose();
+                Game.Instance = null;
             });
         }
 
         private void CreatePuzzle()
         {
-            if (image == null || level == null)
+            if (image is null || level is null)
             {
                 return;
             }
 
-            MyPuzzle.Instance = new(
+            Game.Instance = new(
                 level.FragmentTypeId,
                 level.AssemblyTypeId,
                 level.HorizontalFragmentCount,
                 level.VerticalFragmentCount,
                 image);
-            MyPuzzle.Instance.Mix();
+            Game.Instance.Mix();
         }
 
         private void DrawField()
         {
-            if (MyPuzzle.Instance == null) return;
+            if (Game.Instance is null) return;
 
             var bitmap = new Bitmap(pictureBoxField.Width, pictureBoxField.Height);
-            MyPuzzle.Instance.DrawField(bitmap);
+            Game.Instance.DrawField(bitmap);
             pictureBoxField.Image = bitmap;
         }
 

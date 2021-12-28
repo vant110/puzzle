@@ -1,7 +1,7 @@
 ﻿
 namespace puzzle.UserControls.Center
 {
-    partial class Game
+    partial class GameUC
     {
         /// <summary> 
         /// Обязательная переменная конструктора.
@@ -35,20 +35,23 @@ namespace puzzle.UserControls.Center
             // 
             // pictureBoxField
             // 
-            this.pictureBoxField.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBoxField.Location = new System.Drawing.Point(0, 0);
+            this.pictureBoxField.BackColor = System.Drawing.Color.White;
+            this.pictureBoxField.Location = new System.Drawing.Point(13, 13);
             this.pictureBoxField.Name = "pictureBoxField";
-            this.pictureBoxField.Size = new System.Drawing.Size(800, 495);
+            this.pictureBoxField.Size = new System.Drawing.Size(600, 450);
             this.pictureBoxField.TabIndex = 0;
             this.pictureBoxField.TabStop = false;
             // 
-            // Game
+            // GameUC
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.Controls.Add(this.pictureBoxField);
-            this.Name = "Game";
-            this.Size = new System.Drawing.Size(800, 495);
+            this.Name = "GameUC";
+            this.Padding = new System.Windows.Forms.Padding(10);
+            this.Size = new System.Drawing.Size(626, 476);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxField)).EndInit();
             this.ResumeLayout(false);
 
@@ -56,6 +59,6 @@ namespace puzzle.UserControls.Center
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pictureBoxField;
+        public System.Windows.Forms.PictureBox pictureBoxField;
     }
 }

@@ -135,6 +135,7 @@ namespace puzzle.Dialogs
             // 
             // pictureBoxImage
             // 
+            this.pictureBoxImage.BackColor = System.Drawing.Color.White;
             this.pictureBoxImage.Location = new System.Drawing.Point(13, 144);
             this.pictureBoxImage.Name = "pictureBoxImage";
             this.pictureBoxImage.Size = new System.Drawing.Size(368, 276);
@@ -144,6 +145,7 @@ namespace puzzle.Dialogs
             // 
             // pictureBoxField
             // 
+            this.pictureBoxField.BackColor = System.Drawing.Color.White;
             this.pictureBoxField.Location = new System.Drawing.Point(403, 144);
             this.pictureBoxField.Margin = new System.Windows.Forms.Padding(13, 13, 3, 3);
             this.pictureBoxField.Name = "pictureBoxField";

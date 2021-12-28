@@ -15,37 +15,11 @@ namespace puzzle.UserControls
             InitializeComponent();
         }
 
-        public bool ButtonDeleteVisible
-        {
-            set
-            {
-                buttonDelete.Visible = value;
-            }
-        }
+        public bool ButtonDeleteVisible { set => buttonDelete.Visible = value; }
+        public bool ButtonUpdateVisible { set => buttonUpdate.Visible = value; }
+        public bool ButtonLoadVisible { set => buttonLoad.Visible = value; }
 
-        public bool ButtonUpdateVisible
-        {
-            set
-            {
-                buttonUpdate.Visible = value;
-            }
-        }
-
-        public bool ButtonLoadVisible
-        {
-            set
-            {
-                buttonLoad.Visible = value;
-            }
-        }
-
-        public string ButtonInsertOrNewGameText
-        {
-            set
-            {
-                buttonInsertOrNewGame.Text = value;
-            }
-        }
+        public string ButtonInsertOrNewGameText { set => buttonInsertOrNewGame.Text = value; }
 
         public EventHandler ButtonDeleteClick
         {
@@ -56,7 +30,6 @@ namespace puzzle.UserControls
                 buttonDelete.Click += buttonDeleteClick;
             }
         }
-
         public EventHandler ButtonUpdateClick
         {
             set
@@ -66,7 +39,6 @@ namespace puzzle.UserControls
                 buttonUpdate.Click += buttonUpdateClick;
             }
         }
-
         public EventHandler ButtonLoadClick
         {
             set
@@ -76,7 +48,6 @@ namespace puzzle.UserControls
                 buttonLoad.Click += buttonLoadClick;
             }
         }
-
         public EventHandler ButtonInsertOrNewGameClick
         {
             set

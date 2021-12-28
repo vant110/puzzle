@@ -156,7 +156,29 @@ namespace puzzle
                 .Select(i => i.Image).Single());
         }
 
-        public void DisplayRegAndAuth()
+        private Game CreateGame(PuzzleVM puzzle)
+        {
+            Image image = Image.FromStream(
+                    ((IList<ImageVM>)bindingSourceGallery.List)
+                    .Where(i => i.Id == puzzle.ImageId)
+                    .Select(i => i.Image)
+                    .Single());
+            LevelVM level = ((IList<LevelVM>)bindingSourceFilteredLevels.List)
+                    .Where(i => i.Id == puzzle.DifficultyLevelId)
+                    .Single();
+
+            Game game = new(
+                level.FragmentTypeId,
+                level.AssemblyTypeId,
+                level.HorizontalFragmentCount,
+                level.VerticalFragmentCount,
+                image);
+            game.FragmentNumbers = puzzle.FragmentNumbers;
+
+            return game;
+        }
+
+        internal void DisplayRegAndAuth()
         {
             Size = smallFormSize;
             CenterToScreen();
@@ -168,15 +190,17 @@ namespace puzzle
             ChangeFill(fill);
             ChangeRight(null);
 
-            topControl.ButtonBackVisible = false;
-            topControl.ButtonPauseOrPlayVisible = false;
-            topControl.ButtonImageOrPuzzleVisible = false;
-            topControl.ButtonSoundVisible = false;
-            topControl.LabelTitleText = "Регистрация/авторизация";
+            topControl.buttonBack.Visible = false;
+            topControl.buttonImage.Visible = false;
+            topControl.buttonPause.Visible = false;
+            topControl.buttonSound.Visible = false;
+            topControl.labelTitle.Text = "Регистрация/авторизация";
+            topControl.labelMethod.Visible = false;
+            topControl.labelValue.Visible = false;
 
             panelBottom.Hide();
         }
-        public void DisplayAdminMenu()
+        internal void DisplayAdminMenu()
         {
             Size = smallFormSize;
             CenterToScreen();
@@ -188,19 +212,21 @@ namespace puzzle
             ChangeFill(fill);
             ChangeRight(null);
 
-            topControl.ButtonBackVisible = true;
+            topControl.buttonBack.Visible = true;
             topControl.ButtonBackClick = new EventHandler((s, e) =>
             {
                 DisplayRegAndAuth();
             });
-            topControl.ButtonPauseOrPlayVisible = false;
-            topControl.ButtonImageOrPuzzleVisible = false;
-            topControl.ButtonSoundVisible = false;
-            topControl.LabelTitleText = "Меню администратора";
+            topControl.buttonPause.Visible = false;
+            topControl.buttonImage.Visible = false;
+            topControl.buttonSound.Visible = false;
+            topControl.labelTitle.Text = "Меню администратора";
+            topControl.labelMethod.Visible = false;
+            topControl.labelValue.Visible = false;
 
             panelBottom.Hide();
         }
-        public void DisplayGallery()
+        internal void DisplayGallery()
         {
             Size = normalFormSize;
             CenterToScreen();
@@ -250,16 +276,18 @@ namespace puzzle
             fill.listBox.DataSource = bindingSourceGallery.DataSource;
             #endregion
             #region Top
-            topControl.ButtonBackVisible = true;
+            topControl.buttonBack.Visible = true;
             topControl.ButtonBackClick = new EventHandler((s, e) =>
             {
                 DisposeImage(right);
                 DisplayAdminMenu();
             });
-            topControl.ButtonPauseOrPlayVisible = false;
-            topControl.ButtonImageOrPuzzleVisible = false;
-            topControl.ButtonSoundVisible = false;
-            topControl.LabelTitleText = "Галерея";
+            topControl.buttonPause.Visible = false;
+            topControl.buttonImage.Visible = false;
+            topControl.buttonSound.Visible = false;
+            topControl.labelTitle.Text = "Галерея";
+            topControl.labelMethod.Visible = false;
+            topControl.labelValue.Visible = false;
             #endregion
             #region Bottom
             panelBottom.Show();
@@ -415,7 +443,7 @@ namespace puzzle
             });
             #endregion
         }
-        public void DisplayLevels()
+        internal void DisplayLevels()
         {
             Size = normalFormSize;
             CenterToScreen();
@@ -485,15 +513,17 @@ namespace puzzle
             fill.listBox.DataSource = bindingSourceLevels.DataSource;
             #endregion
             #region Top
-            topControl.ButtonBackVisible = true;
+            topControl.buttonBack.Visible = true;
             topControl.ButtonBackClick = new EventHandler((s, e) =>
             {
                 DisplayAdminMenu();
             });
-            topControl.ButtonPauseOrPlayVisible = false;
-            topControl.ButtonImageOrPuzzleVisible = false;
-            topControl.ButtonSoundVisible = false;
-            topControl.LabelTitleText = "Уровни сложности";
+            topControl.buttonPause.Visible = false;
+            topControl.buttonImage.Visible = false;
+            topControl.buttonSound.Visible = false;
+            topControl.labelTitle.Text = "Уровни сложности";
+            topControl.labelMethod.Visible = false;
+            topControl.labelValue.Visible = false;
             #endregion
             #region Bottom
             panelBottom.Show();
@@ -693,7 +723,7 @@ namespace puzzle
             });
             #endregion
         }
-        public void DisplayPuzzles()
+        internal void DisplayPuzzles()
         {
             Size = normalFormSize;
             CenterToScreen();
@@ -729,16 +759,18 @@ namespace puzzle
             FilterLevels(fill.comboBoxLevels);
             #endregion
             #region Top
-            topControl.ButtonBackVisible = true;
+            topControl.buttonBack.Visible = true;
             topControl.ButtonBackClick = new EventHandler((s, e) =>
             {
                 DisposeImage(right);
                 DisplayAdminMenu();
             });
-            topControl.ButtonPauseOrPlayVisible = false;
-            topControl.ButtonImageOrPuzzleVisible = false;
-            topControl.ButtonSoundVisible = false;
-            topControl.LabelTitleText = "Пазлы";
+            topControl.buttonPause.Visible = false;
+            topControl.buttonImage.Visible = false;
+            topControl.buttonSound.Visible = false;
+            topControl.labelTitle.Text = "Пазлы";
+            topControl.labelMethod.Visible = false;
+            topControl.labelValue.Visible = false;
             #endregion
             #region Bottom
             panelBottom.Show();
@@ -773,7 +805,7 @@ namespace puzzle
                             if (bindingSourceFilteredPuzzles.Count > puzzleIndex)
                             {
                                 fill.listBox.SelectedIndex = puzzleIndex;
-                            }                            
+                            }                      
                             else if (bindingSourceFilteredPuzzles.Count == puzzleIndex)
                             {
                                 fill.listBox.SelectedIndex = puzzleIndex - 1;
@@ -807,20 +839,7 @@ namespace puzzle
                 form.comboBoxImage.SelectedValue = puzzle.ImageId;
                 form.comboBoxLevel.SelectedValue = puzzle.DifficultyLevelId;
 
-                Image image = Image.FromStream(
-                        ((IList<ImageVM>)bindingSourceGallery.List)
-                        .Where(i => i.Id == puzzle.ImageId)
-                        .Select(i => i.Image).Single());
-                LevelVM level = ((IList<LevelVM>)bindingSourceFilteredLevels.List)
-                        .Where(i => i.Id == puzzle.DifficultyLevelId).Single();
-
-                MyPuzzle.Instance = new(
-                    level.FragmentTypeId,
-                    level.AssemblyTypeId,
-                    level.HorizontalFragmentCount,
-                    level.VerticalFragmentCount,
-                    image);
-                MyPuzzle.Instance.FragmentNumbers = puzzle.FragmentNumbers;
+                Game.Instance = CreateGame(puzzle);
 
                 form.buttonInsertOrUpdate.Text = "Изменить";
                 form.ButtonInsertOrUpdateClick = new EventHandler((s, e) =>
@@ -839,7 +858,7 @@ namespace puzzle
                         {
                             throw new Exception("Выберите уровень сложности.");
                         }
-                        if (MyPuzzle.Instance == null)
+                        if (Game.Instance == null)
                         {
                             throw new Exception("Перемешайте фрагменты.");
                         }
@@ -849,7 +868,7 @@ namespace puzzle
                             Name = form.textBoxName.Text,
                             ImageId = ((ImageVM)form.comboBoxImage.SelectedItem).Id,
                             DifficultyLevelId = ((LevelVM)form.comboBoxLevel.SelectedItem).Id,
-                            FragmentNumbers = MyPuzzle.Instance.FragmentNumbers
+                            FragmentNumbers = Game.Instance.FragmentNumbers
                         };
 
                         var id = new MySqlConnector.MySqlParameter("@id", puzzle.Id);
@@ -916,7 +935,7 @@ namespace puzzle
                         {
                             throw new Exception("Выберите уровень сложности.");
                         }
-                        if (MyPuzzle.Instance == null)
+                        if (Game.Instance == null)
                         {
                             throw new Exception("Перемешайте фрагменты.");
                         }
@@ -926,7 +945,7 @@ namespace puzzle
                             Name = form.textBoxName.Text,
                             ImageId = ((ImageVM)form.comboBoxImage.SelectedItem).Id,
                             DifficultyLevelId = ((LevelVM)form.comboBoxLevel.SelectedItem).Id,
-                            FragmentNumbers = MyPuzzle.Instance.FragmentNumbers
+                            FragmentNumbers = Game.Instance.FragmentNumbers
                         };
 
                         var p1 = new MySqlConnector.MySqlParameter("@p1", puzzle.Name);
@@ -969,7 +988,7 @@ namespace puzzle
             #endregion
         }
 
-        public void DisplayGameChoice()
+        internal void DisplayGameChoice()
         {
             Size = normalFormSize;
             CenterToScreen();
@@ -1005,16 +1024,18 @@ namespace puzzle
             FilterLevels(fill.comboBoxLevels);
             #endregion            
             #region Top
-            topControl.ButtonBackVisible = true;
+            topControl.buttonBack.Visible = true;
             topControl.ButtonBackClick = new EventHandler((s, e) =>
             {
                 DisposeImage(right);
                 DisplayRegAndAuth();
             });
-            topControl.ButtonPauseOrPlayVisible = false;
-            topControl.ButtonImageOrPuzzleVisible = false;
-            topControl.ButtonSoundVisible = true;
-            topControl.LabelTitleText = "Выбор игры";
+            topControl.buttonPause.Visible = false;
+            topControl.buttonImage.Visible = false;
+            topControl.buttonSound.Visible = true;
+            topControl.labelTitle.Text = "Выбор игры";
+            topControl.labelMethod.Visible = false;
+            topControl.labelValue.Visible = false;
             #endregion            
             #region Bottom
             panelBottom.Show();
@@ -1023,74 +1044,56 @@ namespace puzzle
             bottomControl.ButtonLoadVisible = true;
             bottomControl.ButtonInsertOrNewGameClick = new EventHandler((s, e) =>
             {                
-                DisplayGame();
+                DisplayGame((PuzzleVM)bindingSourceFilteredPuzzles.Current);
             });
 
             bottomControl.ButtonInsertOrNewGameText = "Новая игра";
             bottomControl.ButtonInsertOrNewGameClick = new EventHandler((s, e) =>
             {
-                DisplayGame();
+                DisplayGame((PuzzleVM)bindingSourceFilteredPuzzles.Current);
             });
             #endregion
         }
-
-        public void DisplayGame()
+        internal void DisplayGame(PuzzleVM puzzle)
         {
             Size = normalFormSize;
             CenterToScreen();
 
-            #region Right
-            var right = new ImageAndMethodsUC()
-            {
-                Dock = DockStyle.Right
-            };
-            ChangeRight(right);
-            right.panelMethods.Visible = true;
-            #endregion
+            ChangeRight(null);
             #region Fill
-            var fill = new listWithPictogramsUC()
+            var fill = new GameUC(CreateGame(puzzle), this)
             {
                 Dock = DockStyle.Fill,
             };
             ChangeFill(fill);
-            fill.panelLevel.Visible = true;
-
-            fill.comboBoxLevels.SelectedValueChanged += new EventHandler((s, e) =>
-            {
-                bindingSourceFilteredLevels.Position = fill.comboBoxLevels.SelectedIndex;
-                FilterPuzzles(fill.dataGridView);
-            });
-
-            fill.dataGridView.SelectionChanged += new EventHandler((s, e) =>
-            {
-                bindingSourceFilteredPuzzles.Position = fill.dataGridView.CurrentRow.Index;
-                DisplayImage(right);
-            });
-
-            FilterLevels(fill.comboBoxLevels);
             #endregion            
             #region Top
-            topControl.ButtonBackVisible = true;
+            topControl.buttonBack.Visible = true;
             topControl.ButtonBackClick = new EventHandler((s, e) =>
             {
-                DisposeImage(right);
-                DisplayRegAndAuth();
+                DisplayGameChoice();
             });
-            topControl.ButtonPauseOrPlayVisible = false;
-            topControl.ButtonImageOrPuzzleVisible = false;
-            topControl.ButtonSoundVisible = true;
-            topControl.LabelTitleText = "Выбор игры";
-            #endregion            
-            #region Bottom
-            panelBottom.Show();
-            bottomControl.ButtonDeleteVisible = false;
-            bottomControl.ButtonUpdateVisible = false;
-            bottomControl.ButtonLoadVisible = true;
-            bottomControl.ButtonInsertOrNewGameText = "Новая игра";
-            bottomControl.ButtonInsertOrNewGameClick = new EventHandler((s, e) =>
+
+            topControl.buttonPause.Visible = false;
+            topControl.buttonPause.Click += new EventHandler((s, e) =>
             {
             });
-            #endregion
+
+            topControl.buttonImage.Visible = true;
+            topControl.buttonImage.Click += new EventHandler((s, e) =>
+            {
+            });
+
+            topControl.buttonSound.Visible = true;
+            topControl.buttonSound.Click += new EventHandler((s, e) =>
+            {
+            });
+
+            topControl.labelTitle.Text = puzzle.Name;
+            topControl.labelMethod.Visible = false;
+            topControl.labelValue.Visible = false;
+            #endregion            
+            panelBottom.Hide();
         }
     }
 }

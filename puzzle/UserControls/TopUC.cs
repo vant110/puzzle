@@ -19,38 +19,6 @@ namespace puzzle.UserControls
             InitializeComponent();
         }        
 
-        public bool ButtonBackVisible
-        {
-            set 
-            { 
-                buttonBack.Visible = value; 
-            }
-        }
-
-        public bool ButtonPauseOrPlayVisible
-        {
-            set
-            {
-                buttonPauseOrPlay.Visible = value;
-            }
-        }
-
-        public bool ButtonImageOrPuzzleVisible
-        {
-            set
-            {
-                buttonImageOrPuzzle.Visible = value;
-            }
-        }
-
-        public bool ButtonSoundVisible
-        {
-            set
-            {
-                buttonSound.Visible = value;
-            }
-        }
-
         public EventHandler ButtonBackClick
         {
             set 
@@ -61,30 +29,20 @@ namespace puzzle.UserControls
             }
         }
 
-        public string LabelTitleText
-        {
-            set
-            {
-                labelTitle.Text = value;
-            }
-        }
-
-        public bool ButtonPauseOn
-        {
-            set
-            {
-                buttonPauseOrPlay.ImageIndex = value ? 5 : 4;
-            }
-        }
-
         public bool ButtonImageOn
         {
             set
             {
-                buttonImageOrPuzzle.ImageIndex = value ? 7 : 6;
+                buttonImage.ImageIndex = value ? 7 : 6;
             }
         }
-
+        public bool ButtonPauseOn
+        {
+            set
+            {
+                buttonPause.ImageIndex = value ? 5 : 4;
+            }
+        }
         public bool ButtonSoundOn
         {
             set

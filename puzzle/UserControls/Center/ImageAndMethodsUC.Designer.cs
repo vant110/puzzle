@@ -41,6 +41,7 @@ namespace puzzle.UserControls
             // 
             // pictureBoxImage
             // 
+            this.pictureBoxImage.BackColor = System.Drawing.Color.White;
             this.pictureBoxImage.Location = new System.Drawing.Point(13, 19);
             this.pictureBoxImage.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBoxImage.Name = "pictureBoxImage";

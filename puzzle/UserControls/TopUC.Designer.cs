@@ -36,8 +36,13 @@ namespace puzzle.UserControls
             this.labelTitle = new System.Windows.Forms.Label();
             this.buttonHelp = new System.Windows.Forms.Button();
             this.buttonSound = new System.Windows.Forms.Button();
-            this.buttonPauseOrPlay = new System.Windows.Forms.Button();
-            this.buttonImageOrPuzzle = new System.Windows.Forms.Button();
+            this.buttonPause = new System.Windows.Forms.Button();
+            this.buttonImage = new System.Windows.Forms.Button();
+            this.labelMethod = new System.Windows.Forms.Label();
+            this.labelValue = new System.Windows.Forms.Label();
+            this.timer = new System.Windows.Forms.Timer(this.components);
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonBack
@@ -51,7 +56,8 @@ namespace puzzle.UserControls
             this.buttonBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonBack.ImageIndex = 0;
             this.buttonBack.ImageList = this.imageListPictograms;
-            this.buttonBack.Location = new System.Drawing.Point(13, 13);
+            this.buttonBack.Location = new System.Drawing.Point(0, 0);
+            this.buttonBack.Margin = new System.Windows.Forms.Padding(0);
             this.buttonBack.Name = "buttonBack";
             this.buttonBack.Size = new System.Drawing.Size(20, 20);
             this.buttonBack.TabIndex = 0;
@@ -74,8 +80,8 @@ namespace puzzle.UserControls
             // labelTitle
             // 
             this.labelTitle.AutoSize = true;
-            this.labelTitle.Location = new System.Drawing.Point(46, 17);
-            this.labelTitle.Margin = new System.Windows.Forms.Padding(10, 0, 3, 0);
+            this.labelTitle.Location = new System.Drawing.Point(33, 4);
+            this.labelTitle.Margin = new System.Windows.Forms.Padding(13, 4, 0, 0);
             this.labelTitle.Name = "labelTitle";
             this.labelTitle.Size = new System.Drawing.Size(27, 13);
             this.labelTitle.TabIndex = 1;
@@ -94,6 +100,7 @@ namespace puzzle.UserControls
             this.buttonHelp.ImageIndex = 1;
             this.buttonHelp.ImageList = this.imageListPictograms;
             this.buttonHelp.Location = new System.Drawing.Point(667, 13);
+            this.buttonHelp.Margin = new System.Windows.Forms.Padding(0);
             this.buttonHelp.Name = "buttonHelp";
             this.buttonHelp.Size = new System.Drawing.Size(20, 20);
             this.buttonHelp.TabIndex = 2;
@@ -112,75 +119,118 @@ namespace puzzle.UserControls
             this.buttonSound.ImageIndex = 2;
             this.buttonSound.ImageList = this.imageListPictograms;
             this.buttonSound.Location = new System.Drawing.Point(634, 13);
-            this.buttonSound.Margin = new System.Windows.Forms.Padding(3, 3, 10, 3);
+            this.buttonSound.Margin = new System.Windows.Forms.Padding(0, 0, 13, 0);
             this.buttonSound.Name = "buttonSound";
             this.buttonSound.Size = new System.Drawing.Size(20, 20);
             this.buttonSound.TabIndex = 3;
             this.buttonSound.UseVisualStyleBackColor = false;
             // 
-            // buttonPauseOrPlay
+            // buttonPause
             // 
-            this.buttonPauseOrPlay.BackColor = System.Drawing.Color.Transparent;
-            this.buttonPauseOrPlay.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.buttonPauseOrPlay.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.buttonPauseOrPlay.FlatAppearance.BorderSize = 0;
-            this.buttonPauseOrPlay.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.buttonPauseOrPlay.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.buttonPauseOrPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonPauseOrPlay.ImageIndex = 4;
-            this.buttonPauseOrPlay.ImageList = this.imageListPictograms;
-            this.buttonPauseOrPlay.Location = new System.Drawing.Point(86, 13);
-            this.buttonPauseOrPlay.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
-            this.buttonPauseOrPlay.Name = "buttonPauseOrPlay";
-            this.buttonPauseOrPlay.Size = new System.Drawing.Size(20, 20);
-            this.buttonPauseOrPlay.TabIndex = 4;
-            this.buttonPauseOrPlay.UseVisualStyleBackColor = false;
+            this.buttonPause.BackColor = System.Drawing.Color.Transparent;
+            this.buttonPause.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.buttonPause.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.buttonPause.FlatAppearance.BorderSize = 0;
+            this.buttonPause.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.buttonPause.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.buttonPause.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonPause.ImageIndex = 4;
+            this.buttonPause.ImageList = this.imageListPictograms;
+            this.buttonPause.Location = new System.Drawing.Point(245, 0);
+            this.buttonPause.Margin = new System.Windows.Forms.Padding(13, 0, 0, 0);
+            this.buttonPause.Name = "buttonPause";
+            this.buttonPause.Size = new System.Drawing.Size(20, 20);
+            this.buttonPause.TabIndex = 4;
+            this.buttonPause.UseVisualStyleBackColor = false;
             // 
-            // buttonImageOrPuzzle
+            // buttonImage
             // 
-            this.buttonImageOrPuzzle.BackColor = System.Drawing.Color.Transparent;
-            this.buttonImageOrPuzzle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.buttonImageOrPuzzle.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.buttonImageOrPuzzle.FlatAppearance.BorderSize = 0;
-            this.buttonImageOrPuzzle.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.buttonImageOrPuzzle.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.buttonImageOrPuzzle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonImageOrPuzzle.ImageIndex = 6;
-            this.buttonImageOrPuzzle.ImageList = this.imageListPictograms;
-            this.buttonImageOrPuzzle.Location = new System.Drawing.Point(119, 13);
-            this.buttonImageOrPuzzle.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
-            this.buttonImageOrPuzzle.Name = "buttonImageOrPuzzle";
-            this.buttonImageOrPuzzle.Size = new System.Drawing.Size(20, 20);
-            this.buttonImageOrPuzzle.TabIndex = 5;
-            this.buttonImageOrPuzzle.UseVisualStyleBackColor = false;
+            this.buttonImage.BackColor = System.Drawing.Color.Transparent;
+            this.buttonImage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.buttonImage.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.buttonImage.FlatAppearance.BorderSize = 0;
+            this.buttonImage.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.buttonImage.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.buttonImage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonImage.ImageIndex = 6;
+            this.buttonImage.ImageList = this.imageListPictograms;
+            this.buttonImage.Location = new System.Drawing.Point(73, 0);
+            this.buttonImage.Margin = new System.Windows.Forms.Padding(13, 0, 0, 0);
+            this.buttonImage.Name = "buttonImage";
+            this.buttonImage.Size = new System.Drawing.Size(20, 20);
+            this.buttonImage.TabIndex = 5;
+            this.buttonImage.UseVisualStyleBackColor = false;
             // 
-            // TopControl
+            // labelMethod
+            // 
+            this.labelMethod.AutoSize = true;
+            this.labelMethod.Location = new System.Drawing.Point(106, 4);
+            this.labelMethod.Margin = new System.Windows.Forms.Padding(13, 4, 0, 0);
+            this.labelMethod.Name = "labelMethod";
+            this.labelMethod.Size = new System.Drawing.Size(75, 13);
+            this.labelMethod.TabIndex = 6;
+            this.labelMethod.Text = "Время:/Очки:";
+            // 
+            // labelValue
+            // 
+            this.labelValue.AutoSize = true;
+            this.labelValue.Location = new System.Drawing.Point(181, 4);
+            this.labelValue.Margin = new System.Windows.Forms.Padding(0, 4, 0, 0);
+            this.labelValue.Name = "labelValue";
+            this.labelValue.Size = new System.Drawing.Size(51, 13);
+            this.labelValue.TabIndex = 7;
+            this.labelValue.Text = "00:00:05";
+            // 
+            // timer
+            // 
+            this.timer.Interval = 1000;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.AutoSize = true;
+            this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
+            this.flowLayoutPanel1.Controls.Add(this.buttonBack);
+            this.flowLayoutPanel1.Controls.Add(this.labelTitle);
+            this.flowLayoutPanel1.Controls.Add(this.buttonImage);
+            this.flowLayoutPanel1.Controls.Add(this.labelMethod);
+            this.flowLayoutPanel1.Controls.Add(this.labelValue);
+            this.flowLayoutPanel1.Controls.Add(this.buttonPause);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(13, 13);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(265, 20);
+            this.flowLayoutPanel1.TabIndex = 8;
+            // 
+            // TopUC
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.Controls.Add(this.buttonImageOrPuzzle);
-            this.Controls.Add(this.buttonPauseOrPlay);
-            this.Controls.Add(this.buttonSound);
+            this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.buttonHelp);
-            this.Controls.Add(this.labelTitle);
-            this.Controls.Add(this.buttonBack);
-            this.Name = "TopControl";
-            this.Padding = new System.Windows.Forms.Padding(10);
+            this.Controls.Add(this.buttonSound);
+            this.Name = "TopUC";
+            this.Padding = new System.Windows.Forms.Padding(13);
             this.Size = new System.Drawing.Size(700, 46);
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Button buttonBack;
-        private System.Windows.Forms.Label labelTitle;
-        private System.Windows.Forms.Button buttonHelp;
-        private System.Windows.Forms.ImageList imageListPictograms;
-        private System.Windows.Forms.Button buttonSound;
-        private System.Windows.Forms.Button buttonPauseOrPlay;
-        private System.Windows.Forms.Button buttonImageOrPuzzle;
+        public System.Windows.Forms.Timer timer;
+        public System.Windows.Forms.Label labelMethod;
+        public System.Windows.Forms.Label labelValue;
+        public System.Windows.Forms.Button buttonBack;
+        public System.Windows.Forms.Label labelTitle;
+        public System.Windows.Forms.Button buttonHelp;
+        public System.Windows.Forms.Button buttonSound;
+        public System.Windows.Forms.Button buttonPause;
+        public System.Windows.Forms.Button buttonImage;
+        public System.Windows.Forms.ImageList imageListPictograms;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
     }
 }

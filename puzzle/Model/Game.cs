@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
 namespace puzzle.Model
 {
-    class MyPuzzle
+    class Game
     {
-        public static MyPuzzle Instance { get; set; }
+        public static Game Instance { get; set; }
 
         public int FragmentType { get; set; }
         public int AssemblyType { get; set; }
@@ -20,7 +18,7 @@ namespace puzzle.Model
         public Fragment[] Tape { get; set; }
         public Image MyImage { get; set; }
 
-        public MyPuzzle(
+        public Game(
             int fragmentType,
             int assemblyType,
             int nHorizontal,
@@ -113,26 +111,30 @@ namespace puzzle.Model
             for (int i = arr.Length - 1; i >= 1; i--)
             {
                 int j = rand.Next(i);
+
                 Fragment tmp = arr[j];
                 arr[j] = arr[i];
                 arr[i] = tmp;
+
+                arr[i].InOriginalPosition = false;
             }
         }
-
         public void DrawField(Image image)
         {
-            using var graphics = Graphics.FromImage(image);
-            graphics.Clear(Color.White);
             Size sizeGraphics = new(
                 image.Width / NHorizontal,
                 image.Height / NVertical);
-            graphics.CompositingMode = CompositingMode.SourceOver;
+
+            using var graphics = Graphics.FromImage(image);
+            graphics.CompositingMode = CompositingMode.SourceCopy;
             graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
             graphics.SmoothingMode = SmoothingMode.HighQuality;
             graphics.CompositingQuality = CompositingQuality.HighQuality;
             graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            using ImageAttributes wrapMode = new();
-            wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+
+            using ImageAttributes imageAttr = new();
+            imageAttr.SetWrapMode(WrapMode.TileFlipXY);
+
             for (int i = 0; i < NVertical; i++)
             {
                 for (int j = 0; j < NHorizontal; j++)
@@ -150,13 +152,12 @@ namespace puzzle.Model
                         Fragment.Size.Width,
                         Fragment.Size.Height,
                         GraphicsUnit.Pixel,
-                        wrapMode);
+                        imageAttr);
                 }
             }
         }
-
         public byte[] FragmentNumbers
-        {            
+        {
             get
             {
                 Fragment[] arr = Field;
@@ -174,7 +175,6 @@ namespace puzzle.Model
             }
             set
             {
-                //if (value.Length != Length) return;
                 Fragment[] arr = Field;
                 if (AssemblyType == 2)
                 {
@@ -184,10 +184,115 @@ namespace puzzle.Model
                 var oldArr = new Fragment[Length];
                 arr.CopyTo(oldArr, 0);
                 for (int i = 0; i < Length; i++)
-                {                    
+                {
                     arr[value[i]] = oldArr[i];
+                    arr[value[i]].InOriginalPosition = FragmentInOriginalPosition(value[i]);
                 }
             }
+        }
+
+        public int GetFragmentIndex(Point location, Size boxSize)
+        {
+            static int SearchNumber(int location, int size, int count)
+            {
+                int i;
+                int step = size / count;
+                for (i = 0; i < step - 1; i++)
+                {
+                    if (location < (i + 1) * step)
+                    {
+                        break;
+                    }
+                }
+                return i;
+            }
+
+            var position = new Point(
+                SearchNumber(location.X, boxSize.Width, NHorizontal),
+                SearchNumber(location.Y, boxSize.Height, NVertical));
+
+            return position.Y * NHorizontal + position.X;
+        }
+        public void SwapFragments(int index1, int index2)
+        {
+            Fragment tmp = Field[index1];
+            Field[index1] = Field[index2];
+            Field[index2] = tmp;
+
+            Field[index1].InOriginalPosition = FragmentInOriginalPosition(index1);
+            Field[index2].InOriginalPosition = FragmentInOriginalPosition(index2);
+        }
+        public void DrawFragment(int index, Image image)
+        {
+            Size sizeGraphics = new(
+                image.Width / NHorizontal,
+                image.Height / NVertical);
+
+            using var graphics = Graphics.FromImage(image);
+            graphics.CompositingMode = CompositingMode.SourceCopy;
+            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            graphics.SmoothingMode = SmoothingMode.HighQuality;
+            graphics.CompositingQuality = CompositingQuality.HighQuality;
+            graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+            using ImageAttributes imageAttr = new();
+            imageAttr.SetWrapMode(WrapMode.TileFlipXY);
+            if (Field[index].InOriginalPosition)
+            {
+                ColorMatrix colorMatrix = new();
+                // Red
+                colorMatrix.Matrix00 = 1.00f;
+                // Green
+                colorMatrix.Matrix11 = 1.00f;
+                // Blue
+                colorMatrix.Matrix22 = 1.00f;
+                // alpha
+                colorMatrix.Matrix33 = 0.50f;
+                // w
+                colorMatrix.Matrix44 = 1.00f;
+                imageAttr.SetColorMatrix(colorMatrix);
+            }
+
+            Point position = new(
+                index % NHorizontal,
+                index / NHorizontal);
+            Rectangle destRect = new(
+                position.X * sizeGraphics.Width,
+                position.Y * sizeGraphics.Height,
+                sizeGraphics.Width,
+                sizeGraphics.Height);
+            graphics.DrawImage(
+                Field[index].Image,
+                destRect,
+                0, 0,
+                Fragment.Size.Width,
+                Fragment.Size.Height,
+                GraphicsUnit.Pixel,
+                imageAttr);
+        }
+        public bool FragmentInOriginalPosition(int index)
+        {
+            Point position = new(
+                index % NHorizontal,
+                index / NHorizontal);
+
+            if (Field[index].OriginalPosition.X == position.X
+                && Field[index].OriginalPosition.Y == position.Y)
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool AllFragmentsInOriginalPosition()
+        {
+            foreach (var fragment in Field)
+            {
+                if (!fragment.InOriginalPosition)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

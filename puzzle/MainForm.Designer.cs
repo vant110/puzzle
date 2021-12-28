@@ -54,30 +54,34 @@
             // 
             this.panelCenter.BackColor = System.Drawing.SystemColors.Control;
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelCenter.Location = new System.Drawing.Point(0, 46);
+            this.panelCenter.Location = new System.Drawing.Point(0, 0);
             this.panelCenter.Margin = new System.Windows.Forms.Padding(0);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(784, 469);
+            this.panelCenter.Size = new System.Drawing.Size(784, 565);
             this.panelCenter.TabIndex = 0;
             // 
             // panelBottom
             // 
+            this.panelBottom.AutoSize = true;
+            this.panelBottom.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panelBottom.BackColor = System.Drawing.Color.Red;
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(0, 515);
+            this.panelBottom.Location = new System.Drawing.Point(0, 565);
             this.panelBottom.Margin = new System.Windows.Forms.Padding(0);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(784, 50);
+            this.panelBottom.Size = new System.Drawing.Size(784, 0);
             this.panelBottom.TabIndex = 0;
             // 
             // panelTop
             // 
+            this.panelTop.AutoSize = true;
+            this.panelTop.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panelTop.BackColor = System.Drawing.Color.Lime;
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
             this.panelTop.Margin = new System.Windows.Forms.Padding(0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(784, 46);
+            this.panelTop.Size = new System.Drawing.Size(784, 0);
             this.panelTop.TabIndex = 0;
             // 
             // bindingSourcePuzzles
@@ -107,6 +111,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFilteredPuzzles)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFilteredLevels)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
