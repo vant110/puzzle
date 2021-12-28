@@ -70,23 +70,10 @@
   <data name="dataGridViewCellStyle1.NullValue" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wgAADsIBFShKgAAAALVJREFUOE+lkrENwjAURDObp/ASpCY1qUJLdgBKUoYFPAMwAAQEadweOku2guwY
+        wAAADsABataJCQAAALVJREFUOE+lkrENwjAURDObp/ASpCY1qUJLdgBKUoYFPAMwAAQEadweOku2guwY
         G4onfZ3vv9+4APAXwTAHN2itkYMnUEpBCJEEu7OC3XaP13MMwreooFyU6PsjukPnLTPjGztRAcssNs3a
         LXNmxjlJQM6nC9pNa+Bs82TBfXigWlYGzlkCu8zLZCr5KmCxXtUfV6dZVCClNNdu18EtW5jxjZ1ZwfSz
         xAgKQt81hif4lWCYDoo36LISoP/H0rIAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="SavedGamePictogram.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
-        qAAAAKgBefSzxgAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFwSURBVFhHxdc7
-        SgNRFIfxAUEFLWx0AeIifC1CBBcg2Plo7HUDupGAhYKVFtooaKMI9roBG0HE53dChMn4TWZikuuBH4T/
-        vffMM8NM1qoFnOMZX332gltsYxS/Kjb+Dlvcb1eYQludwSYPyh3admIQp71K207YhD0M4S81gXtY37y4
-        HM17wgZX0Es1YH2L4sbUgVQ7cAMdSLUD8RfVgTX0UiewvkbDJxwgjqRbsfFPWF+jYUoapqRhShqmpGEd
-        Dzhuid82pw4NO4lH6CKKFdk1bE0nGpY5xAjKKsaOYGvLaGjiNI+hqsbxCOthNDSbqFtbsB5GQzONujUD
-        62E0NJ2ufbFirvUwGppJ1K1427EeRkOzhLq1DOthNDTx8lq3TmE9jIZl1lFVG7C1ZTQs84EdDKNYke0i
-        5tjaMhpWiYfSPlZb4nc3D588DVP6lw+TH69I/mmWd4FsHqk+TvPeMItmzeEScUpscj/FNuLI2XiWfQOQ
-        9B3uv03OewAAAABJRU5ErkJggg==
 </value>
   </data>
 </root>

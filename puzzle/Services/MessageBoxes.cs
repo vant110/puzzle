@@ -23,5 +23,14 @@ namespace puzzle.Services
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
+
+        public static DialogResult Question(string text)
+        {
+            return MessageBox.Show(
+                text,
+                caption,
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Question);
+        }
     }
 }

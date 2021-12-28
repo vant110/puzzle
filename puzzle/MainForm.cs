@@ -15,6 +15,7 @@ using System.ComponentModel;
 using puzzle.ViewModel;
 using System.Collections.Generic;
 using puzzle.UserControls.Center;
+using System.Media;
 
 namespace puzzle
 {
@@ -23,10 +24,14 @@ namespace puzzle
         private readonly Size smallFormSize = new(313, 243);
         private readonly Size normalFormSize = new(800, 600);
 
-        private TopUC topControl;
+        public TopUC topControl;
         private BottomUC bottomControl;
         private UserControl fillControl;
         private UserControl rightControl;
+
+        public SoundPlayer soundPlayer;
+
+        public IList<GameVM> games;
 
         public MainForm()
         {
@@ -60,7 +65,18 @@ namespace puzzle
                 bindingSourceFragmentTypes.DataSource = db.FragmentTypes.Local.ToBindingList();
                 bindingSourceAssemblyTypes.DataSource = db.AssemblyTypes.Local.ToBindingList();
                 bindingSourceMethods.DataSource = db.CountingMethods.Local.ToBindingList();
-            }            
+            }
+
+            soundPlayer = new SoundPlayer(@"sounds\in-original-position.wav");
+            try
+            {
+                soundPlayer.Load();
+            }
+            catch
+            {
+                soundPlayer = null;
+                MessageBoxes.Error("Файл звукового эффекта не найден.");
+            }
         }
 
         private static void DisposeImage(ImageAndMethodsUC right)
@@ -135,8 +151,16 @@ namespace puzzle
                 dataGridView.DataSource = bindingSourceFilteredPuzzles.DataSource;
                 for (int i = 0; i < dataGridView.RowCount; i++)
                 {
-                    // !!! если нет сохраненной игры
-                    dataGridView.Rows[i].Cells[1].Value = new Bitmap(1, 1);
+                    var a = games
+                        .Where(p => p.PuzzleId == ((PuzzleVM)bindingSourceFilteredPuzzles[i]).Id)
+                        .Any();
+                    if (a) {
+                        dataGridView.Rows[i].Cells[1].Value = new Bitmap(puzzle.Properties.Resources.floppy_disk);
+                    }
+                    else
+                    {
+                        dataGridView.Rows[i].Cells[1].Value = new Bitmap(1, 1);
+                    }
                 }
             }
         }
@@ -192,7 +216,6 @@ namespace puzzle
 
             topControl.buttonBack.Visible = false;
             topControl.buttonImage.Visible = false;
-            topControl.buttonPause.Visible = false;
             topControl.buttonSound.Visible = false;
             topControl.labelTitle.Text = "Регистрация/авторизация";
             topControl.labelMethod.Visible = false;
@@ -217,7 +240,6 @@ namespace puzzle
             {
                 DisplayRegAndAuth();
             });
-            topControl.buttonPause.Visible = false;
             topControl.buttonImage.Visible = false;
             topControl.buttonSound.Visible = false;
             topControl.labelTitle.Text = "Меню администратора";
@@ -282,7 +304,6 @@ namespace puzzle
                 DisposeImage(right);
                 DisplayAdminMenu();
             });
-            topControl.buttonPause.Visible = false;
             topControl.buttonImage.Visible = false;
             topControl.buttonSound.Visible = false;
             topControl.labelTitle.Text = "Галерея";
@@ -518,7 +539,6 @@ namespace puzzle
             {
                 DisplayAdminMenu();
             });
-            topControl.buttonPause.Visible = false;
             topControl.buttonImage.Visible = false;
             topControl.buttonSound.Visible = false;
             topControl.labelTitle.Text = "Уровни сложности";
@@ -765,7 +785,6 @@ namespace puzzle
                 DisposeImage(right);
                 DisplayAdminMenu();
             });
-            topControl.buttonPause.Visible = false;
             topControl.buttonImage.Visible = false;
             topControl.buttonSound.Visible = false;
             topControl.labelTitle.Text = "Пазлы";
@@ -988,6 +1007,8 @@ namespace puzzle
             #endregion
         }
 
+        private int MethodId = 1;
+        public bool soundOn = true;        
         internal void DisplayGameChoice()
         {
             Size = normalFormSize;
@@ -1000,6 +1021,19 @@ namespace puzzle
             };
             ChangeRight(right);
             right.panelMethods.Visible = true;
+
+            switch (MethodId)
+            {
+                case 1:
+                    right.radioButton1.Select();
+                    break;
+                case 2:
+                    right.radioButton2.Select();
+                    break;
+                case 0:
+                    right.radioButton0.Select();
+                    break;
+            }
             #endregion
             #region Fill
             var fill = new listWithPictogramsUC()
@@ -1030,9 +1064,14 @@ namespace puzzle
                 DisposeImage(right);
                 DisplayRegAndAuth();
             });
-            topControl.buttonPause.Visible = false;
             topControl.buttonImage.Visible = false;
             topControl.buttonSound.Visible = true;
+            topControl.buttonSound.ImageIndex = soundOn ? 2 : 3;
+            topControl.ButtonSoundClick = new EventHandler((s, e) =>
+            {
+                soundOn = !soundOn;
+                topControl.buttonSound.ImageIndex = soundOn ? 2 : 3;
+            });
             topControl.labelTitle.Text = "Выбор игры";
             topControl.labelMethod.Visible = false;
             topControl.labelValue.Visible = false;
@@ -1042,15 +1081,49 @@ namespace puzzle
             bottomControl.ButtonDeleteVisible = false;
             bottomControl.ButtonUpdateVisible = false;
             bottomControl.ButtonLoadVisible = true;
-            bottomControl.ButtonInsertOrNewGameClick = new EventHandler((s, e) =>
-            {                
-                DisplayGame((PuzzleVM)bindingSourceFilteredPuzzles.Current);
+            bottomControl.ButtonLoadClick = new EventHandler((s, e) =>
+            {
+
             });
 
             bottomControl.ButtonInsertOrNewGameText = "Новая игра";
             bottomControl.ButtonInsertOrNewGameClick = new EventHandler((s, e) =>
             {
-                DisplayGame((PuzzleVM)bindingSourceFilteredPuzzles.Current);
+                var puzzle = (PuzzleVM)bindingSourceFilteredPuzzles.Current;
+                if (right.radioButton1.Checked)
+                {
+                    MethodId = 1;
+                    puzzle.CountingMethodId = 1;
+                    puzzle.Score = 0;
+
+                    topControl.labelMethod.Visible = true;
+                    topControl.labelValue.Visible = true;
+
+                    topControl.labelMethod.Text = "Очки:";
+                    topControl.labelValue.Text = "0";
+                }
+                else if (right.radioButton2.Checked)
+                {
+                    MethodId = 2;
+                    puzzle.CountingMethodId = 2;
+                    puzzle.Time = 0;
+
+                    topControl.labelMethod.Visible = true;
+                    topControl.labelValue.Visible = true;
+
+                    topControl.labelMethod.Text = "Время:";
+                    topControl.labelValue.Text = "00:00:00";
+
+                }
+                else
+                {
+                    MethodId = 0;
+                    puzzle.CountingMethodId = 0;
+
+                    topControl.labelMethod.Visible = false;
+                    topControl.labelValue.Visible = false;
+                }
+                DisplayGame(puzzle);
             });
             #endregion
         }
@@ -1061,37 +1134,108 @@ namespace puzzle
 
             ChangeRight(null);
             #region Fill
-            var fill = new GameUC(CreateGame(puzzle), this)
+            var game = CreateGame(puzzle);
+
+            game.CountingMethodId = puzzle.CountingMethodId;
+            if (game.CountingMethodId == 1)
+            {
+                game.Score = puzzle.Score;
+            }
+            else if (game.CountingMethodId == 2)
+            {
+                game.Time = puzzle.Time;
+            }
+
+            var fill = new GameUC(game, this)
             {
                 Dock = DockStyle.Fill,
             };
             ChangeFill(fill);
             #endregion            
             #region Top
+            Image tempFieldImage = fill.pictureBoxField.Image;
+
             topControl.buttonBack.Visible = true;
             topControl.ButtonBackClick = new EventHandler((s, e) =>
             {
+                if (game.CountingMethodId == 2)
+                {
+                    topControl.timer.Stop();
+                    fill.pictureBoxField.Image = game.MyImage;
+                }
+
+                var result = MessageBoxes.Question("Сохранить игру?");
+                if (result == DialogResult.Cancel)
+                {
+                    if (game.CountingMethodId == 2)
+                    {
+                        fill.pictureBoxField.Image = tempFieldImage;
+                        topControl.timer.Start();
+                    }
+                    return;
+                }
+                else if (result == DialogResult.Yes)
+                {
+                    try
+                    {
+                        var p1 = new MySqlConnector.MySqlParameter("@p1", ResultDTO.PlayerId);
+                        var p2 = new MySqlConnector.MySqlParameter("@p2", puzzle.Id);
+                        var p3 = new MySqlConnector.MySqlParameter("@p3", game.FragmentNumbers);
+                        var p4 = new MySqlConnector.MySqlParameter("@p4", game.CountingMethodId);
+                        var p5 = new MySqlConnector.MySqlParameter("@p5", game.Score);
+                        var p6 = new MySqlConnector.MySqlParameter("@p6", game.Time);
+                        using (var db = new PuzzleContext(Db.Options))
+                        {
+                            int rowsAffected = db.Database.ExecuteSqlRaw("CALL `save_game` (@p1, @p2, @p3, @p4, @p5, @p6)", p1, p2, p3, p4, p5, p6);
+                            if (rowsAffected != 1)
+                            {
+                                throw new Exception("Ошибка.");
+                            }
+                        }
+                        
+                        MessageBoxes.Info("Успешно.");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBoxes.Error(ex.Message);
+                    }
+                }
+
                 DisplayGameChoice();
             });
 
-            topControl.buttonPause.Visible = false;
-            topControl.buttonPause.Click += new EventHandler((s, e) =>
-            {
-            });
-
             topControl.buttonImage.Visible = true;
-            topControl.buttonImage.Click += new EventHandler((s, e) =>
-            {
-            });
 
-            topControl.buttonSound.Visible = true;
-            topControl.buttonSound.Click += new EventHandler((s, e) =>
+            bool imageOn = false;
+            topControl.buttonImage.ImageIndex = imageOn ? 7 : 6;            
+            topControl.ButtonImageClick = new EventHandler((s, e) =>
             {
+                imageOn = !imageOn;
+                topControl.buttonImage.ImageIndex = imageOn ? 7 : 6;
+                                
+                if (imageOn)
+                {
+                    fill.pictureBoxField.Image = game.MyImage;
+                }
+                else
+                {
+                    fill.pictureBoxField.Image = tempFieldImage;
+                }
+
+                if (game.CountingMethodId == 2)                
+                {
+                    if (imageOn)
+                    {
+                        topControl.timer.Stop();
+                    }
+                    else
+                    {
+                        topControl.timer.Start();
+                    }
+                }
             });
 
             topControl.labelTitle.Text = puzzle.Name;
-            topControl.labelMethod.Visible = false;
-            topControl.labelValue.Visible = false;
             #endregion            
             panelBottom.Hide();
         }

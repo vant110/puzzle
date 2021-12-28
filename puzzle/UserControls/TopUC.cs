@@ -13,6 +13,8 @@ namespace puzzle.UserControls
     public partial class TopUC : UserControl
     {
         private EventHandler buttonBackClick;
+        private EventHandler buttonImageClick;
+        private EventHandler buttonSoundClick;
 
         public TopUC()
         {
@@ -28,26 +30,22 @@ namespace puzzle.UserControls
                 buttonBack.Click += buttonBackClick;
             }
         }
-
-        public bool ButtonImageOn
+        public EventHandler ButtonImageClick
         {
             set
             {
-                buttonImage.ImageIndex = value ? 7 : 6;
+                buttonImage.Click -= buttonImageClick;
+                buttonImageClick = value;
+                buttonImage.Click += buttonImageClick;
             }
         }
-        public bool ButtonPauseOn
+        public EventHandler ButtonSoundClick
         {
             set
             {
-                buttonPause.ImageIndex = value ? 5 : 4;
-            }
-        }
-        public bool ButtonSoundOn
-        {
-            set
-            {
-                buttonSound.ImageIndex = value ? 3 : 2;
+                buttonSound.Click -= buttonSoundClick;
+                buttonSoundClick = value;
+                buttonSound.Click += buttonSoundClick;
             }
         }
     }

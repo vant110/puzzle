@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using puzzle.Model;
 using puzzle.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -132,6 +133,43 @@ namespace puzzle.Services
                 }
             }
             return newGallery;
+        }
+        public static IList<GameVM> LoadGames()
+        {
+            List<GameVM> gameScores;
+            List<GameVM> gameTimes;
+            using (var db = new PuzzleContext(Options))
+            {
+                gameScores = db.SavedGameScores.Join(
+                    db.SavedGames
+                    .Where(i => i.PlayerId == ResultDTO.PlayerId),
+                    sgs => sgs.SavedGameId,
+                    sg => sg.SavedGameId,
+                    (sgs, sg) => new GameVM
+                    {
+                        SavedGameId = sg.SavedGameId,
+                        PuzzleId = sg.PuzzleId,
+                        FieldFragmentNumbers = sg.FieldFragmentNumbers,
+                        CountingMethodId = sg.CountingMethodId,
+                        Score = sgs.Score
+                    })
+                    .ToList();
+                gameTimes = db.SavedGameTimes.Join(
+                     db.SavedGames
+                     .Where(i => i.PlayerId == ResultDTO.PlayerId),
+                     sgt => sgt.SavedGameId,
+                     sg => sg.SavedGameId,
+                     (sgt, sg) => new GameVM
+                     {
+                         SavedGameId = sg.SavedGameId,
+                         PuzzleId = sg.PuzzleId,
+                         FieldFragmentNumbers = sg.FieldFragmentNumbers,
+                         CountingMethodId = sg.CountingMethodId,
+                         Time = sgt.Time
+                     }).ToList();
+            }
+            
+            return gameScores.Union(gameTimes).ToList();
         }
     }
 }

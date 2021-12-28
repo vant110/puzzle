@@ -84,8 +84,8 @@ namespace puzzle.UserControls.Center
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle2.Padding = new System.Windows.Forms.Padding(0, 3, 3, 3);
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridView.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -117,7 +117,6 @@ namespace puzzle.UserControls.Center
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Red;
             this.SavedGamePictogram.DefaultCellStyle = dataGridViewCellStyle1;
             this.SavedGamePictogram.HeaderText = "";
-            this.SavedGamePictogram.Image = ((System.Drawing.Image)(resources.GetObject("SavedGamePictogram.Image")));
             this.SavedGamePictogram.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
             this.SavedGamePictogram.Name = "SavedGamePictogram";
             this.SavedGamePictogram.ReadOnly = true;

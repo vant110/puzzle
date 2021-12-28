@@ -36,7 +36,6 @@ namespace puzzle.UserControls
             this.labelTitle = new System.Windows.Forms.Label();
             this.buttonHelp = new System.Windows.Forms.Button();
             this.buttonSound = new System.Windows.Forms.Button();
-            this.buttonPause = new System.Windows.Forms.Button();
             this.buttonImage = new System.Windows.Forms.Button();
             this.labelMethod = new System.Windows.Forms.Label();
             this.labelValue = new System.Windows.Forms.Label();
@@ -125,24 +124,6 @@ namespace puzzle.UserControls
             this.buttonSound.TabIndex = 3;
             this.buttonSound.UseVisualStyleBackColor = false;
             // 
-            // buttonPause
-            // 
-            this.buttonPause.BackColor = System.Drawing.Color.Transparent;
-            this.buttonPause.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.buttonPause.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.buttonPause.FlatAppearance.BorderSize = 0;
-            this.buttonPause.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.buttonPause.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.buttonPause.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonPause.ImageIndex = 4;
-            this.buttonPause.ImageList = this.imageListPictograms;
-            this.buttonPause.Location = new System.Drawing.Point(245, 0);
-            this.buttonPause.Margin = new System.Windows.Forms.Padding(13, 0, 0, 0);
-            this.buttonPause.Name = "buttonPause";
-            this.buttonPause.Size = new System.Drawing.Size(20, 20);
-            this.buttonPause.TabIndex = 4;
-            this.buttonPause.UseVisualStyleBackColor = false;
-            // 
             // buttonImage
             // 
             this.buttonImage.BackColor = System.Drawing.Color.Transparent;
@@ -195,11 +176,10 @@ namespace puzzle.UserControls
             this.flowLayoutPanel1.Controls.Add(this.buttonImage);
             this.flowLayoutPanel1.Controls.Add(this.labelMethod);
             this.flowLayoutPanel1.Controls.Add(this.labelValue);
-            this.flowLayoutPanel1.Controls.Add(this.buttonPause);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(13, 13);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(265, 20);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(232, 20);
             this.flowLayoutPanel1.TabIndex = 8;
             // 
             // TopUC
@@ -224,13 +204,12 @@ namespace puzzle.UserControls
         public System.Windows.Forms.Timer timer;
         public System.Windows.Forms.Label labelMethod;
         public System.Windows.Forms.Label labelValue;
-        public System.Windows.Forms.Button buttonBack;
         public System.Windows.Forms.Label labelTitle;
         public System.Windows.Forms.Button buttonHelp;
         public System.Windows.Forms.Button buttonSound;
-        public System.Windows.Forms.Button buttonPause;
-        public System.Windows.Forms.Button buttonImage;
         public System.Windows.Forms.ImageList imageListPictograms;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        public System.Windows.Forms.Button buttonBack;
+        public System.Windows.Forms.Button buttonImage;
     }
 }

@@ -18,6 +18,10 @@ namespace puzzle.Model
         public Fragment[] Tape { get; set; }
         public Image MyImage { get; set; }
 
+        public sbyte CountingMethodId { get; set; }
+        public short Score { get; set; }
+        public int Time { get; set; }
+
         public Game(
             int fragmentType,
             int assemblyType,
@@ -223,7 +227,7 @@ namespace puzzle.Model
             Field[index2].InOriginalPosition = FragmentInOriginalPosition(index2);
         }
         public void DrawFragment(int index, Image image)
-        {
+        {            
             Size sizeGraphics = new(
                 image.Width / NHorizontal,
                 image.Height / NVertical);

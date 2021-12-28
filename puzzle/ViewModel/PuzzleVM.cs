@@ -11,6 +11,7 @@ namespace puzzle.ViewModel
         private sbyte difficultyLevelId;
         private byte[] fragmentNumbers;
 
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
@@ -62,5 +63,9 @@ namespace puzzle.ViewModel
                 NotifyPropertyChanged();
             }
         }
+
+        public sbyte CountingMethodId { get; set; }
+        public short Score { get; set; }
+        public int Time { get; set; }
     }
 }

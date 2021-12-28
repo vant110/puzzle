@@ -33,7 +33,7 @@ namespace puzzle.UserControls
             this.label1 = new System.Windows.Forms.Label();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.radioButton0 = new System.Windows.Forms.RadioButton();
             this.panelMethods = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxImage)).BeginInit();
             this.panelMethods.SuspendLayout();
@@ -63,6 +63,7 @@ namespace puzzle.UserControls
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
+            this.radioButton1.Checked = true;
             this.radioButton1.Location = new System.Drawing.Point(3, 26);
             this.radioButton1.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.radioButton1.Name = "radioButton1";
@@ -80,28 +81,26 @@ namespace puzzle.UserControls
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(82, 17);
             this.radioButton2.TabIndex = 3;
-            this.radioButton2.TabStop = true;
             this.radioButton2.Text = "по времени";
             this.radioButton2.UseVisualStyleBackColor = true;
             // 
-            // radioButton3
+            // radioButton0
             // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(3, 86);
-            this.radioButton3.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(82, 17);
-            this.radioButton3.TabIndex = 4;
-            this.radioButton3.TabStop = true;
-            this.radioButton3.Text = "не ведется";
-            this.radioButton3.UseVisualStyleBackColor = true;
+            this.radioButton0.AutoSize = true;
+            this.radioButton0.Location = new System.Drawing.Point(3, 86);
+            this.radioButton0.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
+            this.radioButton0.Name = "radioButton0";
+            this.radioButton0.Size = new System.Drawing.Size(82, 17);
+            this.radioButton0.TabIndex = 4;
+            this.radioButton0.Text = "не ведется";
+            this.radioButton0.UseVisualStyleBackColor = true;
             // 
             // panelMethods
             // 
             this.panelMethods.AutoSize = true;
             this.panelMethods.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panelMethods.Controls.Add(this.label1);
-            this.panelMethods.Controls.Add(this.radioButton3);
+            this.panelMethods.Controls.Add(this.radioButton0);
             this.panelMethods.Controls.Add(this.radioButton1);
             this.panelMethods.Controls.Add(this.radioButton2);
             this.panelMethods.Location = new System.Drawing.Point(13, 332);
@@ -131,10 +130,10 @@ namespace puzzle.UserControls
 
         #endregion
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.RadioButton radioButton1;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton radioButton3;
         public System.Windows.Forms.PictureBox pictureBoxImage;
         public System.Windows.Forms.Panel panelMethods;
+        public System.Windows.Forms.RadioButton radioButton1;
+        public System.Windows.Forms.RadioButton radioButton2;
+        public System.Windows.Forms.RadioButton radioButton0;
     }
 }

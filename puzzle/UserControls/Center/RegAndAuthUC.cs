@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using puzzle.Model;
 using puzzle.Services;
 using System;
 using System.Diagnostics;
@@ -72,17 +73,16 @@ namespace puzzle.UserControls
 
                     var p1 = new MySqlConnector.MySqlParameter("@p1", login);
                     var p2 = new MySqlConnector.MySqlParameter("@p2", passwordHash);
-                    int result;
                     using (var db = new PuzzleContext(Db.Options))
                     {
-                        result = db.Results.FromSqlRaw("SELECT `authorize` (@p1, @p2) AS `Value`", p1, p2).Single().Value;
-                        if (result == -1)
+                        ResultDTO.PlayerId = (short)db.Results.FromSqlRaw("SELECT `authorize` (@p1, @p2) AS `Value`", p1, p2).Single().Value;
+                        if (ResultDTO.PlayerId == -1)
                         {
                             throw new Exception("Неверный логин или пароль.");
                         }
                     }
 
-                    if (result == 0)
+                    if (ResultDTO.PlayerId == 0)
                     {
                         // Админ.
                         form.DisplayAdminMenu();
@@ -90,6 +90,7 @@ namespace puzzle.UserControls
                     else
                     {
                         // Игрок.
+                        form.games = Db.LoadGames();
                         form.DisplayGameChoice();
                     }
                 }

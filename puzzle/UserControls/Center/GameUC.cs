@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,11 +20,14 @@ namespace puzzle.UserControls.Center
     public partial class GameUC : UserControl
     {
         private Game game;
+        private MainForm form;
+
 
         internal GameUC(Game game, MainForm form)
         {
             InitializeComponent();
             this.game = game;
+            this.form = form;
 
             DrawField();
 
@@ -67,12 +71,79 @@ namespace puzzle.UserControls.Center
                 game.DrawFragment(index2, pictureBoxField.Image);
                 pictureBoxField.Refresh();
 
-                if (game.AllFragmentsInOriginalPosition())
+                if (game.CountingMethodId == 1) 
                 {
-                    MessageBoxes.Info("Пазл собран.");
-                    form.DisplayGameChoice();
+                    if (game.Field[index1].InOriginalPosition)
+                    {
+                        game.Score++;
+                    }
+                    if (game.Field[index2].InOriginalPosition)
+                    {
+                        game.Score++;
+                    }
+                    if (!game.Field[index1].InOriginalPosition
+                        && !game.Field[index2].InOriginalPosition)
+                    {
+                        game.Score--;
+                    }
+                    form.topControl.labelValue.Text = game.Score.ToString();
                 }
+
+                if (game.Field[index1].InOriginalPosition
+                    || game.Field[index2].InOriginalPosition)
+                {
+                    if (form.soundOn)
+                    {
+                        form.soundPlayer?.Play();
+                    }
+
+                    if (game.AllFragmentsInOriginalPosition())
+                    {
+                        form.topControl.timer.Stop();
+
+                        var message = "Пазл собран.";
+                        if (game.CountingMethodId == 1)
+                        {
+                            message += $" Очки: {game.Score}";
+                        }
+                        else if (game.CountingMethodId == 2)
+                        {
+                            message += $" Время: {form.topControl.labelValue.Text}";
+                        }
+                        MessageBoxes.Info(message);
+
+                        form.DisplayGameChoice();
+                    }
+                }            
             });
+
+            if (game.CountingMethodId == 2)
+            {
+                form.topControl.timer.Tick += new EventHandler((s, e) =>
+                {
+                    game.Time++;
+                    int h = game.Time / 3600;
+                    int m = game.Time / 60 % 60;
+                    int sec = game.Time % 60;
+                    string hStr = h.ToString();
+                    string mStr = m.ToString();
+                    string secStr = sec.ToString();
+                    if (h < 10)
+                    {
+                        hStr = '0' + hStr;
+                    }
+                    if (m < 10)
+                    {
+                        mStr = '0' + mStr;
+                    }
+                    if (sec < 10)
+                    {
+                        secStr = '0' + secStr;
+                    }
+                    form.topControl.labelValue.Text = $"{hStr}:{mStr}:{secStr}";
+                });
+                form.topControl.timer.Start();
+            }
         }
 
         private void DrawField()
