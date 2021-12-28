@@ -64,7 +64,8 @@ namespace puzzle.UserControls.Center
                     PointToClient(new Point(e.X, e.Y)), 
                     pictureBoxField.Size);
 
-                if (index1 == index2) return;     
+                if (index1 == index2
+                    || game.Field[index2].InOriginalPosition) return;   
 
                 game.SwapFragments(index1, index2);
                 game.DrawFragment(index1, pictureBoxField.Image);
@@ -117,32 +118,20 @@ namespace puzzle.UserControls.Center
                 }            
             });
 
-            if (game.CountingMethodId == 2)
+            if (game.CountingMethodId == 1)
+            {
+                form.topControl.labelValue.Text = game.Score.ToString();
+            }
+            else if (game.CountingMethodId == 2)
             {
                 form.topControl.timer.Tick += new EventHandler((s, e) =>
                 {
                     game.Time++;
-                    int h = game.Time / 3600;
-                    int m = game.Time / 60 % 60;
-                    int sec = game.Time % 60;
-                    string hStr = h.ToString();
-                    string mStr = m.ToString();
-                    string secStr = sec.ToString();
-                    if (h < 10)
-                    {
-                        hStr = '0' + hStr;
-                    }
-                    if (m < 10)
-                    {
-                        mStr = '0' + mStr;
-                    }
-                    if (sec < 10)
-                    {
-                        secStr = '0' + secStr;
-                    }
-                    form.topControl.labelValue.Text = $"{hStr}:{mStr}:{secStr}";
+                    DisplayTime();
                 });
                 form.topControl.timer.Start();
+
+                DisplayTime();
             }
         }
 
@@ -151,6 +140,29 @@ namespace puzzle.UserControls.Center
             var bitmap = new Bitmap(pictureBoxField.Width, pictureBoxField.Height);
             game.DrawField(bitmap);
             pictureBoxField.Image = bitmap;
+        }
+
+        private void DisplayTime()
+        {
+            int h = game.Time / 3600;
+            int m = game.Time / 60 % 60;
+            int sec = game.Time % 60;
+            string hStr = h.ToString();
+            string mStr = m.ToString();
+            string secStr = sec.ToString();
+            if (h < 10)
+            {
+                hStr = '0' + hStr;
+            }
+            if (m < 10)
+            {
+                mStr = '0' + mStr;
+            }
+            if (sec < 10)
+            {
+                secStr = '0' + secStr;
+            }
+            form.topControl.labelValue.Text = $"{hStr}:{mStr}:{secStr}";
         }
     }
 }

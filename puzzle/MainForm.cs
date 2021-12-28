@@ -30,8 +30,11 @@ namespace puzzle
         private UserControl rightControl;
 
         public SoundPlayer soundPlayer;
+        public bool soundOn = true;
 
-        public IList<GameVM> games;
+        public IList<SavedGameVM> savedGames;
+        private List<sbyte> savedMethods;
+        private sbyte currMethodId = 1;
 
         public MainForm()
         {
@@ -81,18 +84,14 @@ namespace puzzle
 
         private static void DisposeImage(ImageAndMethodsUC right)
         {
-            if (right.pictureBoxImage.Image == null) return;
-            right.pictureBoxImage.Image.Dispose();
+            right.pictureBoxImage.Image?.Dispose();
             right.pictureBoxImage.Image = null;
         }
 
         private void ChangeFill(UserControl newFillControl)
         {
             panelCenter.Controls.Remove(fillControl);
-            if (fillControl != null)
-            {
-                fillControl.Dispose();
-            }
+            fillControl?.Dispose();
             fillControl = newFillControl;
             panelCenter.Controls.Add(fillControl);
             fillControl.BringToFront();
@@ -100,10 +99,7 @@ namespace puzzle
         private void ChangeRight(UserControl newRightControl)
         {
             panelCenter.Controls.Remove(rightControl);
-            if (rightControl != null)
-            {
-                rightControl.Dispose();
-            }
+            rightControl?.Dispose();
             rightControl = newRightControl;
             panelCenter.Controls.Add(rightControl);
         }
@@ -151,11 +147,11 @@ namespace puzzle
                 dataGridView.DataSource = bindingSourceFilteredPuzzles.DataSource;
                 for (int i = 0; i < dataGridView.RowCount; i++)
                 {
-                    var a = games
+                    var savedGameExists = savedGames
                         .Where(p => p.PuzzleId == ((PuzzleVM)bindingSourceFilteredPuzzles[i]).Id)
                         .Any();
-                    if (a) {
-                        dataGridView.Rows[i].Cells[1].Value = new Bitmap(puzzle.Properties.Resources.floppy_disk);
+                    if (savedGameExists) {
+                        dataGridView.Rows[i].Cells[1].Value = new Bitmap(Properties.Resources.floppy_disk);
                     }
                     else
                     {
@@ -179,17 +175,46 @@ namespace puzzle
                 .Where(i => i.Id == ((PuzzleVM)bindingSourceFilteredPuzzles.Current).ImageId)
                 .Select(i => i.Image).Single());
         }
+        private void DisplaySavedGames(ImageAndMethodsUC right)
+        {
+            if (bindingSourceFilteredPuzzles.Position == -1)
+            {
+                // скрыть method panel?
+                return;
+            }
 
-        private Game CreateGame(PuzzleVM puzzle)
+            savedMethods = savedGames
+                .Where(i => i.PuzzleId == ((PuzzleVM)bindingSourceFilteredPuzzles.Current).Id)
+                .Select(i => i.CountingMethodId).ToList();
+
+            right.buttonSaved1.Visible = savedMethods.Contains(1);
+            right.buttonSaved2.Visible = savedMethods.Contains(2);
+            right.buttonSaved0.Visible = savedMethods.Contains(0);
+
+            if (right.radioButton1.Checked)
+            {
+                bottomControl.ButtonLoadEnabled = savedMethods.Contains(1);
+            }
+            else if (right.radioButton2.Checked)
+            {
+                bottomControl.ButtonLoadEnabled = savedMethods.Contains(2);
+            }
+            else if (right.radioButton0.Checked)
+            {
+                bottomControl.ButtonLoadEnabled = savedMethods.Contains(0);
+            }
+        }
+
+        private Game CreateNewGame(PuzzleVM puzzle)
         {
             Image image = Image.FromStream(
-                    ((IList<ImageVM>)bindingSourceGallery.List)
-                    .Where(i => i.Id == puzzle.ImageId)
-                    .Select(i => i.Image)
-                    .Single());
+                ((IList<ImageVM>)bindingSourceGallery.List)
+                .Where(i => i.Id == puzzle.ImageId)
+                .Select(i => i.Image)
+                .Single());
             LevelVM level = ((IList<LevelVM>)bindingSourceFilteredLevels.List)
-                    .Where(i => i.Id == puzzle.DifficultyLevelId)
-                    .Single();
+                .Where(i => i.Id == puzzle.DifficultyLevelId)
+                .Single();
 
             Game game = new(
                 level.FragmentTypeId,
@@ -199,7 +224,89 @@ namespace puzzle
                 image);
             game.FragmentNumbers = puzzle.FragmentNumbers;
 
+            game.CountingMethodId = puzzle.CountingMethodId;
+            if (game.CountingMethodId == 1)
+            {
+                game.Score = puzzle.Score;
+            }
+            else if (game.CountingMethodId == 2)
+            {
+                game.Time = puzzle.Time;
+            }
+
             return game;
+        }
+        private Game CreateSavedGame(PuzzleVM puzzle)
+        {
+            SavedGameVM savedGame = savedGames
+                .Where(i => i.PuzzleId == puzzle.Id 
+                    && i.CountingMethodId == puzzle.CountingMethodId)
+                .Single();
+            Image image = Image.FromStream(
+                ((IList<ImageVM>)bindingSourceGallery.List)
+                .Where(i => i.Id == puzzle.ImageId)
+                .Select(i => i.Image)
+                .Single());
+            LevelVM level = ((IList<LevelVM>)bindingSourceFilteredLevels.List)
+                .Where(i => i.Id == puzzle.DifficultyLevelId)
+                .Single();
+
+            Game game = new(
+                level.FragmentTypeId,
+                level.AssemblyTypeId,
+                level.HorizontalFragmentCount,
+                level.VerticalFragmentCount,
+                image);
+            game.FragmentNumbers = savedGame.FieldFragmentNumbers;
+
+            game.CountingMethodId = savedGame.CountingMethodId;
+            if (game.CountingMethodId == 1)
+            {
+                game.Score = savedGame.Score;
+            }
+            else if (game.CountingMethodId == 2)
+            {
+                game.Time = savedGame.Time;
+            }
+
+            return game;
+        }
+
+        private void InitTopControl(ImageAndMethodsUC right, PuzzleVM puzzle)
+        {
+            if (right.radioButton1.Checked)
+            {
+                currMethodId = 1;
+                puzzle.CountingMethodId = 1;
+                puzzle.Score = 0;
+
+                topControl.labelMethod.Visible = true;
+                topControl.labelValue.Visible = true;
+
+                topControl.labelMethod.Text = "Очки:";
+                topControl.labelValue.Text = "0";
+            }
+            else if (right.radioButton2.Checked)
+            {
+                currMethodId = 2;
+                puzzle.CountingMethodId = 2;
+                puzzle.Time = 0;
+
+                topControl.labelMethod.Visible = true;
+                topControl.labelValue.Visible = true;
+
+                topControl.labelMethod.Text = "Время:";
+                topControl.labelValue.Text = "00:00:00";
+
+            }
+            else
+            {
+                currMethodId = 0;
+                puzzle.CountingMethodId = 0;
+
+                topControl.labelMethod.Visible = false;
+                topControl.labelValue.Visible = false;
+            }
         }
 
         internal void DisplayRegAndAuth()
@@ -858,7 +965,7 @@ namespace puzzle
                 form.comboBoxImage.SelectedValue = puzzle.ImageId;
                 form.comboBoxLevel.SelectedValue = puzzle.DifficultyLevelId;
 
-                Game.Instance = CreateGame(puzzle);
+                Game.Instance = CreateNewGame(puzzle);
 
                 form.buttonInsertOrUpdate.Text = "Изменить";
                 form.ButtonInsertOrUpdateClick = new EventHandler((s, e) =>
@@ -1006,9 +1113,7 @@ namespace puzzle
             });
             #endregion
         }
-
-        private int MethodId = 1;
-        public bool soundOn = true;        
+       
         internal void DisplayGameChoice()
         {
             Size = normalFormSize;
@@ -1022,7 +1127,7 @@ namespace puzzle
             ChangeRight(right);
             right.panelMethods.Visible = true;
 
-            switch (MethodId)
+            switch (currMethodId)
             {
                 case 1:
                     right.radioButton1.Select();
@@ -1053,6 +1158,7 @@ namespace puzzle
             {
                 bindingSourceFilteredPuzzles.Position = fill.dataGridView.CurrentRow.Index;
                 DisplayImage(right);
+                DisplaySavedGames(right);
             });
 
             FilterLevels(fill.comboBoxLevels);
@@ -1080,72 +1186,89 @@ namespace puzzle
             panelBottom.Show();
             bottomControl.ButtonDeleteVisible = false;
             bottomControl.ButtonUpdateVisible = false;
+
+            right.radioButton1.CheckedChanged += new EventHandler((s, e) =>
+            {
+                bottomControl.ButtonLoadEnabled = savedMethods.Contains(1);
+            });
+            right.radioButton2.CheckedChanged += new EventHandler((s, e) =>
+            {
+                bottomControl.ButtonLoadEnabled = savedMethods.Contains(2);
+            });
+            right.radioButton0.CheckedChanged += new EventHandler((s, e) =>
+            {
+                bottomControl.ButtonLoadEnabled = savedMethods.Contains(0);
+            });
+            bottomControl.ButtonLoadEnabled = savedMethods.Contains(currMethodId);
             bottomControl.ButtonLoadVisible = true;
             bottomControl.ButtonLoadClick = new EventHandler((s, e) =>
             {
+                var puzzle = (PuzzleVM)bindingSourceFilteredPuzzles.Current;
 
+                InitTopControl(right, puzzle);
+
+                DisplayGame(puzzle, CreateSavedGame(puzzle));
             });
 
             bottomControl.ButtonInsertOrNewGameText = "Новая игра";
             bottomControl.ButtonInsertOrNewGameClick = new EventHandler((s, e) =>
             {
                 var puzzle = (PuzzleVM)bindingSourceFilteredPuzzles.Current;
-                if (right.radioButton1.Checked)
+
+                InitTopControl(right, puzzle);
+
+                bool hasSavedGame = savedGames
+                    .Where(i => i.PuzzleId == puzzle.Id
+                        && i.CountingMethodId == puzzle.CountingMethodId)
+                    .Any();
+                if (!hasSavedGame)
                 {
-                    MethodId = 1;
-                    puzzle.CountingMethodId = 1;
-                    puzzle.Score = 0;
-
-                    topControl.labelMethod.Visible = true;
-                    topControl.labelValue.Visible = true;
-
-                    topControl.labelMethod.Text = "Очки:";
-                    topControl.labelValue.Text = "0";
+                    DisplayGame(puzzle, CreateNewGame(puzzle));
                 }
-                else if (right.radioButton2.Checked)
+                else 
                 {
-                    MethodId = 2;
-                    puzzle.CountingMethodId = 2;
-                    puzzle.Time = 0;
+                    var result = MessageBoxes.Question2("Удалить сохраненную игру и начать заного?");
+                    if (result == DialogResult.OK)
+                    {
+                        try
+                        {
+                            var savedGame = savedGames
+                                .Where(i => i.PuzzleId == puzzle.Id
+                                    && i.CountingMethodId == puzzle.CountingMethodId)
+                                .Single();
 
-                    topControl.labelMethod.Visible = true;
-                    topControl.labelValue.Visible = true;
+                            var p1 = new MySqlConnector.MySqlParameter("@p1", savedGame.SavedGameId);
+                            using (var db = new PuzzleContext(Db.Options))
+                            {
+                                int rowsAffected = db.Database.ExecuteSqlRaw("CALL `delete_game` (@p1)", p1);
+                                if (rowsAffected != 1)
+                                {
+                                    throw new Exception("Ошибка.");
+                                }
+                            }
 
-                    topControl.labelMethod.Text = "Время:";
-                    topControl.labelValue.Text = "00:00:00";
+                            savedGames = Db.LoadGames();
 
+                            MessageBoxes.Info("Успешно.");
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBoxes.Error(ex.Message);
+                        }
+
+                        DisplayGame(puzzle, CreateNewGame(puzzle));
+                    }
                 }
-                else
-                {
-                    MethodId = 0;
-                    puzzle.CountingMethodId = 0;
-
-                    topControl.labelMethod.Visible = false;
-                    topControl.labelValue.Visible = false;
-                }
-                DisplayGame(puzzle);
             });
             #endregion
         }
-        internal void DisplayGame(PuzzleVM puzzle)
+        internal void DisplayGame(PuzzleVM puzzle, Game game)
         {
             Size = normalFormSize;
             CenterToScreen();
 
             ChangeRight(null);
             #region Fill
-            var game = CreateGame(puzzle);
-
-            game.CountingMethodId = puzzle.CountingMethodId;
-            if (game.CountingMethodId == 1)
-            {
-                game.Score = puzzle.Score;
-            }
-            else if (game.CountingMethodId == 2)
-            {
-                game.Time = puzzle.Time;
-            }
-
             var fill = new GameUC(game, this)
             {
                 Dock = DockStyle.Fill,
@@ -1164,7 +1287,7 @@ namespace puzzle
                     fill.pictureBoxField.Image = game.MyImage;
                 }
 
-                var result = MessageBoxes.Question("Сохранить игру?");
+                var result = MessageBoxes.Question3("Сохранить игру?");
                 if (result == DialogResult.Cancel)
                 {
                     if (game.CountingMethodId == 2)
@@ -1192,7 +1315,9 @@ namespace puzzle
                                 throw new Exception("Ошибка.");
                             }
                         }
-                        
+
+                        savedGames = Db.LoadGames();
+
                         MessageBoxes.Info("Успешно.");
                     }
                     catch (Exception ex)

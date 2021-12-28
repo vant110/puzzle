@@ -24,12 +24,21 @@ namespace puzzle.Services
                 MessageBoxIcon.Information);
         }
 
-        public static DialogResult Question(string text)
+        public static DialogResult Question3(string text)
         {
             return MessageBox.Show(
                 text,
                 caption,
                 MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Question);
+        }
+
+        public static DialogResult Question2(string text)
+        {
+            return MessageBox.Show(
+                text,
+                caption,
+                MessageBoxButtons.OKCancel,
                 MessageBoxIcon.Question);
         }
     }

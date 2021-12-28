@@ -7,6 +7,8 @@ namespace puzzle.Model
 {
     class Game
     {
+        private ColorMatrix colorMatrix;
+
         public static Game Instance { get; set; }
 
         public int FragmentType { get; set; }
@@ -52,6 +54,20 @@ namespace puzzle.Model
             Fragment.Size = new(
                 MyImage.Width / NHorizontal,
                 MyImage.Height / NVertical);
+
+
+            colorMatrix = new();
+            // Red
+            colorMatrix.Matrix00 = 1.00f;
+            // Green
+            colorMatrix.Matrix11 = 1.00f;
+            // Blue
+            colorMatrix.Matrix22 = 1.00f;
+            // alpha
+            colorMatrix.Matrix33 = 0.50f;
+            // w
+            colorMatrix.Matrix44 = 1.00f;
+
 
             SplitIntoFragments();
         }
@@ -143,6 +159,14 @@ namespace puzzle.Model
             {
                 for (int j = 0; j < NHorizontal; j++)
                 {
+                    if (Field[i * NHorizontal + j].InOriginalPosition)
+                    {
+                        imageAttr.SetColorMatrix(colorMatrix);
+                    }
+                    else
+                    {
+                        imageAttr.ClearColorMatrix();
+                    }
                     Point position = new(j, i);
                     Rectangle destRect = new(
                         position.X * sizeGraphics.Width,
@@ -243,17 +267,6 @@ namespace puzzle.Model
             imageAttr.SetWrapMode(WrapMode.TileFlipXY);
             if (Field[index].InOriginalPosition)
             {
-                ColorMatrix colorMatrix = new();
-                // Red
-                colorMatrix.Matrix00 = 1.00f;
-                // Green
-                colorMatrix.Matrix11 = 1.00f;
-                // Blue
-                colorMatrix.Matrix22 = 1.00f;
-                // alpha
-                colorMatrix.Matrix33 = 0.50f;
-                // w
-                colorMatrix.Matrix44 = 1.00f;
                 imageAttr.SetColorMatrix(colorMatrix);
             }
 

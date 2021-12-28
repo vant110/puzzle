@@ -19,6 +19,8 @@ namespace puzzle.UserControls
         public bool ButtonUpdateVisible { set => buttonUpdate.Visible = value; }
         public bool ButtonLoadVisible { set => buttonLoad.Visible = value; }
 
+        public bool ButtonLoadEnabled { set => buttonLoad.Enabled = value; }
+
         public string ButtonInsertOrNewGameText { set => buttonInsertOrNewGame.Text = value; }
 
         public EventHandler ButtonDeleteClick

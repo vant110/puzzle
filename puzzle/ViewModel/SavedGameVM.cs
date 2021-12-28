@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace puzzle.ViewModel
 {
-    public class GameVM
+    public class SavedGameVM
     {
         public short SavedGameId { get; set; }
         public short PuzzleId { get; set; }

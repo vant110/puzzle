@@ -134,24 +134,36 @@ namespace puzzle.Services
             }
             return newGallery;
         }
-        public static IList<GameVM> LoadGames()
+        public static IList<SavedGameVM> LoadGames()
         {
-            List<GameVM> gameScores;
-            List<GameVM> gameTimes;
+            List<SavedGameVM> games;
+            List<SavedGameVM> gameScores;
+            List<SavedGameVM> gameTimes;
             using (var db = new PuzzleContext(Options))
             {
+                games = db.SavedGames
+                    .Where(i => i.PlayerId == ResultDTO.PlayerId
+                        && i.CountingMethodId == 0)
+                    .Select(i => new SavedGameVM
+                    {
+                        SavedGameId = i.SavedGameId,
+                        PuzzleId = i.PuzzleId,
+                        FieldFragmentNumbers = i.FieldFragmentNumbers,
+                        CountingMethodId = i.CountingMethodId,
+                    })
+                    .ToList();
                 gameScores = db.SavedGameScores.Join(
                     db.SavedGames
                     .Where(i => i.PlayerId == ResultDTO.PlayerId),
                     sgs => sgs.SavedGameId,
                     sg => sg.SavedGameId,
-                    (sgs, sg) => new GameVM
+                    (sgs, sg) => new SavedGameVM
                     {
                         SavedGameId = sg.SavedGameId,
                         PuzzleId = sg.PuzzleId,
                         FieldFragmentNumbers = sg.FieldFragmentNumbers,
                         CountingMethodId = sg.CountingMethodId,
-                        Score = sgs.Score
+                        Score = sgs.Score,
                     })
                     .ToList();
                 gameTimes = db.SavedGameTimes.Join(
@@ -159,7 +171,7 @@ namespace puzzle.Services
                      .Where(i => i.PlayerId == ResultDTO.PlayerId),
                      sgt => sgt.SavedGameId,
                      sg => sg.SavedGameId,
-                     (sgt, sg) => new GameVM
+                     (sgt, sg) => new SavedGameVM
                      {
                          SavedGameId = sg.SavedGameId,
                          PuzzleId = sg.PuzzleId,
@@ -169,7 +181,7 @@ namespace puzzle.Services
                      }).ToList();
             }
             
-            return gameScores.Union(gameTimes).ToList();
+            return games.Union(gameScores).Union(gameTimes).ToList();
         }
     }
 }

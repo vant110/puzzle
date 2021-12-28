@@ -90,7 +90,7 @@ namespace puzzle.UserControls
                     else
                     {
                         // Игрок.
-                        form.games = Db.LoadGames();
+                        form.savedGames = Db.LoadGames();
                         form.DisplayGameChoice();
                     }
                 }
