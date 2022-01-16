@@ -23,7 +23,7 @@ namespace puzzle.Dialogs
                 pictureBoxField.Image?.Dispose();
                 pictureBoxImage.Image?.Dispose();
                 var selectedItem = (ImageVM)comboBoxImage.SelectedItem;
-                if (selectedItem == null) return;
+                if (selectedItem is null) return;
 
                 image = Image.FromStream(selectedItem.Image);
                 pictureBoxImage.Image = image;
@@ -35,7 +35,7 @@ namespace puzzle.Dialogs
                 Game.Instance = null;
                 pictureBoxField.Image?.Dispose();
                 var selectedItem = (LevelVM)comboBoxLevel.SelectedItem;
-                if (selectedItem == null) return;
+                if (selectedItem is null) return;
 
                 level = selectedItem;
             });
@@ -63,10 +63,7 @@ namespace puzzle.Dialogs
 
         private void CreatePuzzle()
         {
-            if (image is null || level is null)
-            {
-                return;
-            }
+            if (image is null || level is null) return;
 
             Game.Instance = new(
                 level.FragmentTypeId,
@@ -76,7 +73,6 @@ namespace puzzle.Dialogs
                 image);
             Game.Instance.Mix();
         }
-
         private void DrawField()
         {
             if (Game.Instance is null) return;

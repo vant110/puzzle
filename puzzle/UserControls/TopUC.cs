@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using puzzle.Dialogs;
+using System;
 using System.Windows.Forms;
 
 namespace puzzle.UserControls
@@ -19,11 +13,13 @@ namespace puzzle.UserControls
         public TopUC()
         {
             InitializeComponent();
-        }        
+
+            buttonHelp.Click += new EventHandler((s, e) => new HelpForm().Show());
+        }
 
         public EventHandler ButtonBackClick
         {
-            set 
+            set
             {
                 buttonBack.Click -= buttonBackClick;
                 buttonBackClick = value;

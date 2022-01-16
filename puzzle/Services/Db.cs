@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace puzzle.Services
 {
@@ -180,8 +179,53 @@ namespace puzzle.Services
                          Time = sgt.Time
                      }).ToList();
             }
-            
+
             return games.Union(gameScores).Union(gameTimes).ToList();
+        }
+        public static IList<RecordVM> LoadRecords(short puzzleId, sbyte methodId)
+        {
+            using var db = new PuzzleContext(Options);
+            var records = db.Records
+                .Where(i => i.PuzzleId == puzzleId
+                    && i.CountingMethodId == methodId)
+                .Join(db.Players,
+                    r => r.PlayerId,
+                    p => p.PlayerId,
+                    (r, p) => new RecordVM
+                    {
+                        RecordId = r.RecordId,
+                        CountingMethodId = r.CountingMethodId,
+                        Login = p.Login
+                    });
+            if (methodId == 1)
+            {
+                records = records.Join(db.RecordScores,
+                    r => r.RecordId,
+                    rs => rs.RecordId,
+                    (r, rs) => new RecordVM
+                    {
+
+                        RecordId = r.RecordId,
+                        CountingMethodId = r.CountingMethodId,
+                        Login = r.Login,
+                        Score = rs.Score
+                    });
+            }
+            else if (methodId == 2)
+            {
+                records = records.Join(db.RecordTimes,
+                    r => r.RecordId,
+                    rt => rt.RecordId,
+                    (r, rt) => new RecordVM
+                    {
+
+                        RecordId = r.RecordId,
+                        CountingMethodId = r.CountingMethodId,
+                        Login = r.Login,
+                        Time = rt.Time
+                    });
+            }
+            return records.ToList();
         }
     }
 }

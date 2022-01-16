@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MySqlConnector;
 using puzzle.Model;
 using puzzle.Services;
 using System;
@@ -31,8 +32,8 @@ namespace puzzle.UserControls
 
                     string passwordHash = Hasher.HashPassword(password, login);
 
-                    var p1 = new MySqlConnector.MySqlParameter("@p1", login);
-                    var p2 = new MySqlConnector.MySqlParameter("@p2", passwordHash);
+                    var p1 = new MySqlParameter("@p1", login);
+                    var p2 = new MySqlParameter("@p2", passwordHash);
                     int rowsAffected;
                     using (var db = new PuzzleContext(Db.Options))
                     {
@@ -45,7 +46,7 @@ namespace puzzle.UserControls
                     }
                     MessageBoxes.Info("Успешно.");
                 }
-                catch (MySqlConnector.MySqlException ex) when (ex.Number == 1062)
+                catch (MySqlException ex) when (ex.Number == 1062)
                 {
                     MessageBoxes.Error("Логин занят.");
                 }
@@ -71,8 +72,8 @@ namespace puzzle.UserControls
 
                     string passwordHash = Hasher.HashPassword(password, login);
 
-                    var p1 = new MySqlConnector.MySqlParameter("@p1", login);
-                    var p2 = new MySqlConnector.MySqlParameter("@p2", passwordHash);
+                    var p1 = new MySqlParameter("@p1", login);
+                    var p2 = new MySqlParameter("@p2", passwordHash);
                     using (var db = new PuzzleContext(Db.Options))
                     {
                         ResultDTO.PlayerId = (short)db.Results.FromSqlRaw("SELECT `authorize` (@p1, @p2) AS `Value`", p1, p2).Single().Value;

@@ -5,6 +5,7 @@ namespace puzzle.Model
     class Fragment
     {
         public static Size Size { get; set; }
+
         public byte Number { get; set; }
         public Point OriginalPosition { get; set; }
         public Image Image { get; set; }

@@ -1,7 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Compile Update="Dialogs\HelpForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Dialogs\InsertOrUpdatePuzzleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\RecordsForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="UserControls\Center\AdminMenuUC.cs">

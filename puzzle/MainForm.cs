@@ -16,6 +16,7 @@ using puzzle.ViewModel;
 using System.Collections.Generic;
 using puzzle.UserControls.Center;
 using System.Media;
+using MySqlConnector;
 
 namespace puzzle
 {
@@ -58,7 +59,17 @@ namespace puzzle
             #endregion
             DisplayRegAndAuth();
 
-            bindingSourceGallery.DataSource = new BindingList<ImageVM>(Db.LoadGallery());
+            try
+            {
+                bindingSourceGallery.DataSource = new BindingList<ImageVM>(Db.LoadGallery());
+            }
+            catch (InvalidOperationException ex)
+            when (((MySqlException)ex.InnerException).Number == 1042)
+            {
+                MessageBoxes.Error("База данных не доступна.");
+                Close();
+                return;
+            }
             bindingSourceLevels.DataSource = new BindingList<LevelVM>(Db.LoadLevels());
             bindingSourcePuzzles.DataSource = new BindingList<PuzzleVM>(Db.LoadPuzzles((IList<ImageVM>)bindingSourceGallery.List));
             using (var db = new PuzzleContext(Db.Options)) {
@@ -68,6 +79,9 @@ namespace puzzle
                 bindingSourceFragmentTypes.DataSource = db.FragmentTypes.Local.ToBindingList();
                 bindingSourceAssemblyTypes.DataSource = db.AssemblyTypes.Local.ToBindingList();
                 bindingSourceMethods.DataSource = db.CountingMethods.Local.ToBindingList();
+                db.CountingMethods.Local.Remove(db.CountingMethods.Local
+                    .Where(i => i.CountingMethodId == 0)
+                    .Single());
             }
 
             soundPlayer = new SoundPlayer(@"sounds\in-original-position.wav");
@@ -121,11 +135,11 @@ namespace puzzle
             comboBoxLevels.DataSource = bindingSourceFilteredLevels.DataSource;
             comboBoxLevels.DisplayMember = "Name";
         }
-        private void FilterPuzzles(Control listOrGrid)
+        private void FilterPuzzles(Control listOrGridOrBox)
         {
             Debug.WriteLine(1);
 
-            if (bindingSourceFilteredLevels.Current == null)
+            if (bindingSourceFilteredLevels.Current is null)
             {
                 bindingSourceFilteredPuzzles.Clear();
                 return;
@@ -137,11 +151,11 @@ namespace puzzle
                 .ToList();
             bindingSourceFilteredPuzzles.DataSource = new BindingList<PuzzleVM>(filteredPuzzles);
 
-            if (listOrGrid is ListBox listBox)
+            if (listOrGridOrBox is ListBox listBox)
             {
                 listBox.DataSource = bindingSourceFilteredPuzzles.DataSource;
             }
-            else if (listOrGrid is DataGridView dataGridView)
+            else if (listOrGridOrBox is DataGridView dataGridView)
             {
                 dataGridView.AutoGenerateColumns = false;
                 dataGridView.DataSource = bindingSourceFilteredPuzzles.DataSource;
@@ -158,6 +172,10 @@ namespace puzzle
                         dataGridView.Rows[i].Cells[1].Value = new Bitmap(1, 1);
                     }
                 }
+            }
+            else if (listOrGridOrBox is ComboBox comboBox)
+            {
+                comboBox.DataSource = bindingSourceFilteredPuzzles.DataSource;
             }
         }
         private void DisplayImage(ImageAndMethodsUC right)
@@ -203,6 +221,38 @@ namespace puzzle
             {
                 bottomControl.ButtonLoadEnabled = savedMethods.Contains(0);
             }
+        }
+
+        private void ShowRecordsForm(sbyte methodId)
+        {
+            var form = new RecordsForm();
+
+            FilterLevels(form.comboBoxLevel);
+            form.comboBoxLevel.SelectedItem = bindingSourceFilteredLevels.Current;
+
+            FilterPuzzles(form.comboBoxPuzzle);
+            form.comboBoxPuzzle.SelectedItem = bindingSourceFilteredPuzzles.Current;
+
+            form.comboBoxMethod.DataSource = bindingSourceMethods.DataSource;
+            form.comboBoxMethod.SelectedValue = methodId;
+
+            form.comboBoxLevel.SelectedValueChanged += new EventHandler((s, e) =>
+            {
+                bindingSourceFilteredLevels.Position = form.comboBoxLevel.SelectedIndex;
+                FilterPuzzles(form.comboBoxPuzzle);
+            });
+
+            form.comboBoxPuzzle.SelectedValueChanged += new EventHandler((s, e) =>
+            {
+                bindingSourceFilteredPuzzles.Position = form.comboBoxPuzzle.SelectedIndex;
+            });
+
+            form.comboBoxMethod.SelectedValueChanged += new EventHandler((s, e) =>
+            {
+                bindingSourceMethods.Position = form.comboBoxMethod.SelectedIndex;
+            });
+
+            form.Show();
         }
 
         private Game CreateNewGame(PuzzleVM puzzle)
@@ -379,7 +429,7 @@ namespace puzzle
             bindingSourceGallery.ListChanged += new ListChangedEventHandler((s, e) =>
             {
                 var selectedItem = (ImageVM)fill.listBox.SelectedItem;
-                if (selectedItem == null)
+                if (selectedItem is null)
                 {
                     return;
                 }
@@ -395,7 +445,7 @@ namespace puzzle
             fill.listBox.SelectedValueChanged += new EventHandler((s, e) =>
             {
                 var selectedItem = (ImageVM)fill.listBox.SelectedItem;
-                if (selectedItem == null)
+                if (selectedItem is null)
                 {
                     return;
                 }
@@ -423,10 +473,10 @@ namespace puzzle
             bottomControl.ButtonDeleteClick = new EventHandler((s, e) =>
             {
                 var selectedItem = (ImageVM)fill.listBox.SelectedItem;
-                if (selectedItem == null) return;
+                if (selectedItem is null) return;
                 try
                 {
-                    var id = new MySqlConnector.MySqlParameter("@id", selectedItem.Id);
+                    var id = new MySqlParameter("@id", selectedItem.Id);
                     using (var db = new PuzzleContext(Db.Options))
                     {
                         int rowsAffected = db.Database.ExecuteSqlRaw("CALL `delete_image` (@id)", id);
@@ -441,7 +491,7 @@ namespace puzzle
                     bindingSourceGallery.Remove(selectedItem);
                     MessageBoxes.Info("Успешно.");
                 }
-                catch (MySqlConnector.MySqlException ex)
+                catch (MySqlException ex)
                 when (ex.Number == 1451)
                 {
                     MessageBoxes.Error("Невозможно удалить изображение,\nпока оно используется хотя бы в одном пазле.");
@@ -493,7 +543,7 @@ namespace puzzle
                         {
                             throw new Exception("Название изображения некорректно.");
                         }
-                        if (newImage.Image == null)
+                        if (newImage.Image is null)
                         {
                             throw new Exception("Выберите файл изображения.");
                         }
@@ -509,9 +559,9 @@ namespace puzzle
                             ImageHash = newImage.ImageHash
                         };
 
-                        var p1 = new MySqlConnector.MySqlParameter("@p1", image.Name);
-                        var p2 = new MySqlConnector.MySqlParameter("@p2", image.Path);
-                        var p3 = new MySqlConnector.MySqlParameter("@p3", image.ImageHash);
+                        var p1 = new MySqlParameter("@p1", image.Name);
+                        var p2 = new MySqlParameter("@p2", image.Path);
+                        var p3 = new MySqlParameter("@p3", image.ImageHash);
                         using (var db = new PuzzleContext(Db.Options))
                         {
                             int rowsAffected = db.Database.ExecuteSqlRaw("CALL `insert_image` (@p1, @p2, @p3)", p1, p2, p3);
@@ -536,7 +586,7 @@ namespace puzzle
 
                         MessageBoxes.Info("Успешно.");
                     }
-                    catch (MySqlConnector.MySqlException ex) 
+                    catch (MySqlException ex) 
                     when (ex.Number == 1062)
                     {
                         if (ex.Message.Contains("'gallery.name'"))
@@ -600,7 +650,7 @@ namespace puzzle
             bindingSourceLevels.ListChanged += new ListChangedEventHandler((s, e) =>
             {
                 var selectedItem = (LevelVM)fill.listBox.SelectedItem;
-                if (selectedItem == null)
+                if (selectedItem is null)
                 {
                     return;
                 }
@@ -624,7 +674,7 @@ namespace puzzle
             fill.listBox.SelectedValueChanged += new EventHandler((s, e) =>
             {
                 var selectedItem = (LevelVM)fill.listBox.SelectedItem;
-                if (selectedItem == null)
+                if (selectedItem is null)
                 {
                     return;
                 }
@@ -658,10 +708,10 @@ namespace puzzle
             bottomControl.ButtonDeleteClick = new EventHandler((s, e) =>
             {
                 var selectedItem = (LevelVM)fill.listBox.SelectedItem;
-                if (selectedItem == null) return;
+                if (selectedItem is null) return;
                 try
                 {
-                    var id = new MySqlConnector.MySqlParameter("@id", selectedItem.Id);
+                    var id = new MySqlParameter("@id", selectedItem.Id);
                     using (var db = new PuzzleContext(Db.Options))
                     {
                         int rowsAffected = db.Database.ExecuteSqlRaw("CALL `delete_level` (@id)", id);
@@ -680,7 +730,7 @@ namespace puzzle
 
                     MessageBoxes.Info("Успешно.");
                 }
-                catch (MySqlConnector.MySqlException ex)
+                catch (MySqlException ex)
                 when (ex.Number == 1451)
                 {
                     MessageBoxes.Error("Невозможно удалить уровень сложности,\nпока он используется хотя бы в одном пазле.");
@@ -695,7 +745,7 @@ namespace puzzle
             bottomControl.ButtonUpdateClick = new EventHandler((s, e) =>
             {
                 var selectedItem = (LevelVM)fill.listBox.SelectedItem;
-                if (selectedItem == null) return;
+                if (selectedItem is null) return;
                 var form = new InsertOrUpdateLevelForm(this)
                 {
                     Text = "Изменение уровня сложности",
@@ -715,11 +765,11 @@ namespace puzzle
                         {
                             throw new Exception("Название уровня сложности некорректно.");
                         }
-                        if (form.comboBoxFragmentType.SelectedItem == null)
+                        if (form.comboBoxFragmentType.SelectedItem is null)
                         {
                             throw new Exception("Выберите тип фрагментов.");
                         }
-                        if (form.comboBoxAssemblyType.SelectedItem == null)
+                        if (form.comboBoxAssemblyType.SelectedItem is null)
                         {
                             throw new Exception("Выберите тип сборки.");
                         }
@@ -733,12 +783,12 @@ namespace puzzle
                             AssemblyTypeId = (sbyte)form.comboBoxAssemblyType.SelectedValue
                         };
 
-                        var id = new MySqlConnector.MySqlParameter("@id", level.Id);
-                        var p1 = new MySqlConnector.MySqlParameter("@p1", level.Name);
-                        var p2 = new MySqlConnector.MySqlParameter("@p2", level.HorizontalFragmentCount);
-                        var p3 = new MySqlConnector.MySqlParameter("@p3", level.VerticalFragmentCount);
-                        var p4 = new MySqlConnector.MySqlParameter("@p4", level.FragmentTypeId);
-                        var p5 = new MySqlConnector.MySqlParameter("@p5", level.AssemblyTypeId);
+                        var id = new MySqlParameter("@id", level.Id);
+                        var p1 = new MySqlParameter("@p1", level.Name);
+                        var p2 = new MySqlParameter("@p2", level.HorizontalFragmentCount);
+                        var p3 = new MySqlParameter("@p3", level.VerticalFragmentCount);
+                        var p4 = new MySqlParameter("@p4", level.FragmentTypeId);
+                        var p5 = new MySqlParameter("@p5", level.AssemblyTypeId);
                         using (var db = new PuzzleContext(Db.Options))
                         {
                             int rowsAffected = db.Database.ExecuteSqlRaw("CALL `update_level` (@id, @p1, @p2, @p3, @p4, @p5)", id, p1, p2, p3, p4, p5);
@@ -754,7 +804,7 @@ namespace puzzle
                         selectedItem.AssemblyTypeId = level.AssemblyTypeId;
                         MessageBoxes.Info("Успешно.");
                     }
-                    catch (MySqlConnector.MySqlException ex)
+                    catch (MySqlException ex)
                     when (ex.Number == 1062)
                     {
                         MessageBoxes.Error("Название уровня сложности занято.");
@@ -786,11 +836,11 @@ namespace puzzle
                         {
                             throw new Exception("Название уровня сложности некорректно.");
                         }
-                        if (form.comboBoxFragmentType.SelectedItem == null)
+                        if (form.comboBoxFragmentType.SelectedItem is null)
                         {
                             throw new Exception("Выберите тип фрагментов.");
                         }
-                        if (form.comboBoxAssemblyType.SelectedItem == null)
+                        if (form.comboBoxAssemblyType.SelectedItem is null)
                         {
                             throw new Exception("Выберите тип сборки.");
                         }
@@ -803,11 +853,11 @@ namespace puzzle
                             AssemblyTypeId = (sbyte)form.comboBoxAssemblyType.SelectedValue
                         };
 
-                        var p1 = new MySqlConnector.MySqlParameter("@p1", level.Name);
-                        var p2 = new MySqlConnector.MySqlParameter("@p2", level.HorizontalFragmentCount);
-                        var p3 = new MySqlConnector.MySqlParameter("@p3", level.VerticalFragmentCount);
-                        var p4 = new MySqlConnector.MySqlParameter("@p4", level.FragmentTypeId);
-                        var p5 = new MySqlConnector.MySqlParameter("@p5", level.AssemblyTypeId);
+                        var p1 = new MySqlParameter("@p1", level.Name);
+                        var p2 = new MySqlParameter("@p2", level.HorizontalFragmentCount);
+                        var p3 = new MySqlParameter("@p3", level.VerticalFragmentCount);
+                        var p4 = new MySqlParameter("@p4", level.FragmentTypeId);
+                        var p5 = new MySqlParameter("@p5", level.AssemblyTypeId);
                         using (var db = new PuzzleContext(Db.Options))
                         {
                             int rowsAffected = db.Database.ExecuteSqlRaw("CALL `insert_level` (@p1, @p2, @p3, @p4, @p5)", p1, p2, p3, p4, p5);
@@ -835,7 +885,7 @@ namespace puzzle
 
                         MessageBoxes.Info("Успешно.");
                     }
-                    catch (MySqlConnector.MySqlException ex)
+                    catch (MySqlException ex)
                     when (ex.Number == 1062)
                     {
                         MessageBoxes.Error("Название уровня сложности занято.");
@@ -904,10 +954,10 @@ namespace puzzle
             bottomControl.ButtonDeleteClick = new EventHandler((s, e) =>
             {
                 var puzzle = (PuzzleVM)fill.listBox.SelectedItem;
-                if (puzzle == null) return;
+                if (puzzle is null) return;
                 try
                 {
-                    var id = new MySqlConnector.MySqlParameter("@id", puzzle.Id);
+                    var id = new MySqlParameter("@id", puzzle.Id);
                     using (var db = new PuzzleContext(Db.Options))
                     {
                         int rowsAffected = db.Database.ExecuteSqlRaw("CALL `delete_puzzle` (@id)", id);
@@ -955,12 +1005,12 @@ namespace puzzle
             bottomControl.ButtonUpdateClick = new EventHandler((s, e) =>
             {
                 var puzzle = (PuzzleVM)fill.listBox.SelectedItem;
-                if (puzzle == null) return;
+                if (puzzle is null) return;
+
                 var form = new InsertOrUpdatePuzzleForm(this)
                 {
                     Text = "Изменение пазла",
                 };
-
                 form.textBoxName.Text = puzzle.Name;
                 form.comboBoxImage.SelectedValue = puzzle.ImageId;
                 form.comboBoxLevel.SelectedValue = puzzle.DifficultyLevelId;
@@ -976,15 +1026,15 @@ namespace puzzle
                         {
                             throw new Exception("Название пазла некорректно.");
                         }
-                        if (form.comboBoxImage.SelectedItem == null)
+                        if (form.comboBoxImage.SelectedItem is null)
                         {
                             throw new Exception("Выберите изображение.");
                         }
-                        if (form.comboBoxLevel.SelectedItem == null)
+                        if (form.comboBoxLevel.SelectedItem is null)
                         {
                             throw new Exception("Выберите уровень сложности.");
                         }
-                        if (Game.Instance == null)
+                        if (Game.Instance is null)
                         {
                             throw new Exception("Перемешайте фрагменты.");
                         }
@@ -997,11 +1047,11 @@ namespace puzzle
                             FragmentNumbers = Game.Instance.FragmentNumbers
                         };
 
-                        var id = new MySqlConnector.MySqlParameter("@id", puzzle.Id);
-                        var p1 = new MySqlConnector.MySqlParameter("@p1", tempPuzzle.Name);
-                        var p2 = new MySqlConnector.MySqlParameter("@p2", tempPuzzle.ImageId);
-                        var p3 = new MySqlConnector.MySqlParameter("@p3", tempPuzzle.DifficultyLevelId);
-                        var p4 = new MySqlConnector.MySqlParameter("@p4", tempPuzzle.FragmentNumbers);
+                        var id = new MySqlParameter("@id", puzzle.Id);
+                        var p1 = new MySqlParameter("@p1", tempPuzzle.Name);
+                        var p2 = new MySqlParameter("@p2", tempPuzzle.ImageId);
+                        var p3 = new MySqlParameter("@p3", tempPuzzle.DifficultyLevelId);
+                        var p4 = new MySqlParameter("@p4", tempPuzzle.FragmentNumbers);
                         using (var db = new PuzzleContext(Db.Options))
                         {
                             int rowsAffected = db.Database.ExecuteSqlRaw("CALL `update_puzzle` (@id, @p1, @p2, @p3, @p4)", id, p1, p2, p3, p4);
@@ -1022,7 +1072,7 @@ namespace puzzle
 
                         MessageBoxes.Info("Успешно.");
                     }
-                    catch (MySqlConnector.MySqlException ex) 
+                    catch (MySqlException ex) 
                     when (ex.Number == 1062)
                     {
                         MessageBoxes.Error("Название пазла занято.");
@@ -1053,15 +1103,15 @@ namespace puzzle
                         {
                             throw new Exception("Название пазла некорректно.");
                         }
-                        if (form.comboBoxImage.SelectedItem == null)
+                        if (form.comboBoxImage.SelectedItem is null)
                         {
                             throw new Exception("Выберите изображение.");
                         }
-                        if (form.comboBoxLevel.SelectedItem == null)
+                        if (form.comboBoxLevel.SelectedItem is null)
                         {
                             throw new Exception("Выберите уровень сложности.");
                         }
-                        if (Game.Instance == null)
+                        if (Game.Instance is null)
                         {
                             throw new Exception("Перемешайте фрагменты.");
                         }
@@ -1074,10 +1124,10 @@ namespace puzzle
                             FragmentNumbers = Game.Instance.FragmentNumbers
                         };
 
-                        var p1 = new MySqlConnector.MySqlParameter("@p1", puzzle.Name);
-                        var p2 = new MySqlConnector.MySqlParameter("@p2", puzzle.ImageId);
-                        var p3 = new MySqlConnector.MySqlParameter("@p3", puzzle.DifficultyLevelId);
-                        var p4 = new MySqlConnector.MySqlParameter("@p4", puzzle.FragmentNumbers);
+                        var p1 = new MySqlParameter("@p1", puzzle.Name);
+                        var p2 = new MySqlParameter("@p2", puzzle.ImageId);
+                        var p3 = new MySqlParameter("@p3", puzzle.DifficultyLevelId);
+                        var p4 = new MySqlParameter("@p4", puzzle.FragmentNumbers);
                         using (var db = new PuzzleContext(Db.Options))
                         {
                             int rowsAffected = db.Database.ExecuteSqlRaw("CALL `insert_puzzle` (@p1, @p2, @p3, @p4)", p1, p2, p3, p4);
@@ -1098,7 +1148,7 @@ namespace puzzle
 
                         MessageBoxes.Info("Успешно.");
                     }
-                    catch (MySqlConnector.MySqlException ex) 
+                    catch (MySqlException ex) 
                     when (ex.Number == 1062)
                     {
                         MessageBoxes.Error("Название пазла занято.");
@@ -1126,6 +1176,9 @@ namespace puzzle
             };
             ChangeRight(right);
             right.panelMethods.Visible = true;
+
+            right.ButtonRecords1Click = new EventHandler((s, e) => ShowRecordsForm(1));
+            right.ButtonRecords2Click = new EventHandler((s, e) => ShowRecordsForm(2));
 
             switch (currMethodId)
             {
@@ -1237,7 +1290,7 @@ namespace puzzle
                                     && i.CountingMethodId == puzzle.CountingMethodId)
                                 .Single();
 
-                            var p1 = new MySqlConnector.MySqlParameter("@p1", savedGame.SavedGameId);
+                            var p1 = new MySqlParameter("@p1", savedGame.SavedGameId);
                             using (var db = new PuzzleContext(Db.Options))
                             {
                                 int rowsAffected = db.Database.ExecuteSqlRaw("CALL `delete_game` (@p1)", p1);
@@ -1269,7 +1322,7 @@ namespace puzzle
 
             ChangeRight(null);
             #region Fill
-            var fill = new GameUC(game, this)
+            var fill = new GameUC(puzzle, game, this)
             {
                 Dock = DockStyle.Fill,
             };
@@ -1284,7 +1337,7 @@ namespace puzzle
                 if (game.CountingMethodId == 2)
                 {
                     topControl.timer.Stop();
-                    fill.pictureBoxField.Image = game.MyImage;
+                    fill.pictureBoxField.Image = game.FullImage;
                 }
 
                 var result = MessageBoxes.Question3("Сохранить игру?");
@@ -1301,12 +1354,12 @@ namespace puzzle
                 {
                     try
                     {
-                        var p1 = new MySqlConnector.MySqlParameter("@p1", ResultDTO.PlayerId);
-                        var p2 = new MySqlConnector.MySqlParameter("@p2", puzzle.Id);
-                        var p3 = new MySqlConnector.MySqlParameter("@p3", game.FragmentNumbers);
-                        var p4 = new MySqlConnector.MySqlParameter("@p4", game.CountingMethodId);
-                        var p5 = new MySqlConnector.MySqlParameter("@p5", game.Score);
-                        var p6 = new MySqlConnector.MySqlParameter("@p6", game.Time);
+                        var p1 = new MySqlParameter("@p1", ResultDTO.PlayerId);
+                        var p2 = new MySqlParameter("@p2", puzzle.Id);
+                        var p3 = new MySqlParameter("@p3", game.FragmentNumbers);
+                        var p4 = new MySqlParameter("@p4", game.CountingMethodId);
+                        var p5 = new MySqlParameter("@p5", game.Score);
+                        var p6 = new MySqlParameter("@p6", game.Time);
                         using (var db = new PuzzleContext(Db.Options))
                         {
                             int rowsAffected = db.Database.ExecuteSqlRaw("CALL `save_game` (@p1, @p2, @p3, @p4, @p5, @p6)", p1, p2, p3, p4, p5, p6);
@@ -1330,7 +1383,6 @@ namespace puzzle
             });
 
             topControl.buttonImage.Visible = true;
-
             bool imageOn = false;
             topControl.buttonImage.ImageIndex = imageOn ? 7 : 6;            
             topControl.ButtonImageClick = new EventHandler((s, e) =>
@@ -1340,7 +1392,7 @@ namespace puzzle
                                 
                 if (imageOn)
                 {
-                    fill.pictureBoxField.Image = game.MyImage;
+                    fill.pictureBoxField.Image = game.FullImage;
                 }
                 else
                 {

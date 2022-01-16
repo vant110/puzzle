@@ -249,11 +249,11 @@ namespace puzzle.UserControls
         public System.Windows.Forms.RadioButton radioButton1;
         public System.Windows.Forms.RadioButton radioButton2;
         public System.Windows.Forms.RadioButton radioButton0;
-        public System.Windows.Forms.Button buttonRecords1;
         private System.Windows.Forms.ImageList imageListPictograms;
         public System.Windows.Forms.Button buttonSaved0;
         public System.Windows.Forms.Button buttonSaved2;
         public System.Windows.Forms.Button buttonSaved1;
-        public System.Windows.Forms.Button buttonRecords2;
+        private System.Windows.Forms.Button buttonRecords1;
+        private System.Windows.Forms.Button buttonRecords2;
     }
 }

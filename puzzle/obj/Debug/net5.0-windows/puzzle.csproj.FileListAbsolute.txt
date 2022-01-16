@@ -57,3 +57,5 @@ F:\VBFile\Учеба\4 курс\ПИ\puzzle\puzzle\obj\Debug\net5.0-windows\puzz
 F:\VBFile\Учеба\4 курс\ПИ\puzzle\puzzle\obj\Debug\net5.0-windows\puzzle.genruntimeconfig.cache
 F:\VBFile\Учеба\4 курс\ПИ\puzzle\puzzle\obj\Debug\net5.0-windows\puzzle.csproj.AssemblyReference.cache
 F:\VBFile\Учеба\4 курс\ПИ\puzzle\puzzle\obj\Debug\net5.0-windows\puzzle.UserControls.Center.GameUC.resources
+F:\VBFile\Учеба\4 курс\ПИ\puzzle\puzzle\obj\Debug\net5.0-windows\puzzle.Dialogs.RecordsForm.resources
+F:\VBFile\Учеба\4 курс\ПИ\puzzle\puzzle\obj\Debug\net5.0-windows\puzzle.Dialogs.HelpForm.resources
