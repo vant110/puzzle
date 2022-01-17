@@ -315,25 +315,11 @@ namespace puzzle
                 level.HorizontalFragmentCount,
                 level.VerticalFragmentCount,
                 image);
+
             game.FieldFragmentNumbers = savedGame.FieldFragmentNumbers;
-
-            Debug.WriteLine($"---game.FieldFragmentNumbers");
-            for (int i = 0; i < game.FieldFragmentNumbers.Length; i++)
-            {
-                Debug.WriteLine($"{i} fn = {game.FieldFragmentNumbers[i]}");
-            }
-            Debug.WriteLine($"---");
-
             if (game.AssemblyType == 2)
             {
                 game.TapeFragmentNumbers = savedGame.TapeFragmentNumbers;
-
-                Debug.WriteLine($"---game.TapeFragmentNumbers");
-                for (int i = 0; i < game.TapeFragmentNumbers.Length; i++)
-                {
-                    Debug.WriteLine($"{i} fn = {game.TapeFragmentNumbers[i]}");
-                }
-                Debug.WriteLine($"---");
             }
 
             game.CountingMethodId = savedGame.CountingMethodId;
@@ -1412,19 +1398,6 @@ namespace puzzle
                 {
                     try
                     {
-                        Debug.WriteLine($"---game.FieldFragmentNumbers");
-                        for (int i = 0; i < game.FieldFragmentNumbers.Length; i++)
-                        {
-                            Debug.WriteLine($"{i} fn = {game.FieldFragmentNumbers[i]}");
-                        }
-                        Debug.WriteLine($"---");
-                        Debug.WriteLine($"---game.TapeFragmentNumbers");
-                        for (int i = 0; i < game.TapeFragmentNumbers.Length; i++)
-                        {
-                            Debug.WriteLine($"{i} fn = {game.TapeFragmentNumbers[i]}");
-                        }
-                        Debug.WriteLine($"---");
-
                         var p1 = new MySqlParameter("@p1", ResultDTO.PlayerId);
                         var p2 = new MySqlParameter("@p2", puzzle.Id);
                         var p3 = new MySqlParameter("@p3", game.FieldFragmentNumbers);

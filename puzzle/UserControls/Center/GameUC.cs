@@ -96,15 +96,8 @@ namespace puzzle.UserControls.Center
                     {
                         pictureBoxTape.Height -= pictureBoxTape.Height / game.Tape.Length;
                         game.Tape = game.Tape.Where(f => f is not null).ToArray();
-
-                        if (game.Tape.Length == 0)
-                        {
-                            pictureBoxTape.Image.Dispose();
-                        }
-                        else
-                        {
-                            DrawTape();
-                        }
+                                                
+                        DrawTape();
                     }
                     else
                     {
@@ -189,6 +182,8 @@ namespace puzzle.UserControls.Center
             pictureBoxTape.AllowDrop = true;
             pictureBoxTape.MouseDown += new MouseEventHandler((s, e) =>
             {
+                if (game.Tape.Length == 0) return;
+
                 source = 2;
                 location1 = e.Location;
 
@@ -210,7 +205,10 @@ namespace puzzle.UserControls.Center
                     pictureBoxField.Size);
                 int index2 = game.Tape.Length;
 
-                pictureBoxTape.Height += pictureBoxTape.Height / game.Tape.Length;
+                if (game.Tape.Length != 0)
+                {
+                    pictureBoxTape.Height += pictureBoxTape.Height / game.Tape.Length;
+                }
                 {
                     var list = game.Tape.ToList();
                     list.Add(null);
@@ -265,6 +263,17 @@ namespace puzzle.UserControls.Center
         private void DrawTape()
         {
             panelTape.Show();
+
+            if (game.Tape.Length == 0)
+            {
+                var image = new Bitmap(
+                    pictureBoxField.Width / game.NHorizontal, 
+                    pictureBoxField.Height / game.NVertical);
+                pictureBoxTape.Image = image;
+                pictureBoxTape.Height = pictureBoxTape.Image.Height;
+                return;
+            }
+
             pictureBoxTape.Width = pictureBoxField.Width / game.NHorizontal;
             pictureBoxTape.Height = pictureBoxField.Height / game.NVertical * game.Tape.Length;
 

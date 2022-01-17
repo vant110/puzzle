@@ -134,6 +134,7 @@ namespace puzzle.Model
 
                 arr[i].InOriginalPosition = false;
             }
+            arr[0].InOriginalPosition = false;
         }
         public void DrawField(Image image)
         {
@@ -220,8 +221,6 @@ namespace puzzle.Model
         {
             get
             {
-                Fragment[] arr = Field;
-
                 byte[] fragmentNumbers = new byte[Length];
                 for (int i = 0; i < Length; i++)
                 {
@@ -230,48 +229,34 @@ namespace puzzle.Model
 
                 for (int i = 0; i < Length; i++)
                 {
-                    if (arr[i] is null) continue;
-                    fragmentNumbers[arr[i].Number] = (byte)i;
+                    if (Field[i] is null) continue;
+                    fragmentNumbers[Field[i].Number] = (byte)i;
                 }
-
-                //Debug.WriteLine($"---field get");
-                for (int i = 0; i < Length; i++)
-                {
-                    //Debug.WriteLine($"{i} fn = {fragmentNumbers[i]}");
-                }
-                //Debug.WriteLine($"---field get");
 
                 return fragmentNumbers;
             }
             set
             {
-                Fragment[] arr = Field;
-                var oldArr = new Fragment[Length];
-                arr.CopyTo(oldArr, 0);
+                var originalGame = new Game(
+                    FragmentType,
+                    1,
+                    NHorizontal,
+                    NVertical,
+                    FullImage);                    
+                var originalField = new Fragment[Length];
+                originalGame.Field.CopyTo(originalField, 0);
+
                 for (int i = 0; i < Length; i++)
                 {
                     if (value[i] == byte.MaxValue) continue;
-                    arr[value[i]] = oldArr[i];
-                    if (arr[value[i]] is not null)
-                    {
-                        arr[value[i]].InOriginalPosition = AssemblyType == 1
-                            && FragmentInOriginalPosition(value[i]);
-                    }
-                }
 
-                //Debug.WriteLine($"---field set");
-                for (int i = 0; i < arr.Length; i++)
-                {
-                    if (arr[i] is null)
+                    Field[value[i]] = originalField[i];
+
+                    if (Field[value[i]] is not null)
                     {
-                        //Debug.WriteLine($"{i} {arr[i]}");
-                    }
-                    else
-                    {
-                        //Debug.WriteLine($"{i} {arr[i].Number}");
+                        Field[value[i]].InOriginalPosition = FragmentInOriginalPosition(value[i]);
                     }
                 }
-                //Debug.WriteLine($"---field set");
             }
         }
         public byte[] TapeFragmentNumbers
@@ -279,8 +264,6 @@ namespace puzzle.Model
             get
             {
                 if (Tape is null) return null;
-                //Debug.WriteLine($"---tape get --- T.L = {Tape.Length}");
-                Fragment[] arr = Tape;
 
                 byte[] fragmentNumbers = new byte[Length];
                 for (int i = 0; i < Length; i++)
@@ -288,44 +271,34 @@ namespace puzzle.Model
                     fragmentNumbers[i] = byte.MaxValue;
                 }
 
-                for (int i = 0; i < arr.Length; i++)
+                for (int i = 0; i < Tape.Length; i++)
                 {
-                    fragmentNumbers[arr[i].Number] = (byte)i;
+                    fragmentNumbers[Tape[i].Number] = (byte)i;
                 }
-
-                //Debug.WriteLine($"---tape get");
-                for (int i = 0; i < Length; i++)
-                {
-                    //Debug.WriteLine($"{i} fn = {fragmentNumbers[i]}");
-                }
-                //Debug.WriteLine($"---tape get");
 
                 return fragmentNumbers;
             }
             set
             {
-                //Debug.WriteLine($"---tape set --- T.L = {Tape.Length}");
-                Fragment[] arr = Tape;
+                var originalTape = new Fragment[Length];
+                Tape.CopyTo(originalTape, 0);
+                for (int i = 0; i < Length; i++)
+                {
+                    Tape[i] = null;
+                }
 
-                var oldArr = new Fragment[Length];
-                arr.CopyTo(oldArr, 0);
                 for (int i = 0; i < Length; i++)
                 {
                     if (value[i] == byte.MaxValue) continue;
-                    arr[value[i]] = oldArr[i];
-                    if (arr[value[i]] is not null)
+
+                    Tape[value[i]] = originalTape[i];
+
+                    if (Tape[value[i]] is not null)
                     {
-                        arr[value[i]].InOriginalPosition = AssemblyType == 1
-                            && FragmentInOriginalPosition(value[i]);
+                        Tape[value[i]].InOriginalPosition = false;
                     }
                 }
-
-                //Debug.WriteLine($"---tape set");
-                for (int i = 0; i < arr.Length; i++)
-                {
-                    //Debug.WriteLine($"{i} {arr[i].Number}");
-                }
-                //Debug.WriteLine($"---tape set");
+                Tape = Tape.Where(f => f is not null).ToArray();
             }
         }
 
