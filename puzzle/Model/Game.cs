@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -215,29 +216,41 @@ namespace puzzle.Model
             }
         }
 
-        public byte[] FragmentNumbers
+        public byte[] FieldFragmentNumbers
         {
             get
             {
-                Fragment[] arr = AssemblyType == 1
-                    ? Field
-                    : Tape;
+                Fragment[] arr = Field;
+
                 byte[] fragmentNumbers = new byte[Length];
                 for (int i = 0; i < Length; i++)
                 {
+                    fragmentNumbers[i] = byte.MaxValue;
+                }
+
+                for (int i = 0; i < Length; i++)
+                {
+                    if (arr[i] is null) continue;
                     fragmentNumbers[arr[i].Number] = (byte)i;
                 }
+
+                //Debug.WriteLine($"---field get");
+                for (int i = 0; i < Length; i++)
+                {
+                    //Debug.WriteLine($"{i} fn = {fragmentNumbers[i]}");
+                }
+                //Debug.WriteLine($"---field get");
+
                 return fragmentNumbers;
             }
             set
             {
-                Fragment[] arr = AssemblyType == 1
-                    ? Field
-                    : Tape;
+                Fragment[] arr = Field;
                 var oldArr = new Fragment[Length];
                 arr.CopyTo(oldArr, 0);
                 for (int i = 0; i < Length; i++)
                 {
+                    if (value[i] == byte.MaxValue) continue;
                     arr[value[i]] = oldArr[i];
                     if (arr[value[i]] is not null)
                     {
@@ -245,6 +258,74 @@ namespace puzzle.Model
                             && FragmentInOriginalPosition(value[i]);
                     }
                 }
+
+                //Debug.WriteLine($"---field set");
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    if (arr[i] is null)
+                    {
+                        //Debug.WriteLine($"{i} {arr[i]}");
+                    }
+                    else
+                    {
+                        //Debug.WriteLine($"{i} {arr[i].Number}");
+                    }
+                }
+                //Debug.WriteLine($"---field set");
+            }
+        }
+        public byte[] TapeFragmentNumbers
+        {
+            get
+            {
+                if (Tape is null) return null;
+                //Debug.WriteLine($"---tape get --- T.L = {Tape.Length}");
+                Fragment[] arr = Tape;
+
+                byte[] fragmentNumbers = new byte[Length];
+                for (int i = 0; i < Length; i++)
+                {
+                    fragmentNumbers[i] = byte.MaxValue;
+                }
+
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    fragmentNumbers[arr[i].Number] = (byte)i;
+                }
+
+                //Debug.WriteLine($"---tape get");
+                for (int i = 0; i < Length; i++)
+                {
+                    //Debug.WriteLine($"{i} fn = {fragmentNumbers[i]}");
+                }
+                //Debug.WriteLine($"---tape get");
+
+                return fragmentNumbers;
+            }
+            set
+            {
+                //Debug.WriteLine($"---tape set --- T.L = {Tape.Length}");
+                Fragment[] arr = Tape;
+
+                var oldArr = new Fragment[Length];
+                arr.CopyTo(oldArr, 0);
+                for (int i = 0; i < Length; i++)
+                {
+                    if (value[i] == byte.MaxValue) continue;
+                    arr[value[i]] = oldArr[i];
+                    if (arr[value[i]] is not null)
+                    {
+                        arr[value[i]].InOriginalPosition = AssemblyType == 1
+                            && FragmentInOriginalPosition(value[i]);
+                    }
+                }
+
+                //Debug.WriteLine($"---tape set");
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    //Debug.WriteLine($"{i} {arr[i].Number}");
+                }
+                //Debug.WriteLine($"---tape set");
             }
         }
 

@@ -135,11 +135,13 @@ namespace puzzle.Services
         }
         public static IList<SavedGameVM> LoadGames()
         {
-            List<SavedGameVM> games;
-            List<SavedGameVM> gameScores;
-            List<SavedGameVM> gameTimes;
+            List<SavedGameVM> fieldGames;
+            List<SavedGameVM> tapeGames;
             using (var db = new PuzzleContext(Options))
             {
+                List<SavedGameVM> games;
+                List<SavedGameVM> scoreGames;
+                List<SavedGameVM> timeGames;
                 games = db.SavedGames
                     .Where(i => i.PlayerId == ResultDTO.PlayerId
                         && i.CountingMethodId == 0)
@@ -151,7 +153,7 @@ namespace puzzle.Services
                         CountingMethodId = i.CountingMethodId,
                     })
                     .ToList();
-                gameScores = db.SavedGameScores.Join(
+                scoreGames = db.SavedGameScores.Join(
                     db.SavedGames
                     .Where(i => i.PlayerId == ResultDTO.PlayerId),
                     sgs => sgs.SavedGameId,
@@ -165,7 +167,7 @@ namespace puzzle.Services
                         Score = sgs.Score,
                     })
                     .ToList();
-                gameTimes = db.SavedGameTimes.Join(
+                timeGames = db.SavedGameTimes.Join(
                      db.SavedGames
                      .Where(i => i.PlayerId == ResultDTO.PlayerId),
                      sgt => sgt.SavedGameId,
@@ -178,9 +180,42 @@ namespace puzzle.Services
                          CountingMethodId = sg.CountingMethodId,
                          Time = sgt.Time
                      }).ToList();
+                games = games.Union(scoreGames).Union(timeGames).ToList();
+
+                fieldGames = games.Where(g => (
+                    db.DifficultyLevels.Join(
+                        db.Puzzles
+                        .Where(p => p.PuzzleId == g.PuzzleId),
+                        dl => dl.DifficultyLevelId,
+                        p => p.DifficultyLevelId,
+                        (dl, p) => dl.AssemblyTypeId)
+                    .Single()) == 1).ToList();
+                tapeGames = games
+                    .Where(g => (
+                        db.DifficultyLevels.Join(
+                            db.Puzzles
+                            .Where(p => p.PuzzleId == g.PuzzleId),
+                            dl => dl.DifficultyLevelId,
+                            p => p.DifficultyLevelId,
+                            (dl, p) => dl.AssemblyTypeId)
+                        .Single()) == 2)
+                    .Join(
+                        db.SavedGameTapes,
+                        g => g.SavedGameId,
+                        sgt => sgt.SavedGameId,
+                        (g, sgt) => new SavedGameVM
+                        {
+                            SavedGameId = g.SavedGameId,
+                            PuzzleId = g.PuzzleId,
+                            FieldFragmentNumbers = g.FieldFragmentNumbers,
+                            TapeFragmentNumbers = sgt.FragmentNumbers,
+                            CountingMethodId = g.CountingMethodId,
+                            Time = g.Time,
+                            Score = g.Score                        
+                        }).ToList();
             }
 
-            return games.Union(gameScores).Union(gameTimes).ToList();
+            return fieldGames.Union(tapeGames).ToList();
         }
         public static IList<RecordVM> LoadRecords(short puzzleId, sbyte methodId)
         {

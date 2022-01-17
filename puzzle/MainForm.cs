@@ -272,7 +272,15 @@ namespace puzzle
                 level.HorizontalFragmentCount,
                 level.VerticalFragmentCount,
                 image);
-            game.FragmentNumbers = puzzle.FragmentNumbers;
+
+            if (game.AssemblyType == 1)
+            {
+                game.FieldFragmentNumbers = puzzle.FragmentNumbers;
+            }
+            else if (game.AssemblyType == 2)
+            {
+                game.TapeFragmentNumbers = puzzle.FragmentNumbers;
+            }
 
             game.CountingMethodId = puzzle.CountingMethodId;
             if (game.CountingMethodId == 1)
@@ -307,7 +315,26 @@ namespace puzzle
                 level.HorizontalFragmentCount,
                 level.VerticalFragmentCount,
                 image);
-            game.FragmentNumbers = savedGame.FieldFragmentNumbers;
+            game.FieldFragmentNumbers = savedGame.FieldFragmentNumbers;
+
+            Debug.WriteLine($"---game.FieldFragmentNumbers");
+            for (int i = 0; i < game.FieldFragmentNumbers.Length; i++)
+            {
+                Debug.WriteLine($"{i} fn = {game.FieldFragmentNumbers[i]}");
+            }
+            Debug.WriteLine($"---");
+
+            if (game.AssemblyType == 2)
+            {
+                game.TapeFragmentNumbers = savedGame.TapeFragmentNumbers;
+
+                Debug.WriteLine($"---game.TapeFragmentNumbers");
+                for (int i = 0; i < game.TapeFragmentNumbers.Length; i++)
+                {
+                    Debug.WriteLine($"{i} fn = {game.TapeFragmentNumbers[i]}");
+                }
+                Debug.WriteLine($"---");
+            }
 
             game.CountingMethodId = savedGame.CountingMethodId;
             if (game.CountingMethodId == 1)
@@ -330,9 +357,6 @@ namespace puzzle
                 puzzle.CountingMethodId = 1;
                 puzzle.Score = 0;
 
-                topControl.labelMethod.Visible = true;
-                topControl.labelValue.Visible = true;
-
                 topControl.labelMethod.Text = "Очки:";
                 topControl.labelValue.Text = "0";
             }
@@ -342,20 +366,13 @@ namespace puzzle
                 puzzle.CountingMethodId = 2;
                 puzzle.Time = 0;
 
-                topControl.labelMethod.Visible = true;
-                topControl.labelValue.Visible = true;
-
                 topControl.labelMethod.Text = "Время:";
                 topControl.labelValue.Text = "00:00:00";
-
             }
             else
             {
                 currMethodId = 0;
                 puzzle.CountingMethodId = 0;
-
-                topControl.labelMethod.Visible = false;
-                topControl.labelValue.Visible = false;
             }
         }
 
@@ -1044,7 +1061,9 @@ namespace puzzle
                             Name = form.textBoxName.Text,
                             ImageId = ((ImageVM)form.comboBoxImage.SelectedItem).Id,
                             DifficultyLevelId = ((LevelVM)form.comboBoxLevel.SelectedItem).Id,
-                            FragmentNumbers = Game.Instance.FragmentNumbers
+                            FragmentNumbers = ((LevelVM)form.comboBoxLevel.SelectedItem).AssemblyTypeId == 1
+                                ? Game.Instance.FieldFragmentNumbers
+                                : Game.Instance.TapeFragmentNumbers
                         };
 
                         var id = new MySqlParameter("@id", puzzle.Id);
@@ -1121,7 +1140,9 @@ namespace puzzle
                             Name = form.textBoxName.Text,
                             ImageId = ((ImageVM)form.comboBoxImage.SelectedItem).Id,
                             DifficultyLevelId = ((LevelVM)form.comboBoxLevel.SelectedItem).Id,
-                            FragmentNumbers = Game.Instance.FragmentNumbers
+                            FragmentNumbers = ((LevelVM)form.comboBoxLevel.SelectedItem).AssemblyTypeId == 1
+                                ? Game.Instance.FieldFragmentNumbers
+                                : Game.Instance.TapeFragmentNumbers
                         };
 
                         var p1 = new MySqlParameter("@p1", puzzle.Name);
@@ -1315,6 +1336,39 @@ namespace puzzle
             });
             #endregion
         }
+        private bool ImageClick(bool imageOn, Image tempFieldImage, Game game, GameUC fill)
+        {
+            imageOn = !imageOn;
+            topControl.buttonImage.ImageIndex = imageOn ? 7 : 6;
+
+            if (imageOn)
+            {
+                fill.panelTape.Visible = false;
+                fill.pictureBoxField.Enabled = false;
+                fill.pictureBoxField.SizeMode = PictureBoxSizeMode.StretchImage;
+                fill.pictureBoxField.Image = game.FullImage;
+            }
+            else
+            {
+                fill.panelTape.Visible = game.AssemblyType == 2;
+                fill.pictureBoxField.Enabled = true;
+                fill.pictureBoxField.SizeMode = PictureBoxSizeMode.Normal;
+                fill.pictureBoxField.Image = tempFieldImage;
+            }
+
+            if (game.CountingMethodId == 2)
+            {
+                if (imageOn)
+                {
+                    topControl.timer.Stop();
+                }
+                else
+                {
+                    topControl.timer.Start();
+                }
+            }
+            return imageOn;
+        }
         internal void DisplayGame(PuzzleVM puzzle, Game game)
         {
             Size = normalFormSize;
@@ -1330,6 +1384,7 @@ namespace puzzle
             #endregion            
             #region Top
             Image tempFieldImage = fill.pictureBoxField.Image;
+            bool imageOn = false;
 
             topControl.buttonBack.Visible = true;
             topControl.ButtonBackClick = new EventHandler((s, e) =>
@@ -1337,7 +1392,7 @@ namespace puzzle
                 if (game.CountingMethodId == 2)
                 {
                     topControl.timer.Stop();
-                    fill.pictureBoxField.Image = game.FullImage;
+                    ImageClick(false, tempFieldImage, game, fill);
                 }
 
                 var result = MessageBoxes.Question3("Сохранить игру?");
@@ -1345,8 +1400,11 @@ namespace puzzle
                 {
                     if (game.CountingMethodId == 2)
                     {
-                        fill.pictureBoxField.Image = tempFieldImage;
-                        topControl.timer.Start();
+                        imageOn = ImageClick(!imageOn, tempFieldImage, game, fill);
+                        if (!imageOn)
+                        {
+                            topControl.timer.Start();
+                        }
                     }
                     return;
                 }
@@ -1354,15 +1412,29 @@ namespace puzzle
                 {
                     try
                     {
+                        Debug.WriteLine($"---game.FieldFragmentNumbers");
+                        for (int i = 0; i < game.FieldFragmentNumbers.Length; i++)
+                        {
+                            Debug.WriteLine($"{i} fn = {game.FieldFragmentNumbers[i]}");
+                        }
+                        Debug.WriteLine($"---");
+                        Debug.WriteLine($"---game.TapeFragmentNumbers");
+                        for (int i = 0; i < game.TapeFragmentNumbers.Length; i++)
+                        {
+                            Debug.WriteLine($"{i} fn = {game.TapeFragmentNumbers[i]}");
+                        }
+                        Debug.WriteLine($"---");
+
                         var p1 = new MySqlParameter("@p1", ResultDTO.PlayerId);
                         var p2 = new MySqlParameter("@p2", puzzle.Id);
-                        var p3 = new MySqlParameter("@p3", game.FragmentNumbers);
-                        var p4 = new MySqlParameter("@p4", game.CountingMethodId);
-                        var p5 = new MySqlParameter("@p5", game.Score);
-                        var p6 = new MySqlParameter("@p6", game.Time);
+                        var p3 = new MySqlParameter("@p3", game.FieldFragmentNumbers);
+                        var p4 = new MySqlParameter("@p4", game.TapeFragmentNumbers);
+                        var p5 = new MySqlParameter("@p5", game.CountingMethodId);
+                        var p6 = new MySqlParameter("@p6", game.Score);
+                        var p7 = new MySqlParameter("@p7", game.Time);
                         using (var db = new PuzzleContext(Db.Options))
                         {
-                            int rowsAffected = db.Database.ExecuteSqlRaw("CALL `save_game` (@p1, @p2, @p3, @p4, @p5, @p6)", p1, p2, p3, p4, p5, p6);
+                            int rowsAffected = db.Database.ExecuteSqlRaw("CALL `save_game` (@p1, @p2, @p3, @p4, @p5, @p6, @p7)", p1, p2, p3, p4, p5, p6, p7);
                             if (rowsAffected != 1)
                             {
                                 throw new Exception("Ошибка.");
@@ -1383,36 +1455,15 @@ namespace puzzle
             });
 
             topControl.buttonImage.Visible = true;
-            bool imageOn = false;
             topControl.buttonImage.ImageIndex = imageOn ? 7 : 6;            
             topControl.ButtonImageClick = new EventHandler((s, e) =>
             {
-                imageOn = !imageOn;
-                topControl.buttonImage.ImageIndex = imageOn ? 7 : 6;
-                                
-                if (imageOn)
-                {
-                    fill.pictureBoxField.Image = game.FullImage;
-                }
-                else
-                {
-                    fill.pictureBoxField.Image = tempFieldImage;
-                }
-
-                if (game.CountingMethodId == 2)                
-                {
-                    if (imageOn)
-                    {
-                        topControl.timer.Stop();
-                    }
-                    else
-                    {
-                        topControl.timer.Start();
-                    }
-                }
+                imageOn = ImageClick(imageOn, tempFieldImage, game, fill);
             });
 
             topControl.labelTitle.Text = puzzle.Name;
+            topControl.labelMethod.Visible = puzzle.CountingMethodId != 0;
+            topControl.labelValue.Visible = topControl.labelMethod.Visible;
             #endregion            
             panelBottom.Hide();
         }
