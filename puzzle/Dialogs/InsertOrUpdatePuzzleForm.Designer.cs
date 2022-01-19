@@ -139,7 +139,6 @@ namespace puzzle.Dialogs
             this.pictureBoxImage.Location = new System.Drawing.Point(13, 144);
             this.pictureBoxImage.Name = "pictureBoxImage";
             this.pictureBoxImage.Size = new System.Drawing.Size(368, 276);
-            this.pictureBoxImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBoxImage.TabIndex = 33;
             this.pictureBoxImage.TabStop = false;
             // 
@@ -150,7 +149,6 @@ namespace puzzle.Dialogs
             this.pictureBoxField.Margin = new System.Windows.Forms.Padding(13, 13, 3, 3);
             this.pictureBoxField.Name = "pictureBoxField";
             this.pictureBoxField.Size = new System.Drawing.Size(368, 276);
-            this.pictureBoxField.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBoxField.TabIndex = 34;
             this.pictureBoxField.TabStop = false;
             // 
