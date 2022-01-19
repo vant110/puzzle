@@ -1,22 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using MySqlConnector;
 using puzzle.Data;
 using puzzle.Dialogs;
 using puzzle.Model;
 using puzzle.Services;
 using puzzle.UserControls;
+using puzzle.UserControls.Center;
 using System;
-using System.Linq;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Windows.Forms;
-using System.ComponentModel;
-using puzzle.ViewModel;
-using System.Collections.Generic;
-using puzzle.UserControls.Center;
+using System.Linq;
 using System.Media;
-using MySqlConnector;
+using System.Windows.Forms;
 
 namespace puzzle
 {
@@ -33,7 +30,7 @@ namespace puzzle
         public SoundPlayer soundPlayer;
         public bool soundOn = true;
 
-        public IList<SavedGameVM> savedGames;
+        public IList<SavedGameModel> savedGames;
         private List<sbyte> savedMethods;
         private sbyte currMethodId = 1;
 
@@ -61,7 +58,7 @@ namespace puzzle
 
             try
             {
-                bindingSourceGallery.DataSource = new BindingList<ImageVM>(Db.LoadGallery());
+                bindingSourceGallery.DataSource = new BindingList<ImageModel>(Db.LoadGallery());
             }
             catch (InvalidOperationException ex)
             when (((MySqlException)ex.InnerException).Number == 1042)
@@ -70,9 +67,10 @@ namespace puzzle
                 Close();
                 return;
             }
-            bindingSourceLevels.DataSource = new BindingList<LevelVM>(Db.LoadLevels());
-            bindingSourcePuzzles.DataSource = new BindingList<PuzzleVM>(Db.LoadPuzzles((IList<ImageVM>)bindingSourceGallery.List));
-            using (var db = new PuzzleContext(Db.Options)) {
+            bindingSourceLevels.DataSource = new BindingList<LevelModel>(Db.LoadLevels());
+            bindingSourcePuzzles.DataSource = new BindingList<PuzzleModel>(Db.LoadPuzzles((IList<ImageModel>)bindingSourceGallery.List));
+            using (var db = new PuzzleContext(Db.Options))
+            {
                 db.FragmentTypes.Load();
                 db.AssemblyTypes.Load();
                 db.CountingMethods.Load();
@@ -122,15 +120,15 @@ namespace puzzle
         {
             Debug.WriteLine(0);
 
-            var filteredLevels = ((IList<LevelVM>)bindingSourceLevels.List)
-                .Join((IList<PuzzleVM>)bindingSourcePuzzles.List,
+            var filteredLevels = ((IList<LevelModel>)bindingSourceLevels.List)
+                .Join((IList<PuzzleModel>)bindingSourcePuzzles.List,
                     l => l.Id,
                     p => p.DifficultyLevelId,
                     (l, p) => l)
                 .Distinct()
                 .OrderBy(i => i.Name)
                 .ToList();
-            bindingSourceFilteredLevels.DataSource = new BindingList<LevelVM>(filteredLevels);
+            bindingSourceFilteredLevels.DataSource = new BindingList<LevelModel>(filteredLevels);
 
             comboBoxLevels.DataSource = bindingSourceFilteredLevels.DataSource;
             comboBoxLevels.DisplayMember = "Name";
@@ -145,11 +143,11 @@ namespace puzzle
                 return;
             }
 
-            var filteredPuzzles = ((IList<PuzzleVM>)bindingSourcePuzzles.List)
-                .Where(i => i.DifficultyLevelId == ((LevelVM)bindingSourceFilteredLevels.Current).Id)
+            var filteredPuzzles = ((IList<PuzzleModel>)bindingSourcePuzzles.List)
+                .Where(i => i.DifficultyLevelId == ((LevelModel)bindingSourceFilteredLevels.Current).Id)
                 .OrderBy(i => i.Name)
                 .ToList();
-            bindingSourceFilteredPuzzles.DataSource = new BindingList<PuzzleVM>(filteredPuzzles);
+            bindingSourceFilteredPuzzles.DataSource = new BindingList<PuzzleModel>(filteredPuzzles);
 
             if (listOrGridOrBox is ListBox listBox)
             {
@@ -162,9 +160,10 @@ namespace puzzle
                 for (int i = 0; i < dataGridView.RowCount; i++)
                 {
                     var savedGameExists = savedGames
-                        .Where(p => p.PuzzleId == ((PuzzleVM)bindingSourceFilteredPuzzles[i]).Id)
+                        .Where(p => p.PuzzleId == ((PuzzleModel)bindingSourceFilteredPuzzles[i]).Id)
                         .Any();
-                    if (savedGameExists) {
+                    if (savedGameExists)
+                    {
                         dataGridView.Rows[i].Cells[1].Value = new Bitmap(Properties.Resources.floppy_disk);
                     }
                     else
@@ -189,8 +188,8 @@ namespace puzzle
             }
 
             right.pictureBoxImage.Image = Image.FromStream(
-                ((IList<ImageVM>)bindingSourceGallery.List)
-                .Where(i => i.Id == ((PuzzleVM)bindingSourceFilteredPuzzles.Current).ImageId)
+                ((IList<ImageModel>)bindingSourceGallery.List)
+                .Where(i => i.Id == ((PuzzleModel)bindingSourceFilteredPuzzles.Current).ImageId)
                 .Select(i => i.Image).Single());
         }
         private void DisplaySavedGames(ImageAndMethodsUC right)
@@ -202,7 +201,7 @@ namespace puzzle
             }
 
             savedMethods = savedGames
-                .Where(i => i.PuzzleId == ((PuzzleVM)bindingSourceFilteredPuzzles.Current).Id)
+                .Where(i => i.PuzzleId == ((PuzzleModel)bindingSourceFilteredPuzzles.Current).Id)
                 .Select(i => i.CountingMethodId).ToList();
 
             right.buttonSaved1.Visible = savedMethods.Contains(1);
@@ -255,14 +254,14 @@ namespace puzzle
             form.Show();
         }
 
-        private Game CreateNewGame(PuzzleVM puzzle)
+        private Game CreateNewGame(PuzzleModel puzzle)
         {
             Image image = Image.FromStream(
-                ((IList<ImageVM>)bindingSourceGallery.List)
+                ((IList<ImageModel>)bindingSourceGallery.List)
                 .Where(i => i.Id == puzzle.ImageId)
                 .Select(i => i.Image)
                 .Single());
-            LevelVM level = ((IList<LevelVM>)bindingSourceFilteredLevels.List)
+            LevelModel level = ((IList<LevelModel>)bindingSourceFilteredLevels.List)
                 .Where(i => i.Id == puzzle.DifficultyLevelId)
                 .Single();
 
@@ -294,18 +293,18 @@ namespace puzzle
 
             return game;
         }
-        private Game CreateSavedGame(PuzzleVM puzzle)
+        private Game CreateSavedGame(PuzzleModel puzzle)
         {
-            SavedGameVM savedGame = savedGames
-                .Where(i => i.PuzzleId == puzzle.Id 
+            SavedGameModel savedGame = savedGames
+                .Where(i => i.PuzzleId == puzzle.Id
                     && i.CountingMethodId == puzzle.CountingMethodId)
                 .Single();
             Image image = Image.FromStream(
-                ((IList<ImageVM>)bindingSourceGallery.List)
+                ((IList<ImageModel>)bindingSourceGallery.List)
                 .Where(i => i.Id == puzzle.ImageId)
                 .Select(i => i.Image)
                 .Single());
-            LevelVM level = ((IList<LevelVM>)bindingSourceFilteredLevels.List)
+            LevelModel level = ((IList<LevelModel>)bindingSourceFilteredLevels.List)
                 .Where(i => i.Id == puzzle.DifficultyLevelId)
                 .Single();
 
@@ -335,7 +334,7 @@ namespace puzzle
             return game;
         }
 
-        private void InitTopControl(ImageAndMethodsUC right, PuzzleVM puzzle)
+        private void InitTopControl(ImageAndMethodsUC right, PuzzleModel puzzle)
         {
             if (right.radioButton1.Checked)
             {
@@ -431,7 +430,7 @@ namespace puzzle
 
             bindingSourceGallery.ListChanged += new ListChangedEventHandler((s, e) =>
             {
-                var selectedItem = (ImageVM)fill.listBox.SelectedItem;
+                var selectedItem = (ImageModel)fill.listBox.SelectedItem;
                 if (selectedItem is null)
                 {
                     return;
@@ -440,14 +439,14 @@ namespace puzzle
                 var selectedIndex = fill.listBox.SelectedIndex;
                 if (selectedIndex != bindingSourceGallery.List.Count)
                 {
-                    selectedItem = (ImageVM)bindingSourceGallery.List[selectedIndex];
+                    selectedItem = (ImageModel)bindingSourceGallery.List[selectedIndex];
                     right.pictureBoxImage.Image = Image.FromStream(selectedItem.Image);
                 }
             });
 
             fill.listBox.SelectedValueChanged += new EventHandler((s, e) =>
             {
-                var selectedItem = (ImageVM)fill.listBox.SelectedItem;
+                var selectedItem = (ImageModel)fill.listBox.SelectedItem;
                 if (selectedItem is null)
                 {
                     return;
@@ -475,7 +474,7 @@ namespace puzzle
             bottomControl.ButtonDeleteVisible = true;
             bottomControl.ButtonDeleteClick = new EventHandler((s, e) =>
             {
-                var selectedItem = (ImageVM)fill.listBox.SelectedItem;
+                var selectedItem = (ImageModel)fill.listBox.SelectedItem;
                 if (selectedItem is null) return;
                 try
                 {
@@ -512,7 +511,7 @@ namespace puzzle
             {
                 var form = new InsertImageForm();
 
-                var newImage = new ImageVM();
+                var newImage = new ImageModel();
                 form.buttonFile.Click += new EventHandler((s, e) =>
                 {
                     if (newImage.Image != null)
@@ -554,8 +553,8 @@ namespace puzzle
                         newImage.Image = LocalStorage.Resize(newImage.Image);
                         newImage.ImageHash = Hasher.HashImage(newImage.Image);
 
-                        var image = new ImageVM 
-                        { 
+                        var image = new ImageModel
+                        {
                             Name = newImage.Name,
                             Path = newImage.Path,
                             Image = newImage.Image,
@@ -589,7 +588,7 @@ namespace puzzle
 
                         MessageBoxes.Info("Успешно.");
                     }
-                    catch (MySqlException ex) 
+                    catch (MySqlException ex)
                     when (ex.Number == 1062)
                     {
                         if (ex.Message.Contains("'gallery.name'"))
@@ -652,7 +651,7 @@ namespace puzzle
 
             bindingSourceLevels.ListChanged += new ListChangedEventHandler((s, e) =>
             {
-                var selectedItem = (LevelVM)fill.listBox.SelectedItem;
+                var selectedItem = (LevelModel)fill.listBox.SelectedItem;
                 if (selectedItem is null)
                 {
                     return;
@@ -661,7 +660,7 @@ namespace puzzle
                 var selectedIndex = fill.listBox.SelectedIndex;
                 if (selectedIndex != bindingSourceLevels.List.Count)
                 {
-                    selectedItem = (LevelVM)bindingSourceLevels.List[selectedIndex];
+                    selectedItem = (LevelModel)bindingSourceLevels.List[selectedIndex];
 
                     right.labelHorizontal.Text = selectedItem.HorizontalFragmentCount.ToString();
                     right.labelVertical.Text = selectedItem.VerticalFragmentCount.ToString();
@@ -676,7 +675,7 @@ namespace puzzle
 
             fill.listBox.SelectedValueChanged += new EventHandler((s, e) =>
             {
-                var selectedItem = (LevelVM)fill.listBox.SelectedItem;
+                var selectedItem = (LevelModel)fill.listBox.SelectedItem;
                 if (selectedItem is null)
                 {
                     return;
@@ -710,7 +709,7 @@ namespace puzzle
             bottomControl.ButtonDeleteVisible = true;
             bottomControl.ButtonDeleteClick = new EventHandler((s, e) =>
             {
-                var selectedItem = (LevelVM)fill.listBox.SelectedItem;
+                var selectedItem = (LevelModel)fill.listBox.SelectedItem;
                 if (selectedItem is null) return;
                 try
                 {
@@ -747,7 +746,7 @@ namespace puzzle
             bottomControl.ButtonUpdateVisible = true;
             bottomControl.ButtonUpdateClick = new EventHandler((s, e) =>
             {
-                var selectedItem = (LevelVM)fill.listBox.SelectedItem;
+                var selectedItem = (LevelModel)fill.listBox.SelectedItem;
                 if (selectedItem is null) return;
                 var form = new InsertOrUpdateLevelForm(this)
                 {
@@ -777,7 +776,7 @@ namespace puzzle
                             throw new Exception("Выберите тип сборки.");
                         }
 
-                        var level = new LevelVM
+                        var level = new LevelModel
                         {
                             Id = selectedItem.Id,
                             Name = form.textBoxName.Text,
@@ -848,7 +847,7 @@ namespace puzzle
                             throw new Exception("Выберите тип сборки.");
                         }
 
-                        var level = new LevelVM
+                        var level = new LevelModel
                         {
                             Name = form.textBoxName.Text,
                             HorizontalFragmentCount = (sbyte)form.numericUpDownHorizontal.Value,
@@ -876,7 +875,7 @@ namespace puzzle
                         bindingSourceLevels.Add(level);
 
                         fill.listBox.SelectedItem = level;
-                        var selectedItem = (LevelVM)fill.listBox.SelectedItem;
+                        var selectedItem = (LevelModel)fill.listBox.SelectedItem;
                         right.labelHorizontal.Text = selectedItem.HorizontalFragmentCount.ToString();
                         right.labelVertical.Text = selectedItem.VerticalFragmentCount.ToString();
                         right.labelFragmentType.Text = ((IList<FragmentType>)bindingSourceFragmentTypes.List)
@@ -935,7 +934,7 @@ namespace puzzle
                 bindingSourceFilteredPuzzles.Position = fill.listBox.SelectedIndex;
                 DisplayImage(right);
             });
-            
+
             FilterLevels(fill.comboBoxLevels);
             #endregion
             #region Top
@@ -956,7 +955,7 @@ namespace puzzle
             bottomControl.ButtonDeleteVisible = true;
             bottomControl.ButtonDeleteClick = new EventHandler((s, e) =>
             {
-                var puzzle = (PuzzleVM)fill.listBox.SelectedItem;
+                var puzzle = (PuzzleModel)fill.listBox.SelectedItem;
                 if (puzzle is null) return;
                 try
                 {
@@ -976,15 +975,15 @@ namespace puzzle
                     bindingSourcePuzzles.Remove(puzzle);
 
                     FilterLevels(fill.comboBoxLevels);
-                    if (bindingSourceFilteredLevels.Contains(level)) 
+                    if (bindingSourceFilteredLevels.Contains(level))
                     {
                         fill.comboBoxLevels.SelectedItem = level;
-                        if (bindingSourceFilteredPuzzles.Count > 1) 
+                        if (bindingSourceFilteredPuzzles.Count > 1)
                         {
                             if (bindingSourceFilteredPuzzles.Count > puzzleIndex)
                             {
                                 fill.listBox.SelectedIndex = puzzleIndex;
-                            }                      
+                            }
                             else if (bindingSourceFilteredPuzzles.Count == puzzleIndex)
                             {
                                 fill.listBox.SelectedIndex = puzzleIndex - 1;
@@ -1007,7 +1006,7 @@ namespace puzzle
             bottomControl.ButtonUpdateVisible = true;
             bottomControl.ButtonUpdateClick = new EventHandler((s, e) =>
             {
-                var puzzle = (PuzzleVM)fill.listBox.SelectedItem;
+                var puzzle = (PuzzleModel)fill.listBox.SelectedItem;
                 if (puzzle is null) return;
 
                 var form = new InsertOrUpdatePuzzleForm(this)
@@ -1042,12 +1041,12 @@ namespace puzzle
                             throw new Exception("Перемешайте фрагменты.");
                         }
 
-                        var tempPuzzle = new PuzzleVM
+                        var tempPuzzle = new PuzzleModel
                         {
                             Name = form.textBoxName.Text,
-                            ImageId = ((ImageVM)form.comboBoxImage.SelectedItem).Id,
-                            DifficultyLevelId = ((LevelVM)form.comboBoxLevel.SelectedItem).Id,
-                            FragmentNumbers = ((LevelVM)form.comboBoxLevel.SelectedItem).AssemblyTypeId == 1
+                            ImageId = ((ImageModel)form.comboBoxImage.SelectedItem).Id,
+                            DifficultyLevelId = ((LevelModel)form.comboBoxLevel.SelectedItem).Id,
+                            FragmentNumbers = ((LevelModel)form.comboBoxLevel.SelectedItem).AssemblyTypeId == 1
                                 ? Game.Instance.FieldFragmentNumbers
                                 : Game.Instance.TapeFragmentNumbers
                         };
@@ -1077,7 +1076,7 @@ namespace puzzle
 
                         MessageBoxes.Info("Успешно.");
                     }
-                    catch (MySqlException ex) 
+                    catch (MySqlException ex)
                     when (ex.Number == 1062)
                     {
                         MessageBoxes.Error("Название пазла занято.");
@@ -1121,12 +1120,12 @@ namespace puzzle
                             throw new Exception("Перемешайте фрагменты.");
                         }
 
-                        var puzzle = new PuzzleVM
+                        var puzzle = new PuzzleModel
                         {
                             Name = form.textBoxName.Text,
-                            ImageId = ((ImageVM)form.comboBoxImage.SelectedItem).Id,
-                            DifficultyLevelId = ((LevelVM)form.comboBoxLevel.SelectedItem).Id,
-                            FragmentNumbers = ((LevelVM)form.comboBoxLevel.SelectedItem).AssemblyTypeId == 1
+                            ImageId = ((ImageModel)form.comboBoxImage.SelectedItem).Id,
+                            DifficultyLevelId = ((LevelModel)form.comboBoxLevel.SelectedItem).Id,
+                            FragmentNumbers = ((LevelModel)form.comboBoxLevel.SelectedItem).AssemblyTypeId == 1
                                 ? Game.Instance.FieldFragmentNumbers
                                 : Game.Instance.TapeFragmentNumbers
                         };
@@ -1155,7 +1154,7 @@ namespace puzzle
 
                         MessageBoxes.Info("Успешно.");
                     }
-                    catch (MySqlException ex) 
+                    catch (MySqlException ex)
                     when (ex.Number == 1062)
                     {
                         MessageBoxes.Error("Название пазла занято.");
@@ -1170,7 +1169,7 @@ namespace puzzle
             });
             #endregion
         }
-       
+
         internal void DisplayGameChoice()
         {
             Size = normalFormSize;
@@ -1263,7 +1262,7 @@ namespace puzzle
             bottomControl.ButtonLoadVisible = true;
             bottomControl.ButtonLoadClick = new EventHandler((s, e) =>
             {
-                var puzzle = (PuzzleVM)bindingSourceFilteredPuzzles.Current;
+                var puzzle = (PuzzleModel)bindingSourceFilteredPuzzles.Current;
 
                 InitTopControl(right, puzzle);
 
@@ -1273,7 +1272,7 @@ namespace puzzle
             bottomControl.ButtonInsertOrNewGameText = "Новая игра";
             bottomControl.ButtonInsertOrNewGameClick = new EventHandler((s, e) =>
             {
-                var puzzle = (PuzzleVM)bindingSourceFilteredPuzzles.Current;
+                var puzzle = (PuzzleModel)bindingSourceFilteredPuzzles.Current;
 
                 InitTopControl(right, puzzle);
 
@@ -1285,7 +1284,7 @@ namespace puzzle
                 {
                     DisplayGame(puzzle, CreateNewGame(puzzle));
                 }
-                else 
+                else
                 {
                     var result = MessageBoxes.Question2("Удалить сохраненную игру и начать заного?");
                     if (result == DialogResult.OK)
@@ -1355,7 +1354,7 @@ namespace puzzle
             }
             return imageOn;
         }
-        internal void DisplayGame(PuzzleVM puzzle, Game game)
+        internal void DisplayGame(PuzzleModel puzzle, Game game)
         {
             Size = normalFormSize;
             CenterToScreen();
@@ -1428,7 +1427,7 @@ namespace puzzle
             });
 
             topControl.buttonImage.Visible = true;
-            topControl.buttonImage.ImageIndex = imageOn ? 7 : 6;            
+            topControl.buttonImage.ImageIndex = imageOn ? 7 : 6;
             topControl.ButtonImageClick = new EventHandler((s, e) =>
             {
                 imageOn = ImageClick(imageOn, tempFieldImage, game, fill);

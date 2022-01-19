@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using puzzle.Model;
-using puzzle.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -37,13 +36,13 @@ namespace puzzle.Services
                 LogLevel.Trace);
         }
 
-        public static IList<ImageVM> LoadGallery()
+        public static IList<ImageModel> LoadGallery()
         {
-            List<ImageVM> gallery;
+            List<ImageModel> gallery;
             using (var db = new PuzzleContext(Options))
             {
                 gallery = db.Galleries
-                    .Select(i => new ImageVM
+                    .Select(i => new ImageModel
                     {
                         Id = i.ImageId,
                         Name = i.Name,
@@ -51,7 +50,7 @@ namespace puzzle.Services
                         ImageHash = i.ImageHash
                     }).ToList();
             }
-            List<ImageVM> newGallery = new();
+            List<ImageModel> newGallery = new();
             foreach (var g in gallery)
             {
                 if (!LocalStorage.Exists(g.Path)) continue;
@@ -64,11 +63,11 @@ namespace puzzle.Services
             }
             return newGallery;
         }
-        public static IList<LevelVM> LoadLevels()
+        public static IList<LevelModel> LoadLevels()
         {
             using var db = new PuzzleContext(Options);
             return db.DifficultyLevels
-                .Select(i => new LevelVM
+                .Select(i => new LevelModel
                 {
                     Id = i.DifficultyLevelId,
                     Name = i.Name,
@@ -77,17 +76,17 @@ namespace puzzle.Services
                     AssemblyTypeId = i.AssemblyTypeId
                 }).ToList();
         }
-        public static IList<PuzzleVM> LoadPuzzles(IList<ImageVM> gallery)
+        public static IList<PuzzleModel> LoadPuzzles(IList<ImageModel> gallery)
         {
-            List<PuzzleVM> puzzleFields;
-            List<PuzzleVM> puzzleTapes;
+            List<PuzzleModel> puzzleFields;
+            List<PuzzleModel> puzzleTapes;
             using (var db = new PuzzleContext(Options))
             {
                 puzzleFields = db.PuzzleFields.Join(
                     db.Puzzles,
                     p => p.PuzzleId,
                     pf => pf.PuzzleField.PuzzleId,
-                    (pf, p) => new PuzzleVM
+                    (pf, p) => new PuzzleModel
                     {
                         Id = p.PuzzleId,
                         Name = p.Name,
@@ -99,7 +98,7 @@ namespace puzzle.Services
                     db.Puzzles,
                     p => p.PuzzleId,
                     pf => pf.PuzzleTape.PuzzleId,
-                    (pf, p) => new PuzzleVM
+                    (pf, p) => new PuzzleModel
                     {
                         Id = p.PuzzleId,
                         Name = p.Name,
@@ -108,10 +107,10 @@ namespace puzzle.Services
                         FragmentNumbers = pf.FragmentNumbers
                     }).ToList();
             }
-            List<PuzzleVM> newGallery = new();
+            List<PuzzleModel> newGallery = new();
             foreach (var p in puzzleFields.Union(puzzleTapes).ToList())
             {
-                ImageVM image;
+                ImageModel image;
                 try
                 {
                     image = gallery
@@ -133,19 +132,19 @@ namespace puzzle.Services
             }
             return newGallery;
         }
-        public static IList<SavedGameVM> LoadGames()
+        public static IList<SavedGameModel> LoadGames()
         {
-            List<SavedGameVM> fieldGames;
-            List<SavedGameVM> tapeGames;
+            List<SavedGameModel> fieldGames;
+            List<SavedGameModel> tapeGames;
             using (var db = new PuzzleContext(Options))
             {
-                List<SavedGameVM> games;
-                List<SavedGameVM> scoreGames;
-                List<SavedGameVM> timeGames;
+                List<SavedGameModel> games;
+                List<SavedGameModel> scoreGames;
+                List<SavedGameModel> timeGames;
                 games = db.SavedGames
                     .Where(i => i.PlayerId == ResultDTO.PlayerId
                         && i.CountingMethodId == 0)
-                    .Select(i => new SavedGameVM
+                    .Select(i => new SavedGameModel
                     {
                         SavedGameId = i.SavedGameId,
                         PuzzleId = i.PuzzleId,
@@ -158,7 +157,7 @@ namespace puzzle.Services
                     .Where(i => i.PlayerId == ResultDTO.PlayerId),
                     sgs => sgs.SavedGameId,
                     sg => sg.SavedGameId,
-                    (sgs, sg) => new SavedGameVM
+                    (sgs, sg) => new SavedGameModel
                     {
                         SavedGameId = sg.SavedGameId,
                         PuzzleId = sg.PuzzleId,
@@ -172,7 +171,7 @@ namespace puzzle.Services
                      .Where(i => i.PlayerId == ResultDTO.PlayerId),
                      sgt => sgt.SavedGameId,
                      sg => sg.SavedGameId,
-                     (sgt, sg) => new SavedGameVM
+                     (sgt, sg) => new SavedGameModel
                      {
                          SavedGameId = sg.SavedGameId,
                          PuzzleId = sg.PuzzleId,
@@ -203,7 +202,7 @@ namespace puzzle.Services
                         db.SavedGameTapes,
                         g => g.SavedGameId,
                         sgt => sgt.SavedGameId,
-                        (g, sgt) => new SavedGameVM
+                        (g, sgt) => new SavedGameModel
                         {
                             SavedGameId = g.SavedGameId,
                             PuzzleId = g.PuzzleId,
@@ -211,13 +210,13 @@ namespace puzzle.Services
                             TapeFragmentNumbers = sgt.FragmentNumbers,
                             CountingMethodId = g.CountingMethodId,
                             Time = g.Time,
-                            Score = g.Score                        
+                            Score = g.Score
                         }).ToList();
             }
 
             return fieldGames.Union(tapeGames).ToList();
         }
-        public static IList<RecordVM> LoadRecords(short puzzleId, sbyte methodId)
+        public static IList<RecordModel> LoadRecords(short puzzleId, sbyte methodId)
         {
             using var db = new PuzzleContext(Options);
             var records = db.Records
@@ -226,7 +225,7 @@ namespace puzzle.Services
                 .Join(db.Players,
                     r => r.PlayerId,
                     p => p.PlayerId,
-                    (r, p) => new RecordVM
+                    (r, p) => new RecordModel
                     {
                         RecordId = r.RecordId,
                         CountingMethodId = r.CountingMethodId,
@@ -237,28 +236,26 @@ namespace puzzle.Services
                 records = records.Join(db.RecordScores,
                     r => r.RecordId,
                     rs => rs.RecordId,
-                    (r, rs) => new RecordVM
+                    (r, rs) => new RecordModel
                     {
-
                         RecordId = r.RecordId,
                         CountingMethodId = r.CountingMethodId,
                         Login = r.Login,
                         Score = rs.Score
-                    });
+                    }).OrderByDescending(r => r.Score);
             }
             else if (methodId == 2)
             {
                 records = records.Join(db.RecordTimes,
                     r => r.RecordId,
                     rt => rt.RecordId,
-                    (r, rt) => new RecordVM
+                    (r, rt) => new RecordModel
                     {
-
                         RecordId = r.RecordId,
                         CountingMethodId = r.CountingMethodId,
                         Login = r.Login,
                         Time = rt.Time
-                    });
+                    }).OrderByDescending(r => r.Time);
             }
             return records.ToList();
         }

@@ -62,6 +62,7 @@ namespace puzzle.UserControls.Center
             this.panelTape.AutoScroll = true;
             this.panelTape.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panelTape.Controls.Add(this.pictureBoxTape);
+            this.panelTape.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelTape.Location = new System.Drawing.Point(574, 13);
             this.panelTape.Margin = new System.Windows.Forms.Padding(0);
             this.panelTape.Name = "panelTape";

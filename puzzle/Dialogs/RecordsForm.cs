@@ -1,5 +1,5 @@
 ﻿using puzzle.Services;
-using puzzle.ViewModel;
+using puzzle.Model;
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
@@ -28,7 +28,7 @@ namespace puzzle.Dialogs
             dataGridView.Columns[1].HeaderText = (sbyte)comboBoxMethod.SelectedValue == 1
                 ? "Очки"
                 : "Время";
-            dataGridView.DataSource = new BindingList<RecordVM>(Db.LoadRecords(
+            dataGridView.DataSource = new BindingList<RecordModel>(Db.LoadRecords(
                 (short)comboBoxPuzzle.SelectedValue,
                 (sbyte)comboBoxMethod.SelectedValue));
         }

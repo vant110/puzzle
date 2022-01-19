@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -57,7 +56,8 @@ namespace puzzle.Model
                 FullImage.Width / NHorizontal,
                 FullImage.Height / NVertical);
 
-            colorMatrix = new() {
+            colorMatrix = new()
+            {
                 // Red
                 Matrix00 = 1.00f,
                 // Green
@@ -75,8 +75,8 @@ namespace puzzle.Model
         private void SplitIntoFragments()
         {
             // Создает изображения фрагментов в обычном порядке.
-            Fragment[] arr = AssemblyType == 1 
-                ? Field 
+            Fragment[] arr = AssemblyType == 1
+                ? Field
                 : Tape;
             for (int i = 0; i < NVertical; i++)
             {
@@ -242,7 +242,7 @@ namespace puzzle.Model
                     1,
                     NHorizontal,
                     NVertical,
-                    FullImage);                    
+                    FullImage);
                 var originalField = new Fragment[Length];
                 originalGame.Field.CopyTo(originalField, 0);
 

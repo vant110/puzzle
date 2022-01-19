@@ -1,16 +1,15 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 
-namespace puzzle.ViewModel
+namespace puzzle.Model
 {
-    class PuzzleVM : INotifyPropertyChanged
+    class ImageModel : INotifyPropertyChanged
     {
         private short id;
         private string name;
-        private short imageId;
-        private sbyte difficultyLevelId;
-        private byte[] fragmentNumbers;
-
+        private string path;
+        private string imageHash;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
@@ -36,36 +35,25 @@ namespace puzzle.ViewModel
                 NotifyPropertyChanged();
             }
         }
-        public short ImageId
+        public string Path
         {
-            get { return imageId; }
+            get { return path; }
             set
             {
-                imageId = value;
+                path = value;
                 NotifyPropertyChanged();
             }
         }
-        public sbyte DifficultyLevelId
+        public string ImageHash
         {
-            get { return difficultyLevelId; }
+            get { return imageHash; }
             set
             {
-                difficultyLevelId = value;
-                NotifyPropertyChanged();
-            }
-        }
-        public byte[] FragmentNumbers
-        {
-            get { return fragmentNumbers; }
-            set
-            {
-                fragmentNumbers = value;
+                imageHash = value;
                 NotifyPropertyChanged();
             }
         }
 
-        public sbyte CountingMethodId { get; set; }
-        public short Score { get; set; }
-        public int Time { get; set; }
+        public Stream Image { get; set; }
     }
 }

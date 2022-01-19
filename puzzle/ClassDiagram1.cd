@@ -1,0 +1,308 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="puzzle.Data.AssemblyType" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAACAAAAAAAAAAABAA=</HashCode>
+      <FileName>Data\AssemblyType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Data.CountingMethod" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAAQAAAAAAABAAAgAAAAAAAA=</HashCode>
+      <FileName>Data\CountingMethod.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Data.DifficultyLevel" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAAAAACAAAQQAAAASAAQAAAAgAABAAA=</HashCode>
+      <FileName>Data\DifficultyLevel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Data.FragmentType" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAQAAAAAAAABAA=</HashCode>
+      <FileName>Data\FragmentType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Data.Gallery" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAUAAAAAAAEAAAAAAAABAAA=</HashCode>
+      <FileName>Data\Gallery.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Data.Puzzle" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAABAAAAAAAAAAAAAAQAAAAIABNABAAAAAAAAAQ=</HashCode>
+      <FileName>Data\Puzzle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Data.PuzzleField" Collapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAAAAAAAAAAAAAgAAABAAAAAAAAAA=</HashCode>
+      <FileName>Data\PuzzleField.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Data.PuzzleTape" Collapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAAAAAAAAAAAAAgAAABAAAAAAAAAA=</HashCode>
+      <FileName>Data\PuzzleTape.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Data.Record" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAgAAAAAAAACAAAAAAAAAAAAAAAABAgJAQIAAAA=</HashCode>
+      <FileName>Data\Record.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Data.RecordScore" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAIABAA=</HashCode>
+      <FileName>Data\RecordScore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Data.RecordTime" Collapsed="true">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIABQA=</HashCode>
+      <FileName>Data\RecordTime.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Data.SavedGame" Collapsed="true">
+    <Position X="5.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAACAAAAAAAAAACAABAAAAAAAAAAAAABAgIAQIBgAA=</HashCode>
+      <FileName>Data\SavedGame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Data.SavedGameScore" Collapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAgAAAAAAAABAAA=</HashCode>
+      <FileName>Data\SavedGameScore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Data.SavedGameTape" Collapsed="true">
+    <Position X="2.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAgAAAAAAAABAAA=</HashCode>
+      <FileName>Data\SavedGameTape.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Data.SavedGameTime" Collapsed="true">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAABAQA=</HashCode>
+      <FileName>Data\SavedGameTime.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Dialogs.HelpForm">
+    <Position X="22.75" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAABAAACCAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Dialogs\HelpForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Dialogs.InsertImageForm">
+    <Position X="25.25" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAACIAgAAEAACAAAQCAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Dialogs\InsertImageForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Dialogs.InsertOrUpdateLevelForm">
+    <Position X="27.75" Y="0.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgSAAABBFACCAAAACAQAAAAAAAAAgABAAACA=</HashCode>
+      <FileName>Dialogs\InsertOrUpdateLevelForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Dialogs.InsertOrUpdatePuzzleForm">
+    <Position X="31.25" Y="0.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIBAASAAABAUAACCAAASEQEAAAAAAIAAABAAACA=</HashCode>
+      <FileName>Dialogs\InsertOrUpdatePuzzleForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Dialogs.RecordsForm">
+    <Position X="22.75" Y="3.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEIAAACAAAFAAAACAAAACAAAAAAAAAAAgQQAIAAA=</HashCode>
+      <FileName>Dialogs\RecordsForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Model.Fragment">
+    <Position X="33.5" Y="15" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAEAAAAgAAAAAABAAAAAAgAAAAAA=</HashCode>
+      <FileName>Logic\Fragment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Model.Game">
+    <Position X="50.5" Y="0.5" Width="5.25" />
+    <TypeIdentifier>
+      <HashCode>QAAGAAAAQAAAgggQEQCAAQBAYgAAQAAYQAkAAIAQgRA=</HashCode>
+      <FileName>Logic\Game.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Model.ImageModel" BaseTypeListCollapsed="true">
+    <Position X="27.5" Y="10" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAIIAAQACAAUAgAAEABAAAAAAAAAAAgA=</HashCode>
+      <FileName>Model\ImageModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="puzzle.Model.LevelModel" BaseTypeListCollapsed="true">
+    <Position X="31.5" Y="10" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAACAIAAAAAAAAQQgAAEGAAQAAgAkAAAAgA=</HashCode>
+      <FileName>Model\LevelModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="puzzle.Model.PuzzleModel" BaseTypeListCollapsed="true">
+    <Position X="35.5" Y="10" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAABAAAAAIgAAAAAAASAgAAEgAEAAAgBAAAAAwE=</HashCode>
+      <FileName>Model\PuzzleModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="puzzle.Model.RecordModel">
+    <Position X="27.5" Y="15" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAgQAAIAAQA=</HashCode>
+      <FileName>Model\RecordModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Model.ResultDTO">
+    <Position X="27.5" Y="13.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAAAA=</HashCode>
+      <FileName>Model\ResultDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Model.SavedGameModel">
+    <Position X="30.25" Y="15" Width="3" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAQAAAAAgAAAAAAAAAAAAAAAAABAgAAAABAQA=</HashCode>
+      <FileName>Model\SavedGameModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Services.Db">
+    <Position X="35.5" Y="0.5" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAgAEAgAAAAEAAAAAAAAAAAAAAAAAAABAAAE=</HashCode>
+      <FileName>Services\Db.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Services.Hasher">
+    <Position X="35.5" Y="3.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEBAAAAAQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\Hasher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Services.LocalStorage">
+    <Position X="40" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAgIAAAAAAAAAAAAAACAAAEAEAAAAAAQAAAAEAAQA=</HashCode>
+      <FileName>Services\LocalStorage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Services.MessageBoxes">
+    <Position X="35.75" Y="5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAEAAAAAEgAAAA=</HashCode>
+      <FileName>Services\MessageBoxes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Services.Validator">
+    <Position X="39" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQIAAAAAAAAAQE0AAAAAAAAAAAAAAABiAAAAAA=</HashCode>
+      <FileName>Services\Validator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.UserControls.AdminMenuUC">
+    <Position X="6" Y="7.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAACAAAACAAAAAAABAAAAAQAAAAA=</HashCode>
+      <FileName>UserControls\Center\AdminMenuUC.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.UserControls.ImageAndMethodsUC">
+    <Position X="11" Y="7.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAACAAABAEQACAAgACAAIAAAAAEAAAAABAQII=</HashCode>
+      <FileName>UserControls\Center\ImageAndMethodsUC.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.UserControls.LevelInfoUC">
+    <Position X="14.25" Y="7.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAgCAAABAAAACAAAACAAEAAAAQAAAAAAAAAgA=</HashCode>
+      <FileName>UserControls\Center\LevelInfoUC.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.UserControls.ListUC">
+    <Position X="8.5" Y="7.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACQAAAAAAACAAACCAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>UserControls\Center\ListUC.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.UserControls.RegAndAuthUC">
+    <Position X="3.5" Y="7.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>CAAAAABAECAAAAAAAACAAAACAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>UserControls\Center\RegAndAuthUC.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.UserControls.BottomUC">
+    <Position X="0.5" Y="12.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>BAFAAEYAACACAAEAACCAAAICAIAACAkAACAAAAAIBAA=</HashCode>
+      <FileName>UserControls\BottomUC.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.UserControls.TopUC">
+    <Position X="0.5" Y="7.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAIBAAAAKFAAQCAIAAAAAAEAABBAAAAAQ=</HashCode>
+      <FileName>UserControls\TopUC.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.UserControls.Center.GameUC">
+    <Position X="9.5" Y="12.5" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AQAAAABAACBAAAAQAACAAAACAAAAAAAYAACAAAQAAAA=</HashCode>
+      <FileName>UserControls\Center\GameUC.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.UserControls.Center.listWithPictogramsUC">
+    <Position X="6" Y="12.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACQAAEAAAACAAACKAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UserControls\Center\ListWithPictogramsUC.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.MainForm">
+    <Position X="45.25" Y="0.5" Width="5" />
+    <TypeIdentifier>
+      <HashCode>AsACACUAECgFAACApMCDAAAGAUBCAABhQBIAAAwEhRg=</HashCode>
+      <FileName>MainForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>

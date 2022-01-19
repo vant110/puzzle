@@ -1,5 +1,5 @@
 ﻿using puzzle.Model;
-using puzzle.ViewModel;
+using puzzle.Model;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -11,7 +11,7 @@ namespace puzzle.Dialogs
         private EventHandler buttonInsertOrUpdateClick;
 
         private Image image;
-        private LevelVM level;
+        private LevelModel level;
 
         public InsertOrUpdatePuzzleForm(MainForm form)
         {
@@ -22,7 +22,7 @@ namespace puzzle.Dialogs
                 Game.Instance = null;
                 pictureBoxField.Image?.Dispose();
                 pictureBoxImage.Image?.Dispose();
-                var selectedItem = (ImageVM)comboBoxImage.SelectedItem;
+                var selectedItem = (ImageModel)comboBoxImage.SelectedItem;
                 if (selectedItem is null) return;
 
                 image = Image.FromStream(selectedItem.Image);
@@ -34,7 +34,7 @@ namespace puzzle.Dialogs
             {
                 Game.Instance = null;
                 pictureBoxField.Image?.Dispose();
-                var selectedItem = (LevelVM)comboBoxLevel.SelectedItem;
+                var selectedItem = (LevelModel)comboBoxLevel.SelectedItem;
                 if (selectedItem is null) return;
 
                 level = selectedItem;

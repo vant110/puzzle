@@ -2,9 +2,9 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace puzzle.ViewModel
+namespace puzzle.Model
 {
-    class LevelVM : INotifyPropertyChanged
+    class LevelModel : INotifyPropertyChanged
     {
         private sbyte id;
         private string name;

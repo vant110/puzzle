@@ -1,6 +1,6 @@
-﻿namespace puzzle.ViewModel
+﻿namespace puzzle.Model
 {
-    class RecordVM
+    class RecordModel
     {
         public short RecordId { get; set; }
         public sbyte CountingMethodId { get; set; }

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace puzzle.ViewModel
+﻿namespace puzzle.Model
 {
-    public class SavedGameVM
+    public class SavedGameModel
     {
         public short SavedGameId { get; set; }
         public short PuzzleId { get; set; }
