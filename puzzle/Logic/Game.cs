@@ -16,7 +16,6 @@ namespace puzzle.Model
         public sbyte AssemblyTypeId { get; set; }
         public int NHorizontal { get; set; }
         public int NVertical { get; set; }
-        public int Length { get; set; }
         public Fragment[] Field { get; set; }
         public Fragment[] Tape { get; set; }
         public Image FullImage { get; set; }
@@ -38,18 +37,20 @@ namespace puzzle.Model
             NVertical = nVertical;
             FullImage = image;
 
-            Length = NHorizontal * NVertical;
-            if (FragmentTypeId == 2)
             {
-                // Треугольные.
-                Length *= 2;
-            }
+                int length = NHorizontal * NVertical;
+                if (FragmentTypeId == 2)
+                {
+                    // Треугольные.
+                    length *= 2;
+                }
 
-            Field = new Fragment[Length];
-            if (AssemblyTypeId == 2)
-            {
-                // С ленты.
-                Tape = new Fragment[Length];
+                Field = new Fragment[length];
+                if (AssemblyTypeId == 2)
+                {
+                    // С ленты.
+                    Tape = new Fragment[length];
+                }
             }
 
             Fragment.Size = new(
@@ -221,13 +222,13 @@ namespace puzzle.Model
         {
             get
             {
-                byte[] fragmentNumbers = new byte[Length];
-                for (int i = 0; i < Length; i++)
+                byte[] fragmentNumbers = new byte[Field.Length];
+                for (int i = 0; i < fragmentNumbers.Length; i++)
                 {
                     fragmentNumbers[i] = byte.MaxValue;
                 }
 
-                for (int i = 0; i < Length; i++)
+                for (int i = 0; i < Field.Length; i++)
                 {
                     if (Field[i] is null) continue;
                     fragmentNumbers[Field[i].Number] = (byte)i;
@@ -243,10 +244,10 @@ namespace puzzle.Model
                     NHorizontal,
                     NVertical,
                     FullImage);
-                var originalField = new Fragment[Length];
+                var originalField = new Fragment[Field.Length];
                 originalGame.Field.CopyTo(originalField, 0);
 
-                for (int i = 0; i < Length; i++)
+                for (int i = 0; i < value.Length; i++)
                 {
                     if (value[i] == byte.MaxValue) continue;
 
@@ -265,8 +266,8 @@ namespace puzzle.Model
             {
                 if (Tape is null) return null;
 
-                byte[] fragmentNumbers = new byte[Length];
-                for (int i = 0; i < Length; i++)
+                byte[] fragmentNumbers = new byte[Field.Length];
+                for (int i = 0; i < fragmentNumbers.Length; i++)
                 {
                     fragmentNumbers[i] = byte.MaxValue;
                 }
@@ -280,14 +281,14 @@ namespace puzzle.Model
             }
             set
             {
-                var originalTape = new Fragment[Length];
+                var originalTape = new Fragment[Field.Length];
                 Tape.CopyTo(originalTape, 0);
-                for (int i = 0; i < Length; i++)
+                for (int i = 0; i < Tape.Length; i++)
                 {
                     Tape[i] = null;
                 }
 
-                for (int i = 0; i < Length; i++)
+                for (int i = 0; i < value.Length; i++)
                 {
                     if (value[i] == byte.MaxValue) continue;
 
