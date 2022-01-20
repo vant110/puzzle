@@ -122,6 +122,25 @@ namespace puzzle.Model
             NVertical = nVertical;
             Image = image;
 
+            CreateFragments();
+
+            colorMatrix = new()
+            {
+                // Red
+                Matrix00 = 1.00f,
+                // Green
+                Matrix11 = 1.00f,
+                // Blue
+                Matrix22 = 1.00f,
+                // alpha
+                Matrix33 = 0.50f,
+                // w
+                Matrix44 = 1.00f
+            };
+        }
+        private void CreateFragments()
+        {
+            // Создает изображения фрагментов в обычном порядке.
             {
                 int length = NHorizontal * NVertical;
                 if (FragmentTypeId == 2)
@@ -142,25 +161,6 @@ namespace puzzle.Model
                 Image.Width / NHorizontal,
                 Image.Height / NVertical);
 
-            colorMatrix = new()
-            {
-                // Red
-                Matrix00 = 1.00f,
-                // Green
-                Matrix11 = 1.00f,
-                // Blue
-                Matrix22 = 1.00f,
-                // alpha
-                Matrix33 = 0.50f,
-                // w
-                Matrix44 = 1.00f
-            };
-
-            SplitIntoFragments();
-        }
-        private void SplitIntoFragments()
-        {
-            // Создает изображения фрагментов в обычном порядке.
             Fragment[] arr = AssemblyTypeId == 1
                 ? Field
                 : Tape;
@@ -316,17 +316,17 @@ namespace puzzle.Model
             }
             return i;
         }
-        public int GetFragmentIndexOnField(Point location, Size pictureBoxSize)
+        public int GetFragmentIndexOnField(Point location, Size fieldSize)
         {
             var position = new Point(
-                SearchNumber(location.X, pictureBoxSize.Width, NHorizontal),
-                SearchNumber(location.Y, pictureBoxSize.Height, NVertical));
+                SearchNumber(location.X, fieldSize.Width, NHorizontal),
+                SearchNumber(location.Y, fieldSize.Height, NVertical));
 
             return position.Y * NHorizontal + position.X;
         }
-        public int GetFragmentIndexOnTape(Point location, Size pictureBoxSize)
+        public int GetFragmentIndexOnTape(Point location, Size tapeSize)
         {
-            return SearchNumber(location.Y, pictureBoxSize.Height, Tape.Length);
+            return SearchNumber(location.Y, tapeSize.Height, Tape.Length);
         }
 
         public void SwapFragmentsOnField(int index1, int index2)
@@ -344,7 +344,7 @@ namespace puzzle.Model
                 Field[index2].InOriginalPosition = FragmentInOriginalPosition(index2);
             }
         }
-        public void AddFragmentsOnFieldFromTape(int tapeIndex, int fieldIndex)
+        public void AddFragmentOnFieldFromTape(int tapeIndex, int fieldIndex)
         {
             Fragment tmp = Tape[tapeIndex];
             Tape[tapeIndex] = Field[fieldIndex];
@@ -354,10 +354,23 @@ namespace puzzle.Model
             {
                 Tape[tapeIndex].InOriginalPosition = false;
             }
+            else
+            {
+                Tape = Tape.Where(f => f is not null).ToArray();
+            }
             if (Field[fieldIndex] is not null)
             {
                 Field[fieldIndex].InOriginalPosition = FragmentInOriginalPosition(fieldIndex);
             }
+        }
+        public void AddFragmentOnTape(int fieldIndex)
+        {
+            {
+                var tapeList = Tape.ToList();
+                tapeList.Add(null);
+                Tape = tapeList.ToArray();
+            }
+            AddFragmentOnFieldFromTape(Tape.Length - 1, fieldIndex);
         }
 
         public void DrawFragmentOnField(int index, Image image)
@@ -449,7 +462,7 @@ namespace puzzle.Model
             }
             return false;
         }
-        public bool AllFragmentsInOriginalPosition()
+        public bool EachFragmentInOriginalPosition()
         {
             foreach (var fragment in Field)
             {

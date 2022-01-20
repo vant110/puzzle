@@ -82,12 +82,10 @@ namespace puzzle.UserControls.Center
                 }
                 else if (source == 2)
                 {
-                    game.AddFragmentsOnFieldFromTape(index1, index2);
-                    if (game.Tape[index1] is null)
+                    bool fieldFragmentIsNull = game.Field[index2] is null;
+                    game.AddFragmentOnFieldFromTape(index1, index2);
+                    if (fieldFragmentIsNull)
                     {
-                        pictureBoxTape.Height -= pictureBoxTape.Height / game.Tape.Length;
-                        game.Tape = game.Tape.Where(f => f is not null).ToArray();
-
                         DrawTape();
                     }
                     else
@@ -132,7 +130,7 @@ namespace puzzle.UserControls.Center
                         form.soundPlayer?.Play();
                     }
 
-                    if (game.AllFragmentsInOriginalPosition())
+                    if (game.EachFragmentInOriginalPosition())
                     {
                         form.topControl.timer.Stop();
 
@@ -194,18 +192,8 @@ namespace puzzle.UserControls.Center
                 int index1 = game.GetFragmentIndexOnField(
                     location1,
                     pictureBoxField.Size);
-                int index2 = game.Tape.Length;
-
-                if (game.Tape.Length != 0)
-                {
-                    pictureBoxTape.Height += pictureBoxTape.Height / game.Tape.Length;
-                }
-                {
-                    var list = game.Tape.ToList();
-                    list.Add(null);
-                    game.Tape = list.ToArray();
-                }
-                game.AddFragmentsOnFieldFromTape(index2, index1);
+                
+                game.AddFragmentOnTape(index1);
                 game.DrawFragmentOnField(index1, pictureBoxField.Image);
                 pictureBoxField.Refresh();
                 DrawTape();
@@ -298,6 +286,10 @@ namespace puzzle.UserControls.Center
             var bitmap = new Bitmap(pictureBoxTape.Width, pictureBoxTape.Height);
             game.DrawTape(bitmap);
             pictureBoxTape.Image = bitmap;
+            if (game.Tape.Length != 0)
+            {
+                pictureBoxTape.Height = pictureBoxTape.Image.Height;
+            }
         }
 
         private void DisplayTime()

@@ -148,9 +148,9 @@
     </TypeIdentifier>
   </Class>
   <Class Name="puzzle.Model.Game">
-    <Position X="32" Y="15.25" Width="5.25" />
+    <Position X="31.75" Y="15.25" Width="6" />
     <TypeIdentifier>
-      <HashCode>QAAGAAAAQAAAgggQEQCAAQBAYgAAQAAYQAkAAIAQgRA=</HashCode>
+      <HashCode>QAAGAAAAQAAQgAgQEAAAAQAAYgAACBAYQAkRAIAAgQA=</HashCode>
       <FileName>Logic\Game.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -300,7 +300,7 @@
   <Class Name="puzzle.MainForm">
     <Position X="45.25" Y="0.5" Width="5" />
     <TypeIdentifier>
-      <HashCode>AsACACUAECgFAACApMCDAAAGAUBCAABBQBIAAAwEhRg=</HashCode>
+      <HashCode>AsACACUAECgFACCApMCDAAAGAEBCAABBQBIAAAwEhRg=</HashCode>
       <FileName>MainForm.cs</FileName>
     </TypeIdentifier>
   </Class>
