@@ -148,7 +148,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="puzzle.Model.Game">
-    <Position X="31.75" Y="15.25" Width="6" />
+    <Position X="31.75" Y="14" Width="6" />
     <TypeIdentifier>
       <HashCode>QAAGAAAAQAAQgAgQEAAAAQAAYgAACBAYQAkRAIAAgQA=</HashCode>
       <FileName>Logic\Game.cs</FileName>
@@ -179,7 +179,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="puzzle.Model.RecordModel">
-    <Position X="38" Y="15.5" Width="2.5" />
+    <Position X="38.5" Y="16.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAgQAAIAAQA=</HashCode>
       <FileName>Model\RecordModel.cs</FileName>
@@ -193,7 +193,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="puzzle.Model.SavedGameModel">
-    <Position X="28" Y="18.75" Width="3" />
+    <Position X="28" Y="18.5" Width="3" />
     <TypeIdentifier>
       <HashCode>QAAAAAAAQAAAAAgAAAAAAAAAAAAAAAAABAgAAAABAQA=</HashCode>
       <FileName>Model\SavedGameModel.cs</FileName>
