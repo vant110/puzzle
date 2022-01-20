@@ -8,12 +8,12 @@ namespace puzzle.Model
 {
     class Game
     {
-        private ColorMatrix colorMatrix;
+        private readonly ColorMatrix colorMatrix;
 
         public static Game Instance { get; set; }
 
-        public int FragmentType { get; set; }
-        public int AssemblyType { get; set; }
+        public sbyte FragmentTypeId { get; set; }
+        public sbyte AssemblyTypeId { get; set; }
         public int NHorizontal { get; set; }
         public int NVertical { get; set; }
         public int Length { get; set; }
@@ -22,31 +22,31 @@ namespace puzzle.Model
         public Image FullImage { get; set; }
 
         public sbyte CountingMethodId { get; set; }
-        public short Score { get; set; }
-        public int Time { get; set; }
+        public short Score { get; set; } = 0;
+        public int Time { get; set; } = 0;
 
         public Game(
-            int fragmentType,
-            int assemblyType,
+            sbyte fragmentType,
+            sbyte assemblyType,
             int nHorizontal,
             int nVertical,
             Image image)
         {
-            FragmentType = fragmentType;
-            AssemblyType = assemblyType;
+            FragmentTypeId = fragmentType;
+            AssemblyTypeId = assemblyType;
             NHorizontal = nHorizontal;
             NVertical = nVertical;
             FullImage = image;
 
             Length = NHorizontal * NVertical;
-            if (FragmentType == 2)
+            if (FragmentTypeId == 2)
             {
                 // Треугольные.
                 Length *= 2;
             }
 
             Field = new Fragment[Length];
-            if (AssemblyType == 2)
+            if (AssemblyTypeId == 2)
             {
                 // С ленты.
                 Tape = new Fragment[Length];
@@ -75,7 +75,7 @@ namespace puzzle.Model
         private void SplitIntoFragments()
         {
             // Создает изображения фрагментов в обычном порядке.
-            Fragment[] arr = AssemblyType == 1
+            Fragment[] arr = AssemblyTypeId == 1
                 ? Field
                 : Tape;
             for (int i = 0; i < NVertical; i++)
@@ -120,7 +120,7 @@ namespace puzzle.Model
 
         public void Mix()
         {
-            Fragment[] arr = AssemblyType == 1
+            Fragment[] arr = AssemblyTypeId == 1
                 ? Field
                 : Tape;
             Random rand = new();
@@ -238,7 +238,7 @@ namespace puzzle.Model
             set
             {
                 var originalGame = new Game(
-                    FragmentType,
+                    FragmentTypeId,
                     1,
                     NHorizontal,
                     NVertical,

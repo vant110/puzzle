@@ -22,17 +22,17 @@ namespace puzzle
         private readonly Size smallFormSize = new(313, 243);
         private readonly Size normalFormSize = new(800, 600);
 
-        public TopUC topControl;
-        private BottomUC bottomControl;
+        public readonly TopUC topControl;
+        private readonly BottomUC bottomControl;
         private UserControl fillControl;
         private UserControl rightControl;
 
-        public SoundPlayer soundPlayer;
+        public readonly SoundPlayer soundPlayer;
         public bool soundOn = true;
 
         public IList<SavedGameModel> savedGames;
         private List<sbyte> savedMethods;
-        private sbyte currMethodId = 1;
+        private sbyte countingMethodId = 1;
 
         public MainForm()
         {
@@ -272,32 +272,30 @@ namespace puzzle
                 level.VerticalFragmentCount,
                 image);
 
-            if (game.AssemblyType == 1)
+            if (game.AssemblyTypeId == 1)
             {
                 game.FieldFragmentNumbers = puzzle.FragmentNumbers;
             }
-            else if (game.AssemblyType == 2)
+            else if (game.AssemblyTypeId == 2)
             {
                 game.TapeFragmentNumbers = puzzle.FragmentNumbers;
             }
 
-            game.CountingMethodId = puzzle.CountingMethodId;
-            if (game.CountingMethodId == 1)
-            {
-                game.Score = puzzle.Score;
-            }
-            else if (game.CountingMethodId == 2)
-            {
-                game.Time = puzzle.Time;
-            }
+            return game;
+        }
+        private Game CreateNewGame(PuzzleModel puzzle, sbyte countingMethodId)
+        {
+            var game = CreateNewGame(puzzle);
+
+            game.CountingMethodId = countingMethodId;
 
             return game;
         }
-        private Game CreateSavedGame(PuzzleModel puzzle)
+        private Game CreateSavedGame(PuzzleModel puzzle, sbyte countingMethodId)
         {
             SavedGameModel savedGame = savedGames
                 .Where(i => i.PuzzleId == puzzle.Id
-                    && i.CountingMethodId == puzzle.CountingMethodId)
+                    && i.CountingMethodId == countingMethodId)
                 .Single();
             Image image = Image.FromStream(
                 ((IList<ImageModel>)bindingSourceGallery.List)
@@ -316,7 +314,7 @@ namespace puzzle
                 image);
 
             game.FieldFragmentNumbers = savedGame.FieldFragmentNumbers;
-            if (game.AssemblyType == 2)
+            if (game.AssemblyTypeId == 2)
             {
                 game.TapeFragmentNumbers = savedGame.TapeFragmentNumbers;
             }
@@ -332,33 +330,6 @@ namespace puzzle
             }
 
             return game;
-        }
-
-        private void InitTopControl(ImageAndMethodsUC right, PuzzleModel puzzle)
-        {
-            if (right.radioButton1.Checked)
-            {
-                currMethodId = 1;
-                puzzle.CountingMethodId = 1;
-                puzzle.Score = 0;
-
-                topControl.labelMethod.Text = "Очки:";
-                topControl.labelValue.Text = "0";
-            }
-            else if (right.radioButton2.Checked)
-            {
-                currMethodId = 2;
-                puzzle.CountingMethodId = 2;
-                puzzle.Time = 0;
-
-                topControl.labelMethod.Text = "Время:";
-                topControl.labelValue.Text = "00:00:00";
-            }
-            else
-            {
-                currMethodId = 0;
-                puzzle.CountingMethodId = 0;
-            }
         }
 
         internal void DisplayRegAndAuth()
@@ -1203,7 +1174,7 @@ namespace puzzle
             right.ButtonRecords1Click = new EventHandler((s, e) => ShowRecordsForm(1));
             right.ButtonRecords2Click = new EventHandler((s, e) => ShowRecordsForm(2));
 
-            switch (currMethodId)
+            switch (countingMethodId)
             {
                 case 1:
                     right.radioButton1.Select();
@@ -1275,15 +1246,27 @@ namespace puzzle
             {
                 bottomControl.ButtonLoadEnabled = savedMethods.Contains(0);
             });
-            bottomControl.ButtonLoadEnabled = savedMethods.Contains(currMethodId);
+
+            bottomControl.ButtonLoadEnabled = savedMethods.Contains(countingMethodId);
             bottomControl.ButtonLoadVisible = true;
             bottomControl.ButtonLoadClick = new EventHandler((s, e) =>
             {
                 var puzzle = (PuzzleModel)bindingSourceFilteredPuzzles.Current;
 
-                InitTopControl(right, puzzle);
+                if (right.radioButton1.Checked)
+                {
+                    countingMethodId = 1;
+                }
+                else if (right.radioButton2.Checked)
+                {
+                    countingMethodId = 2;
+                }
+                else
+                {
+                    countingMethodId = 0;
+                }
 
-                DisplayGame(puzzle, CreateSavedGame(puzzle));
+                DisplayGame(puzzle, CreateSavedGame(puzzle, countingMethodId));
             });
 
             bottomControl.ButtonInsertOrNewGameText = "Новая игра";
@@ -1291,15 +1274,26 @@ namespace puzzle
             {
                 var puzzle = (PuzzleModel)bindingSourceFilteredPuzzles.Current;
 
-                InitTopControl(right, puzzle);
+                if (right.radioButton1.Checked)
+                {
+                    countingMethodId = 1;
+                }
+                else if (right.radioButton2.Checked)
+                {
+                    countingMethodId = 2;
+                }
+                else
+                {
+                    countingMethodId = 0;
+                }
 
                 bool hasSavedGame = savedGames
                     .Where(i => i.PuzzleId == puzzle.Id
-                        && i.CountingMethodId == puzzle.CountingMethodId)
+                        && i.CountingMethodId == countingMethodId)
                     .Any();
                 if (!hasSavedGame)
                 {
-                    DisplayGame(puzzle, CreateNewGame(puzzle));
+                    DisplayGame(puzzle, CreateNewGame(puzzle, countingMethodId));
                 }
                 else
                 {
@@ -1310,7 +1304,7 @@ namespace puzzle
                         {
                             var savedGame = savedGames
                                 .Where(i => i.PuzzleId == puzzle.Id
-                                    && i.CountingMethodId == puzzle.CountingMethodId)
+                                    && i.CountingMethodId == countingMethodId)
                                 .Single();
 
                             var p1 = new MySqlParameter("@p1", savedGame.SavedGameId);
@@ -1332,7 +1326,7 @@ namespace puzzle
                             MessageBoxes.Error(ex.Message);
                         }
 
-                        DisplayGame(puzzle, CreateNewGame(puzzle));
+                        DisplayGame(puzzle, CreateNewGame(puzzle, countingMethodId));
                     }
                 }
             });
@@ -1352,7 +1346,7 @@ namespace puzzle
             }
             else
             {
-                fill.panelTape.Visible = game.AssemblyType == 2;
+                fill.panelTape.Visible = game.AssemblyTypeId == 2;
                 fill.pictureBoxField.Enabled = true;
                 fill.pictureBoxField.SizeMode = PictureBoxSizeMode.Normal;
                 fill.pictureBoxField.Image = tempFieldImage;
@@ -1383,7 +1377,7 @@ namespace puzzle
                 Dock = DockStyle.Fill,
             };
             ChangeFill(fill);
-            #endregion            
+            #endregion
             #region Top
             Image tempFieldImage = fill.pictureBoxField.Image;
             bool imageOn = false;
@@ -1451,7 +1445,7 @@ namespace puzzle
             });
 
             topControl.labelTitle.Text = puzzle.Name;
-            topControl.labelMethod.Visible = puzzle.CountingMethodId != 0;
+            topControl.labelMethod.Visible = game.CountingMethodId != 0;
             topControl.labelValue.Visible = topControl.labelMethod.Visible;
             #endregion            
             panelBottom.Hide();

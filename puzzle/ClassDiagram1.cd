@@ -173,7 +173,7 @@
   <Class Name="puzzle.Model.PuzzleModel" BaseTypeListCollapsed="true">
     <Position X="32.75" Y="10" Width="3.75" />
     <TypeIdentifier>
-      <HashCode>AAACAAABAAAAAIgAAAAAAASAgAAEgAEAAAgBAAAAAwE=</HashCode>
+      <HashCode>AAACAAABAAAAAIAAAAAAAASAgAAEgAEAAAABAAAAAgE=</HashCode>
       <FileName>Model\PuzzleModel.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -300,7 +300,7 @@
   <Class Name="puzzle.MainForm">
     <Position X="45.25" Y="0.5" Width="5" />
     <TypeIdentifier>
-      <HashCode>AsACACUAECgFAACApMCDAAAGAUBCAABhQBIAAAwEhRg=</HashCode>
+      <HashCode>AsACACUAECgFAACApMCDAAAGAUBCAABBQBIAAAwEhRg=</HashCode>
       <FileName>MainForm.cs</FileName>
     </TypeIdentifier>
   </Class>

@@ -12,8 +12,8 @@ namespace puzzle.UserControls.Center
 {
     public partial class GameUC : UserControl
     {
-        private Game game;
-        private MainForm form;
+        private readonly Game game;
+        private readonly MainForm form;
 
         internal GameUC(PuzzleModel puzzle, Game game, MainForm form)
         {
@@ -22,7 +22,7 @@ namespace puzzle.UserControls.Center
             this.form = form;
 
             DrawField();
-            if (game.AssemblyType == 2)
+            if (game.AssemblyTypeId == 2)
             {
                 DrawTape();
             }
@@ -214,10 +214,12 @@ namespace puzzle.UserControls.Center
 
             if (game.CountingMethodId == 1)
             {
+                form.topControl.labelMethod.Text = "Очки:";
                 form.topControl.labelValue.Text = game.Score.ToString();
             }
             else if (game.CountingMethodId == 2)
             {
+                form.topControl.labelMethod.Text = "Время:";
                 form.topControl.timer.Tick += new EventHandler((s, e) =>
                 {
                     game.Time++;
@@ -234,7 +236,7 @@ namespace puzzle.UserControls.Center
             var maxFieldHeight = form.ClientSize.Height
                 - form.topControl.Height
                 - pictureBoxField.Location.Y * 2;
-            if (game.AssemblyType == 1)
+            if (game.AssemblyTypeId == 1)
             {
                 pictureBoxField.Height = maxFieldHeight;
                 pictureBoxField.Width = pictureBoxField.Height * 4 / 3;
@@ -256,7 +258,7 @@ namespace puzzle.UserControls.Center
             }
             pictureBoxField.Width -= pictureBoxField.Width % game.NHorizontal;
             pictureBoxField.Height -= pictureBoxField.Height % game.NVertical;
-            if (game.AssemblyType == 1)
+            if (game.AssemblyTypeId == 1)
             {
                 pictureBoxField.Location = new(
                     (form.ClientSize.Width - pictureBoxField.Width) / 2,
