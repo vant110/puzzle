@@ -53,10 +53,10 @@ namespace puzzle.Services
             List<ImageModel> newGallery = new();
             foreach (var g in gallery)
             {
-                if (!LocalStorage.Exists(g.Path)) continue;
+                if (!LocalStorage.ImageExists(g.Path)) continue;
 
-                g.Image = LocalStorage.Load(g.Path);
-                if (Hasher.HashImage(g.Image) == g.ImageHash)
+                g.Image = LocalStorage.LoadImage(g.Path);
+                if (Hasher.Hash(g.Image) == g.ImageHash)
                 {
                     newGallery.Add(g);
                 }
@@ -122,10 +122,10 @@ namespace puzzle.Services
                     continue;
                 }
 
-                if (!LocalStorage.Exists(image.Path)) continue;
+                if (!LocalStorage.ImageExists(image.Path)) continue;
 
-                image.Image = LocalStorage.Load(image.Path);
-                if (Hasher.HashImage(image.Image) == image.ImageHash)
+                image.Image = LocalStorage.LoadImage(image.Path);
+                if (Hasher.Hash(image.Image) == image.ImageHash)
                 {
                     newGallery.Add(p);
                 }
@@ -255,7 +255,7 @@ namespace puzzle.Services
                         CountingMethodId = r.CountingMethodId,
                         Login = r.Login,
                         Time = rt.Time
-                    }).OrderByDescending(r => r.Time);
+                    }).OrderBy(r => r.Time);
             }
             return records.ToList();
         }

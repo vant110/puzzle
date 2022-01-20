@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -15,18 +14,18 @@ namespace puzzle.Services
             return Convert.ToBase64String(pbkdf2.GetBytes(44));
         }
 
-        public static string HashImage(Stream imageStream)
+        public static string Hash(Stream s)
         {
-            imageStream.Seek(0, SeekOrigin.Begin);
+            s.Seek(0, SeekOrigin.Begin);
 
             SHA512 shaM = new SHA512Managed();
-            return Convert.ToBase64String(shaM.ComputeHash(imageStream));
+            return Convert.ToBase64String(shaM.ComputeHash(s));
         }
 
-        public static string HashImageAndClose(Stream imageStream)
+        public static string HashAndClose(Stream s)
         {
-            string hash = HashImage(imageStream);
-            imageStream.Close();
+            string hash = Hash(s);
+            s.Close();
             return hash;
         }
     }

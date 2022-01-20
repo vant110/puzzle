@@ -141,14 +141,14 @@
     </TypeIdentifier>
   </Class>
   <Class Name="puzzle.Model.Fragment">
-    <Position X="33.5" Y="15" Width="3.75" />
+    <Position X="27.5" Y="15.75" Width="3.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAgAAAAEAAAAgAAAAAABAAAAAAgAAAAAA=</HashCode>
       <FileName>Logic\Fragment.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="puzzle.Model.Game">
-    <Position X="50.5" Y="0.5" Width="5.25" />
+    <Position X="32" Y="15.25" Width="5.25" />
     <TypeIdentifier>
       <HashCode>QAAGAAAAQAAAgggQEQCAAQBAYgAAQAAYQAkAAIAQgRA=</HashCode>
       <FileName>Logic\Game.cs</FileName>
@@ -163,7 +163,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="puzzle.Model.LevelModel" BaseTypeListCollapsed="true">
-    <Position X="31.5" Y="10" Width="3.75" />
+    <Position X="37.75" Y="10" Width="3.75" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAACAIAAAAAAAAQQgAAEGAAQAAgAkAAAAgA=</HashCode>
       <FileName>Model\LevelModel.cs</FileName>
@@ -171,7 +171,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="puzzle.Model.PuzzleModel" BaseTypeListCollapsed="true">
-    <Position X="35.5" Y="10" Width="3.75" />
+    <Position X="32.75" Y="10" Width="3.75" />
     <TypeIdentifier>
       <HashCode>AAACAAABAAAAAIgAAAAAAASAgAAEgAEAAAgBAAAAAwE=</HashCode>
       <FileName>Model\PuzzleModel.cs</FileName>
@@ -179,21 +179,21 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="puzzle.Model.RecordModel">
-    <Position X="27.5" Y="15" Width="2.5" />
+    <Position X="38" Y="15.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAgQAAIAAQA=</HashCode>
       <FileName>Model\RecordModel.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="puzzle.Model.ResultDTO">
-    <Position X="27.5" Y="13.5" Width="2" />
+    <Position X="24" Y="10" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAAAA=</HashCode>
       <FileName>Model\ResultDTO.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="puzzle.Model.SavedGameModel">
-    <Position X="30.25" Y="15" Width="3" />
+    <Position X="28" Y="18.75" Width="3" />
     <TypeIdentifier>
       <HashCode>QAAAAAAAQAAAAAgAAAAAAAAAAAAAAAAABAgAAAABAQA=</HashCode>
       <FileName>Model\SavedGameModel.cs</FileName>
@@ -209,14 +209,14 @@
   <Class Name="puzzle.Services.Hasher">
     <Position X="35.5" Y="3.25" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAEBAAAAAQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAIEAAAAAACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Services\Hasher.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="puzzle.Services.LocalStorage">
     <Position X="40" Y="0.5" Width="3" />
     <TypeIdentifier>
-      <HashCode>AAAAgIAAAAAAAAAAAAAACAAAEAEAAAAAAQAAAAEAAQA=</HashCode>
+      <HashCode>AAAAAAAAQAAAAAAAAAAACAAAEAAAAAAAAQAADAEAIRA=</HashCode>
       <FileName>Services\LocalStorage.cs</FileName>
     </TypeIdentifier>
   </Class>

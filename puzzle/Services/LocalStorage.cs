@@ -11,9 +11,9 @@ namespace puzzle.Services
         private static readonly string images = Application.StartupPath + "images\\";
         private static readonly string format = "";
 
-        private static void CreateDirectory()
+        private static void CreateDirectory(string path)
         {
-            var directoryInfo = new DirectoryInfo(images);
+            var directoryInfo = new DirectoryInfo(path);
             if (!directoryInfo.Exists)
             {
                 directoryInfo.Create();
@@ -84,34 +84,49 @@ namespace puzzle.Services
             return ms;
         }
 
-        public static void Save(Stream imageStream, string path)
+        public static void SaveImage(Stream s, string path)
         {
-            imageStream.Seek(0, SeekOrigin.Begin);
+            s.Seek(0, SeekOrigin.Begin);
 
-            CreateDirectory();
+            CreateDirectory(images);
             using var outFileStream = File.Create($"{images}{path}{format}");
-            imageStream.CopyTo(outFileStream);
+            s.CopyTo(outFileStream);
         }
 
-        public static MemoryStream Load(string path)
+        public static bool ImageExists(string path)
+        {
+            return File.Exists($"{images}{path}{format}");
+        }
+        public static bool HelpExists(string[] help)
+        {
+            bool exists = false;
+            for (int i = 0; i < help.Length; i++)
+            {
+                exists = File.Exists(help[i]);
+                if (!exists) break;
+            }
+            return exists;
+        }
+
+        public static MemoryStream LoadImage(string path)
         {
             var ms = new MemoryStream();
             using var inFileStream = File.OpenRead($"{images}{path}{format}");
             inFileStream.CopyTo(ms);
             return ms;
         }
-
-        public static Image LoadImage(string path)
+        public static MemoryStream LoadHelp(string[] help)
         {
-            return Image.FromFile($"{images}{path}{format}");
+            var ms = new MemoryStream();
+            for (int i = 0; i < help.Length; i++)
+            {
+                using var inFileStream = File.OpenRead(help[i]);
+                inFileStream.CopyTo(ms);
+            }
+            return ms;
         }
 
-        public static bool Exists(string path)
-        {
-            return File.Exists($"{images}{path}{format}");
-        }
-
-        public static void Delete(string path)
+        public static void DeleteImage(string path)
         {
             File.Delete($"{images}{path}{format}");
         }

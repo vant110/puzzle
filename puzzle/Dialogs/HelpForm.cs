@@ -1,12 +1,6 @@
 ﻿using puzzle.Services;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace puzzle.Dialogs
@@ -19,13 +13,29 @@ namespace puzzle.Dialogs
 
             linkLabelAbout.Click += new EventHandler((s, e) =>
             {
-                try
+                string[] help = new string[14];
+                help[0] = $@"{Application.StartupPath}help\help.html";
+                for (int i = 1; i <= 13; i++)
                 {
-                    System.Diagnostics.Process.Start("");
+                    help[i] = $@"{Application.StartupPath}help\images\{i}.jpg";
                 }
-                catch
+
+                try
+                {                    
+                    if (!LocalStorage.HelpExists(help))
+                    {
+                        throw new Exception("Справка не найдена.");
+                    }
+                    if (Hasher.Hash(LocalStorage.LoadHelp(help)) != "ctRt50GMt7MSQVWVPkbmCeLKQAPD7ByYFUZW8gNuO4GcHJB8d5BT/OFCXUA/EgYyRH5APs3Apk5RCaEDDW15Jg==")
+                    {
+                        throw new Exception("Справка повреждена.");
+                    }
+
+                    Process.Start(new ProcessStartInfo(help[0]) { UseShellExecute = true });
+                }
+                catch (Exception ex)
                 {
-                    MessageBoxes.Error("Не удалось открыть файл справки.");
+                    MessageBoxes.Error(ex.Message);
                 }
             });
         }

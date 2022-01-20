@@ -488,7 +488,7 @@ namespace puzzle
                         }
                     }
 
-                    LocalStorage.Delete(selectedItem.Path);
+                    LocalStorage.DeleteImage(selectedItem.Path);
                     DisposeImage(right);
                     bindingSourceGallery.Remove(selectedItem);
                     MessageBoxes.Info("Успешно.");
@@ -551,7 +551,7 @@ namespace puzzle
                         }
 
                         newImage.Image = LocalStorage.Resize(newImage.Image);
-                        newImage.ImageHash = Hasher.HashImage(newImage.Image);
+                        newImage.ImageHash = Hasher.Hash(newImage.Image);
 
                         var image = new ImageModel
                         {
@@ -576,7 +576,7 @@ namespace puzzle
                                 .Select(i => i.ImageId).Single();
                         }
 
-                        LocalStorage.Save(image.Image, image.Path);
+                        LocalStorage.SaveImage(image.Image, image.Path);
                         //newImage.Image.Close();
                         newImage.Image = null;
                         form.labelFile.Text = "Файл не выбран";
@@ -713,6 +713,14 @@ namespace puzzle
                 if (selectedItem is null) return;
                 try
                 {
+                    {
+                        int minLevelCount = 3;
+                        if (bindingSourceLevels.Count <= minLevelCount)
+                        {
+                            throw new Exception($"Минимальное количество уровней сложности: {minLevelCount}.");
+                        }
+                    }
+
                     var id = new MySqlParameter("@id", selectedItem.Id);
                     using (var db = new PuzzleContext(Db.Options))
                     {
@@ -824,6 +832,15 @@ namespace puzzle
             bottomControl.ButtonInsertOrNewGameText = "Добавить";
             bottomControl.ButtonInsertOrNewGameClick = new EventHandler((s, e) =>
             {
+                {
+                    int maxLevelCount = 9;
+                    if (bindingSourceLevels.Count >= maxLevelCount)
+                    {
+                        MessageBoxes.Error($"Максимальное количество уровней сложности: {maxLevelCount}.");
+                        return;
+                    }
+                }
+
                 var form = new InsertOrUpdateLevelForm(this)
                 {
                     Text = "Добавление уровня сложности",
