@@ -1342,7 +1342,7 @@ namespace puzzle
                 fill.panelTape.Visible = false;
                 fill.pictureBoxField.Enabled = false;
                 fill.pictureBoxField.SizeMode = PictureBoxSizeMode.StretchImage;
-                fill.pictureBoxField.Image = game.FullImage;
+                fill.pictureBoxField.Image = game.Image;
             }
             else
             {
@@ -1406,8 +1406,6 @@ namespace puzzle
                 }
                 else if (result == DialogResult.Yes)
                 {
-                    var a = game.FieldFragmentNumbers;
-                    var b = game.TapeFragmentNumbers;
                     try
                     {
                         var p1 = new MySqlParameter("@p1", ResultDTO.PlayerId);

@@ -12,30 +12,115 @@ namespace puzzle.Model
 
         public static Game Instance { get; set; }
 
-        public sbyte FragmentTypeId { get; set; }
-        public sbyte AssemblyTypeId { get; set; }
-        public int NHorizontal { get; set; }
-        public int NVertical { get; set; }
-        public Fragment[] Field { get; set; }
-        public Fragment[] Tape { get; set; }
-        public Image FullImage { get; set; }
+        public sbyte FragmentTypeId { get; private set; }
+        public sbyte AssemblyTypeId { get; private set; }
+        public sbyte NHorizontal { get; private set; }
+        public sbyte NVertical { get; private set; }
+        public Image Image { get; private set; }
+        public Fragment[] Field { get; private set; }
+        public Fragment[] Tape { get; private set; }
 
         public sbyte CountingMethodId { get; set; }
         public short Score { get; set; } = 0;
         public int Time { get; set; } = 0;
 
+        public byte[] FieldFragmentNumbers
+        {
+            get
+            {
+                byte[] fragmentNumbers = new byte[Field.Length];
+                for (int i = 0; i < fragmentNumbers.Length; i++)
+                {
+                    fragmentNumbers[i] = byte.MaxValue;
+                }
+
+                for (int i = 0; i < Field.Length; i++)
+                {
+                    if (Field[i] is null) continue;
+                    fragmentNumbers[Field[i].Number] = (byte)i;
+                }
+
+                return fragmentNumbers;
+            }
+            set
+            {
+                var originalGame = new Game(
+                    FragmentTypeId,
+                    1,
+                    NHorizontal,
+                    NVertical,
+                    Image);
+                var originalField = new Fragment[Field.Length];
+                originalGame.Field.CopyTo(originalField, 0);
+
+                for (int i = 0; i < value.Length; i++)
+                {
+                    if (value[i] == byte.MaxValue) continue;
+
+                    Field[value[i]] = originalField[i];
+
+                    if (Field[value[i]] is not null)
+                    {
+                        Field[value[i]].InOriginalPosition = FragmentInOriginalPosition(value[i]);
+                    }
+                }
+            }
+        }
+        public byte[] TapeFragmentNumbers
+        {
+            get
+            {
+                if (Tape is null) return null;
+
+                byte[] fragmentNumbers = new byte[Field.Length];
+                for (int i = 0; i < fragmentNumbers.Length; i++)
+                {
+                    fragmentNumbers[i] = byte.MaxValue;
+                }
+
+                for (int i = 0; i < Tape.Length; i++)
+                {
+                    fragmentNumbers[Tape[i].Number] = (byte)i;
+                }
+
+                return fragmentNumbers;
+            }
+            set
+            {
+                var originalTape = new Fragment[Field.Length];
+                Tape.CopyTo(originalTape, 0);
+                for (int i = 0; i < Tape.Length; i++)
+                {
+                    Tape[i] = null;
+                }
+
+                for (int i = 0; i < value.Length; i++)
+                {
+                    if (value[i] == byte.MaxValue) continue;
+
+                    Tape[value[i]] = originalTape[i];
+
+                    if (Tape[value[i]] is not null)
+                    {
+                        Tape[value[i]].InOriginalPosition = false;
+                    }
+                }
+                Tape = Tape.Where(f => f is not null).ToArray();
+            }
+        }
+
         public Game(
-            sbyte fragmentType,
-            sbyte assemblyType,
-            int nHorizontal,
-            int nVertical,
+            sbyte fragmentTypeId,
+            sbyte assemblyTypeId,
+            sbyte nHorizontal,
+            sbyte nVertical,
             Image image)
         {
-            FragmentTypeId = fragmentType;
-            AssemblyTypeId = assemblyType;
+            FragmentTypeId = fragmentTypeId;
+            AssemblyTypeId = assemblyTypeId;
             NHorizontal = nHorizontal;
             NVertical = nVertical;
-            FullImage = image;
+            Image = image;
 
             {
                 int length = NHorizontal * NVertical;
@@ -54,8 +139,8 @@ namespace puzzle.Model
             }
 
             Fragment.Size = new(
-                FullImage.Width / NHorizontal,
-                FullImage.Height / NVertical);
+                Image.Width / NHorizontal,
+                Image.Height / NVertical);
 
             colorMatrix = new()
             {
@@ -86,7 +171,7 @@ namespace puzzle.Model
                     Bitmap bitmap = new(
                         Fragment.Size.Width,
                         Fragment.Size.Height);
-                    bitmap.SetResolution(FullImage.HorizontalResolution, FullImage.VerticalResolution);
+                    bitmap.SetResolution(Image.HorizontalResolution, Image.VerticalResolution);
 
                     using Graphics graphics = Graphics.FromImage(bitmap);
                     graphics.CompositingMode = CompositingMode.SourceCopy;
@@ -105,7 +190,7 @@ namespace puzzle.Model
                     Point position = new(j, i);
                     graphics.Clear(Color.White);
                     graphics.DrawImage(
-                        FullImage,
+                        Image,
                         destRect,
                         position.X * Fragment.Size.Width,
                         position.Y * Fragment.Size.Height,
@@ -217,92 +302,7 @@ namespace puzzle.Model
                     imageAttr);
             }
         }
-
-        public byte[] FieldFragmentNumbers
-        {
-            get
-            {
-                byte[] fragmentNumbers = new byte[Field.Length];
-                for (int i = 0; i < fragmentNumbers.Length; i++)
-                {
-                    fragmentNumbers[i] = byte.MaxValue;
-                }
-
-                for (int i = 0; i < Field.Length; i++)
-                {
-                    if (Field[i] is null) continue;
-                    fragmentNumbers[Field[i].Number] = (byte)i;
-                }
-
-                return fragmentNumbers;
-            }
-            set
-            {
-                var originalGame = new Game(
-                    FragmentTypeId,
-                    1,
-                    NHorizontal,
-                    NVertical,
-                    FullImage);
-                var originalField = new Fragment[Field.Length];
-                originalGame.Field.CopyTo(originalField, 0);
-
-                for (int i = 0; i < value.Length; i++)
-                {
-                    if (value[i] == byte.MaxValue) continue;
-
-                    Field[value[i]] = originalField[i];
-
-                    if (Field[value[i]] is not null)
-                    {
-                        Field[value[i]].InOriginalPosition = FragmentInOriginalPosition(value[i]);
-                    }
-                }
-            }
-        }
-        public byte[] TapeFragmentNumbers
-        {
-            get
-            {
-                if (Tape is null) return null;
-
-                byte[] fragmentNumbers = new byte[Field.Length];
-                for (int i = 0; i < fragmentNumbers.Length; i++)
-                {
-                    fragmentNumbers[i] = byte.MaxValue;
-                }
-
-                for (int i = 0; i < Tape.Length; i++)
-                {
-                    fragmentNumbers[Tape[i].Number] = (byte)i;
-                }
-
-                return fragmentNumbers;
-            }
-            set
-            {
-                var originalTape = new Fragment[Field.Length];
-                Tape.CopyTo(originalTape, 0);
-                for (int i = 0; i < Tape.Length; i++)
-                {
-                    Tape[i] = null;
-                }
-
-                for (int i = 0; i < value.Length; i++)
-                {
-                    if (value[i] == byte.MaxValue) continue;
-
-                    Tape[value[i]] = originalTape[i];
-
-                    if (Tape[value[i]] is not null)
-                    {
-                        Tape[value[i]].InOriginalPosition = false;
-                    }
-                }
-                Tape = Tape.Where(f => f is not null).ToArray();
-            }
-        }
-
+                
         private static int SearchNumber(int location, int size, int count)
         {
             int i;
