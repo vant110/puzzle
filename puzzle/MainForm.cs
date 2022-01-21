@@ -274,11 +274,11 @@ namespace puzzle
 
             if (game.AssemblyTypeId == 1)
             {
-                game.FieldFragmentNumbers = puzzle.FragmentNumbers;
+                game.Field.FragmentNumbers = puzzle.FragmentNumbers;
             }
             else if (game.AssemblyTypeId == 2)
             {
-                game.TapeFragmentNumbers = puzzle.FragmentNumbers;
+                game.Tape.FragmentNumbers = puzzle.FragmentNumbers;
             }
 
             return game;
@@ -313,10 +313,10 @@ namespace puzzle
                 level.VerticalFragmentCount,
                 image);
 
-            game.FieldFragmentNumbers = savedGame.FieldFragmentNumbers;
+            game.Field.FragmentNumbers = savedGame.FieldFragmentNumbers;
             if (game.AssemblyTypeId == 2)
             {
-                game.TapeFragmentNumbers = savedGame.TapeFragmentNumbers;
+                game.Tape.FragmentNumbers = savedGame.TapeFragmentNumbers;
             }
 
             game.CountingMethodId = savedGame.CountingMethodId;
@@ -1035,8 +1035,8 @@ namespace puzzle
                             ImageId = ((ImageModel)form.comboBoxImage.SelectedItem).Id,
                             DifficultyLevelId = ((LevelModel)form.comboBoxLevel.SelectedItem).Id,
                             FragmentNumbers = ((LevelModel)form.comboBoxLevel.SelectedItem).AssemblyTypeId == 1
-                                ? Game.Instance.FieldFragmentNumbers
-                                : Game.Instance.TapeFragmentNumbers
+                                ? Game.Instance.Field.FragmentNumbers
+                                : Game.Instance.Tape.FragmentNumbers
                         };
 
                         var id = new MySqlParameter("@id", puzzle.Id);
@@ -1114,8 +1114,8 @@ namespace puzzle
                             ImageId = ((ImageModel)form.comboBoxImage.SelectedItem).Id,
                             DifficultyLevelId = ((LevelModel)form.comboBoxLevel.SelectedItem).Id,
                             FragmentNumbers = ((LevelModel)form.comboBoxLevel.SelectedItem).AssemblyTypeId == 1
-                                ? Game.Instance.FieldFragmentNumbers
-                                : Game.Instance.TapeFragmentNumbers
+                                ? Game.Instance.Field.FragmentNumbers
+                                : Game.Instance.Tape.FragmentNumbers
                         };
 
                         var p1 = new MySqlParameter("@p1", puzzle.Name);
@@ -1410,8 +1410,8 @@ namespace puzzle
                     {
                         var p1 = new MySqlParameter("@p1", ResultDTO.PlayerId);
                         var p2 = new MySqlParameter("@p2", puzzle.Id);
-                        var p3 = new MySqlParameter("@p3", game.FieldFragmentNumbers);
-                        var p4 = new MySqlParameter("@p4", game.TapeFragmentNumbers);
+                        var p3 = new MySqlParameter("@p3", game.Field.FragmentNumbers);
+                        var p4 = new MySqlParameter("@p4", game.AssemblyTypeId == 2 ? game.Tape.FragmentNumbers : null);
                         var p5 = new MySqlParameter("@p5", game.CountingMethodId);
                         var p6 = new MySqlParameter("@p6", game.Score);
                         var p7 = new MySqlParameter("@p7", game.Time);

@@ -36,11 +36,11 @@ namespace puzzle.UserControls.Center
                 source = 1;
                 location1 = e.Location;
 
-                int index = game.GetFragmentIndexOnField(
+                int index = game.Field.GetFragmentIndex(
                     location1,
                     pictureBoxField.Size);
-                if (game.Field[index] is null
-                    || game.FragmentInOriginalPosition(index)) return;
+                if (game.Field.Fragments[index] is null
+                    || game.Field.FragmentInOriginalPosition(index)) return;
 
                 pictureBoxField.DoDragDrop(
                     new object(),
@@ -55,34 +55,34 @@ namespace puzzle.UserControls.Center
                 int index1 = 0;
                 if (source == 1)
                 {
-                    index1 = game.GetFragmentIndexOnField(
+                    index1 = game.Field.GetFragmentIndex(
                         location1,
                         pictureBoxField.Size);
                 }
                 else if (source == 2)
                 {
-                    index1 = game.GetFragmentIndexOnTape(
+                    index1 = game.Tape.GetFragmentIndex(
                         location1,
                         pictureBoxTape.Size);
                 }
 
-                int index2 = game.GetFragmentIndexOnField(
+                int index2 = game.Field.GetFragmentIndex(
                     PointToClient(new Point(e.X - pictureBoxField.Location.X, e.Y - pictureBoxField.Location.Y)),
                     pictureBoxField.Size);
 
                 if (source == 1
                     && index1 == index2) return;
-                if (game.Field[index2] is not null
-                    && game.Field[index2].InOriginalPosition) return;
+                if (game.Field.Fragments[index2] is not null
+                    && game.Field.Fragments[index2].InOriginalPosition) return;
 
                 if (source == 1)
                 {
-                    game.SwapFragmentsOnField(index1, index2);
-                    game.DrawFragmentOnField(index1, pictureBoxField.Image);
+                    game.Field.SwapFragments(index1, index2);
+                    game.Field.DrawFragment(index1, pictureBoxField.Image);
                 }
                 else if (source == 2)
                 {
-                    bool fieldFragmentIsNull = game.Field[index2] is null;
+                    bool fieldFragmentIsNull = game.Field.Fragments[index2] is null;
                     game.AddFragmentOnFieldFromTape(index1, index2);
                     if (fieldFragmentIsNull)
                     {
@@ -90,30 +90,30 @@ namespace puzzle.UserControls.Center
                     }
                     else
                     {
-                        game.DrawFragmentOnTape(index1, pictureBoxTape.Image);
+                        game.Tape.DrawFragment(index1, pictureBoxTape.Image);
                     }
                     pictureBoxTape.Refresh();
                 }
-                game.DrawFragmentOnField(index2, pictureBoxField.Image);
+                game.Field.DrawFragment(index2, pictureBoxField.Image);
                 pictureBoxField.Refresh();
 
 
                 if (game.CountingMethodId == 1)
                 {
                     if (source == 1
-                        && game.Field[index1] is not null
-                        && game.Field[index1].InOriginalPosition)
+                        && game.Field.Fragments[index1] is not null
+                        && game.Field.Fragments[index1].InOriginalPosition)
                     {
                         game.Score++;
                     }
-                    if (game.Field[index2].InOriginalPosition)
+                    if (game.Field.Fragments[index2].InOriginalPosition)
                     {
                         game.Score++;
                     }
                     if (!((source == 1
-                        && game.Field[index1] is not null
-                        && game.Field[index1].InOriginalPosition)
-                        || game.Field[index2].InOriginalPosition))
+                        && game.Field.Fragments[index1] is not null
+                        && game.Field.Fragments[index1].InOriginalPosition)
+                        || game.Field.Fragments[index2].InOriginalPosition))
                     {
                         game.Score--;
                     }
@@ -121,16 +121,16 @@ namespace puzzle.UserControls.Center
                 }
 
                 if ((source == 1
-                    && game.Field[index1] is not null
-                    && game.Field[index1].InOriginalPosition)
-                    || game.Field[index2].InOriginalPosition)
+                    && game.Field.Fragments[index1] is not null
+                    && game.Field.Fragments[index1].InOriginalPosition)
+                    || game.Field.Fragments[index2].InOriginalPosition)
                 {
                     if (form.soundOn)
                     {
                         form.soundPlayer?.Play();
                     }
 
-                    if (game.EachFragmentInOriginalPosition())
+                    if (game.Field.EachFragmentInOriginalPosition())
                     {
                         form.topControl.timer.Stop();
 
@@ -171,7 +171,7 @@ namespace puzzle.UserControls.Center
             pictureBoxTape.AllowDrop = true;
             pictureBoxTape.MouseDown += new MouseEventHandler((s, e) =>
             {
-                if (game.Tape.Length == 0) return;
+                if (game.Tape.Fragments.Length == 0) return;
 
                 source = 2;
                 location1 = e.Location;
@@ -189,12 +189,12 @@ namespace puzzle.UserControls.Center
             });
             pictureBoxTape.DragDrop += new DragEventHandler((s, e) =>
             {
-                int index1 = game.GetFragmentIndexOnField(
+                int index1 = game.Field.GetFragmentIndex(
                     location1,
                     pictureBoxField.Size);
                 
                 game.AddFragmentOnTape(index1);
-                game.DrawFragmentOnField(index1, pictureBoxField.Image);
+                game.Field.DrawFragment(index1, pictureBoxField.Image);
                 pictureBoxField.Refresh();
                 DrawTape();
                 pictureBoxTape.Refresh();
@@ -234,8 +234,8 @@ namespace puzzle.UserControls.Center
                 pictureBoxField.Width = (form.ClientSize.Width
                     - pictureBoxField.Location.X * 3
                     - SystemInformation.VerticalScrollBarWidth)
-                    * game.NHorizontal
-                    / (game.NHorizontal + 1);
+                    * game.Field.NHorizontal
+                    / (game.Field.NHorizontal + 1);
                 pictureBoxField.Height = pictureBoxField.Width * 3 / 4;
 
                 if (pictureBoxField.Height > maxFieldHeight)
@@ -244,8 +244,8 @@ namespace puzzle.UserControls.Center
                     pictureBoxField.Width = pictureBoxField.Height * 4 / 3;
                 }
             }
-            pictureBoxField.Width -= pictureBoxField.Width % game.NHorizontal;
-            pictureBoxField.Height -= pictureBoxField.Height % game.NVertical;
+            pictureBoxField.Width -= pictureBoxField.Width % game.Field.NHorizontal;
+            pictureBoxField.Height -= pictureBoxField.Height % game.Field.NVertical;
             if (game.AssemblyTypeId == 1)
             {
                 pictureBoxField.Location = new(
@@ -261,32 +261,32 @@ namespace puzzle.UserControls.Center
             }
 
             var bitmap = new Bitmap(pictureBoxField.Width, pictureBoxField.Height);
-            game.DrawField(bitmap);
+            game.Field.Draw(bitmap);
             pictureBoxField.Image = bitmap;
         }
         private void DrawTape()
         {
             panelTape.Show();
 
-            if (game.Tape.Length == 0)
+            if (game.Tape.Fragments.Length == 0)
             {
                 var image = new Bitmap(
-                    pictureBoxField.Width / game.NHorizontal,
-                    pictureBoxField.Height / game.NVertical);
+                    pictureBoxField.Width / game.Field.NHorizontal,
+                    pictureBoxField.Height / game.Field.NVertical);
                 pictureBoxTape.Image = image;
                 pictureBoxTape.Height = pictureBoxTape.Image.Height;
                 return;
             }
 
-            pictureBoxTape.Width = pictureBoxField.Width / game.NHorizontal;
-            pictureBoxTape.Height = pictureBoxField.Height / game.NVertical * game.Tape.Length;
+            pictureBoxTape.Width = pictureBoxField.Width / game.Field.NHorizontal;
+            pictureBoxTape.Height = pictureBoxField.Height / game.Field.NVertical * game.Tape.Fragments.Length;
 
             panelTape.Width = pictureBoxTape.Width + SystemInformation.VerticalScrollBarWidth;
 
             var bitmap = new Bitmap(pictureBoxTape.Width, pictureBoxTape.Height);
-            game.DrawTape(bitmap);
+            game.Tape.Draw(bitmap);
             pictureBoxTape.Image = bitmap;
-            if (game.Tape.Length != 0)
+            if (game.Tape.Fragments.Length != 0)
             {
                 pictureBoxTape.Height = pictureBoxTape.Image.Height;
             }

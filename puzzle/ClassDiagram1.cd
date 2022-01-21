@@ -141,16 +141,16 @@
     </TypeIdentifier>
   </Class>
   <Class Name="puzzle.Model.Fragment">
-    <Position X="27.5" Y="15.75" Width="3.75" />
+    <Position X="27.5" Y="13.75" Width="3.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAgAAAAEAAAAgAAAAAABAAAAAAgAAAAAA=</HashCode>
       <FileName>Logic\Fragment.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="puzzle.Model.Game">
-    <Position X="31.75" Y="14" Width="6" />
+    <Position X="32.5" Y="14" Width="6" />
     <TypeIdentifier>
-      <HashCode>QAAGAAAAQAAQgAgQEAAAAQAAYgAACBAYQAkRAIAAgQA=</HashCode>
+      <HashCode>AAAAAAAAAAAQAAgAEAAAAAAAQAAACBAQQAkBAIAAgQA=</HashCode>
       <FileName>Logic\Game.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -179,7 +179,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="puzzle.Model.RecordModel">
-    <Position X="38.5" Y="16.25" Width="2.5" />
+    <Position X="39" Y="14.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAgQAAIAAQA=</HashCode>
       <FileName>Model\RecordModel.cs</FileName>
@@ -193,7 +193,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="puzzle.Model.SavedGameModel">
-    <Position X="28" Y="18.5" Width="3" />
+    <Position X="39" Y="16.5" Width="3" />
     <TypeIdentifier>
       <HashCode>QAAAAAAAQAAAAAgAAAAAAAAAAAAAAAAABAgAAAABAQA=</HashCode>
       <FileName>Model\SavedGameModel.cs</FileName>
@@ -302,6 +302,20 @@
     <TypeIdentifier>
       <HashCode>AsACACUAECgFACCApMCDAAAGAEBCAABBQBIAAAwEhRg=</HashCode>
       <FileName>MainForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Logic.Field">
+    <Position X="27.75" Y="16.25" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAgAAAAAAAQAAIgAAgAAIQAAQAAQAQAA=</HashCode>
+      <FileName>Logic\Field.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="puzzle.Logic.Tape">
+    <Position X="32.5" Y="17.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAQAAAgAAAAAAAAAAAAAAggAIQAAAAAAAQAA=</HashCode>
+      <FileName>Logic\Tape.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Tahoma" Size="8.25" />

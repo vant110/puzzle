@@ -76,11 +76,11 @@ namespace puzzle.Dialogs
         {
             if (Game.Instance is null) return;
 
-            pictureBoxField.Width = pictureBoxImage.Width - pictureBoxImage.Width % Game.Instance.NHorizontal;
-            pictureBoxField.Height = pictureBoxImage.Height - pictureBoxImage.Height % Game.Instance.NVertical;
+            pictureBoxField.Width = pictureBoxImage.Width - pictureBoxImage.Width % Game.Instance.Field.NHorizontal;
+            pictureBoxField.Height = pictureBoxImage.Height - pictureBoxImage.Height % Game.Instance.Field.NVertical;
 
             var bitmap = new Bitmap(pictureBoxField.Width, pictureBoxField.Height);
-            Game.Instance.DrawField(bitmap);
+            Game.Instance.Field.Draw(bitmap);
             pictureBoxField.Image = bitmap;
         }
 
