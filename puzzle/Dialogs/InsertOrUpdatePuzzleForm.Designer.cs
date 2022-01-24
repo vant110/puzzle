@@ -139,6 +139,7 @@ namespace puzzle.Dialogs
             this.pictureBoxImage.Location = new System.Drawing.Point(13, 144);
             this.pictureBoxImage.Name = "pictureBoxImage";
             this.pictureBoxImage.Size = new System.Drawing.Size(368, 276);
+            this.pictureBoxImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBoxImage.TabIndex = 33;
             this.pictureBoxImage.TabStop = false;
             // 

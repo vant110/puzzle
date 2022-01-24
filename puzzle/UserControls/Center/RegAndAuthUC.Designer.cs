@@ -44,7 +44,6 @@ namespace puzzle.UserControls
             this.textBoxLogin.PlaceholderText = "Логин";
             this.textBoxLogin.Size = new System.Drawing.Size(182, 21);
             this.textBoxLogin.TabIndex = 0;
-            this.textBoxLogin.Text = "player";
             // 
             // textBoxPassword
             // 
@@ -56,7 +55,6 @@ namespace puzzle.UserControls
             this.textBoxPassword.PlaceholderText = "Пароль";
             this.textBoxPassword.Size = new System.Drawing.Size(182, 21);
             this.textBoxPassword.TabIndex = 1;
-            this.textBoxPassword.Text = "player";
             this.textBoxPassword.UseSystemPasswordChar = true;
             // 
             // buttonRegister
